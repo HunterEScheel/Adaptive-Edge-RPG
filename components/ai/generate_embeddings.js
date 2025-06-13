@@ -1,0 +1,101 @@
+const fs = require("fs");
+const { OpenAI } = require("openai");
+
+// Create a simple Supabase client just for this script
+const { createClient } = require("@supabase/supabase-js");
+
+// Initialize Supabase client with service role key to bypass RLS
+const supabase = createClient(process.env.SUPABASE_URL, process.env.SUPABASE_SERVICE_KEY);
+
+const openai = new OpenAI({
+  apiKey: process.env.OPENAI_API_KEY,
+});
+
+// Read skills from CSV (one skill per line)
+const inputCsv = "./skills.csv";
+const skills = fs
+  .readFileSync(inputCsv, "utf8")
+  .split("\n")
+  .map((line) => line.trim());
+
+function sleep(ms) {
+  return new Promise((resolve) => setTimeout(resolve, ms));
+}
+
+async function runAllEmbeddings() {
+  // Clear existing data from the table
+  console.log("Clearing existing embeddings from database...");
+  try {
+    const { error: deleteError } = await supabase.from("skill_embeddings").delete().neq("id", 0); // This deletes all rows
+
+    if (deleteError) {
+      console.error("Error clearing database:", deleteError);
+    } else {
+      console.log("Successfully cleared existing embeddings");
+    }
+  } catch (error) {
+    console.error("Error during database clearing:", error);
+  }
+
+  // Process each skill
+  for (const skill of skills) {
+    try {
+      const response = await openai.embeddings.create({
+        model: "text-embedding-3-small",
+        input: skill,
+      });
+
+      const embedding = response.data[0].embedding;
+
+      // Insert into Supabase
+      const { error } = await supabase.from("skill_embeddings").insert({
+        skill_name: skill,
+        embedding_vector: embedding,
+      });
+
+      if (error) {
+        console.error(`Error saving embedding to database for ${skill}:`, error);
+      } else {
+        console.log(`Saved embedding for: ${skill}`);
+      }
+    } catch (err) {
+      console.error(`Error embedding ${skill}:`, err);
+    }
+    await sleep(500); // Prevent rate limiting
+  }
+
+  console.log("All embeddings saved to the database");
+
+  // Export to CSV for offline use
+  await exportToCSV();
+}
+
+async function exportToCSV() {
+  const outputFile = "./embeddings.csv";
+  try {
+    console.log("Exporting database to CSV...");
+
+    // Fetch all embeddings from the database
+    const { data, error } = await supabase.from("skill_embeddings").select("skill_name, embedding_vector");
+
+    if (error) {
+      console.error("Error fetching embeddings for CSV export:", error);
+      return;
+    }
+
+    // Write CSV header
+    fs.writeFileSync(outputFile, "Skill,Embedding\n");
+
+    // Write each row
+    for (const item of data) {
+      const embeddingStr = '"' + item.embedding_vector.join(" ") + '"';
+      fs.appendFileSync(outputFile, `${item.skill_name},${embeddingStr}\n`);
+    }
+
+    console.log(`Successfully exported ${data.length} embeddings to ${outputFile}`);
+  } catch (error) {
+    console.error("Error during CSV export:", error);
+  }
+}
+
+runAllEmbeddings();
