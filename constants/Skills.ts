@@ -3,12 +3,12 @@
 import { ePlayerStat } from "./Stats";
 
 export interface Skill {
-  id: string;
-  name: string;
-  level: number;
-  description?: string;
-  statModified?: ePlayerStat;
-  modificationLevel?: number;
+    id: string;
+    name: string;
+    level: number;
+    description?: string;
+    statModified?: ePlayerStat;
+    modificationLevel?: number;
 }
 
 // Calculate BP cost for a skill level based on Fibonacci sequence
@@ -23,24 +23,30 @@ export interface Skill {
 // Level 9: 89 BP (total 230)
 // Level 10: 144 BP (total 374)
 export const calculateSkillCost = (level: number): number => {
-  if (level <= 0) return 0;
-  if (level === 1) return 2;
-  if (level === 2) return 3;
+    if (level <= 0) return 0;
+    if (level === 1) return 2;
+    if (level === 2) return 3;
+    if (level === 3) return 5;
 
-  // Fibonacci sequence for level 3+
-  const fibonacci = [0, 1, 1];
-  for (let i = 3; i <= level + 1; i++) {
-    fibonacci[i] = fibonacci[i - 1] + fibonacci[i - 2];
-  }
+    // Fibonacci sequence for level 4+
+    // Previous two values are 3 and 5, so next is 8, then 13, etc.
+    let prev2 = 2; // level 1 cost
+    let prev1 = 3; // level 2 cost
 
-  return fibonacci[level + 1];
+    for (let i = 3; i <= level; i++) {
+        const current = prev1 + prev2;
+        prev2 = prev1;
+        prev1 = current;
+    }
+
+    return prev1;
 };
 
 // Calculate total BP cost for a skill at given level
 export const calculateTotalSkillCost = (level: number): number => {
-  let total = 0;
-  for (let i = 1; i <= level; i++) {
-    total += calculateSkillCost(i);
-  }
-  return total;
+    let total = 0;
+    for (let i = 1; i <= level; i++) {
+        total += calculateSkillCost(i);
+    }
+    return total;
 };

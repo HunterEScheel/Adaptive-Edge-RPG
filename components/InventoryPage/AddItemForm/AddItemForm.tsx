@@ -7,6 +7,7 @@ import React, { useCallback, useEffect, useState } from "react";
 import { Alert, Dimensions, Modal, Pressable, ScrollView, StyleSheet, View } from "react-native";
 import { Dropdown } from "react-native-element-dropdown";
 import { useDispatch } from "react-redux";
+import { AddArmor } from "./AddArmor";
 import { AddConsumable } from "./AddConsumable";
 import { AddEquipment } from "./AddEquipment";
 import { AddWeapon } from "./AddWeapon";
@@ -24,6 +25,10 @@ const WeaponForm = React.memo(({ onChange }: { onChange: (item: Partial<iItem>) 
 
 const EquipmentForm = React.memo(({ onChange }: { onChange: (item: Partial<iItem>) => void }) => {
   return <AddEquipment onChange={onChange} />;
+});
+
+const ArmorForm = React.memo(({ onChange }: { onChange: (item: Partial<iItem>) => void }) => {
+  return <AddArmor onChange={onChange} />;
 });
 
 const ConsumableForm = React.memo(({ onChange }: { onChange: (item: Partial<iItem>) => void }) => {
@@ -122,6 +127,7 @@ export function AddItemForm({ open, setOpen, onClose }: AddItemFormProps) {
           <ScrollView style={styles.formContent} contentContainerStyle={styles.formContentContainer}>
             {itemClass === eItemClassifications.weapon ? <WeaponForm onChange={handleItemChange} /> : null}
             {itemClass === eItemClassifications.equipment ? <EquipmentForm onChange={handleItemChange} /> : null}
+            {itemClass === eItemClassifications.armor ? <ArmorForm onChange={handleItemChange} /> : null}
             {itemClass === eItemClassifications.consumable ? <ConsumableForm onChange={handleItemChange} /> : null}
             {itemClass === eItemClassifications.other ? <OtherForm /> : null}
           </ScrollView>
