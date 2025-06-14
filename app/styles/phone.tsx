@@ -10,61 +10,53 @@ import { app_theme } from "./theme";
 
 export const cssStyle = StyleSheet.create({
     // BUTTONS - Consolidated and theme-consistent
-    primaryButton: {
-        color: app_theme.primary_component_text,
-        backgroundColor: app_theme.primary_component_bg,
+    button: {
         borderRadius: 8,
         padding: 12,
         alignItems: "center",
         justifyContent: "center",
+    },
+    primaryButton: {
+        color: app_theme.primary_component_text,
+        backgroundColor: app_theme.primary_component_bg,
     },
     secondaryButton: {
         color: app_theme.secondary_component_text,
         backgroundColor: app_theme.secondary_component_bg,
-        borderRadius: 8,
-        padding: 12,
-        alignItems: "center",
-        justifyContent: "center",
     },
     actionButton: {
         backgroundColor: "#007AFF",
         borderRadius: 8,
-        padding: 12,
+        display: "flex",
+        flexDirection: "row",
         alignItems: "center",
         justifyContent: "center",
     },
     dangerButton: {
-        backgroundColor: "#e74c3c",
-        borderRadius: 8,
-        padding: 12,
-        alignItems: "center",
-        justifyContent: "center",
+        backgroundColor: "#F44336",
     },
     successButton: {
         backgroundColor: "#4CAF50",
-        borderRadius: 8,
-        padding: 12,
-        alignItems: "center",
-        justifyContent: "center",
     },
     disabledButton: {
         backgroundColor: "#ccc",
-        borderRadius: 8,
-        padding: 12,
-        alignItems: "center",
-        justifyContent: "center",
     },
     compactButton: {
         width: 36,
         height: 36,
         borderRadius: 18,
-        justifyContent: "center",
-        alignItems: "center",
+    },
+    levelButton: {
+        width: 30,
+        height: 30,
+        borderRadius: 15,
+        backgroundColor: "#007AFF",
     },
     buttonText: {
         color: "#FFFFFF",
         fontWeight: "bold",
         fontSize: 16,
+        padding: 5,
     },
     smallButtonText: {
         color: "#FFFFFF",
@@ -72,17 +64,29 @@ export const cssStyle = StyleSheet.create({
         fontWeight: "bold",
     },
 
-    // CONTAINERS & LAYOUT - Unified
-    container: {
-        padding: 16,
-        borderRadius: 8,
+    // CONTAINERS - Unified base patterns
+    lightContainer: {
         backgroundColor: "rgba(0, 0, 0, 0.05)",
+        borderRadius: 8,
+        padding: 12,
+        marginBottom: 8,
+    },
+    whiteContainer: {
+        backgroundColor: "rgba(255, 255, 255, 0.9)",
+        borderRadius: 8,
+        padding: 16,
+        marginBottom: 12,
+    },
+    container: {
+        backgroundColor: "rgba(0, 0, 0, 0.05)",
+        borderRadius: 8,
+        padding: 16,
         marginVertical: 8,
     },
     card: {
-        padding: 16,
         backgroundColor: "rgba(255, 255, 255, 0.9)",
         borderRadius: 8,
+        padding: 16,
         marginBottom: 12,
         shadowColor: "#000",
         shadowOffset: { width: 0, height: 2 },
@@ -90,9 +94,15 @@ export const cssStyle = StyleSheet.create({
         shadowRadius: 3,
         elevation: 2,
     },
+    itemContainer: {
+        backgroundColor: "rgba(0, 0, 0, 0.05)",
+        borderRadius: 8,
+        padding: 12,
+        marginBottom: 8,
+    },
 
     // MODALS
-    centeredView: {
+    modalOverlay: {
         flex: 1,
         justifyContent: "center",
         alignItems: "center",
@@ -129,23 +139,25 @@ export const cssStyle = StyleSheet.create({
         marginBottom: 15,
         textAlign: "center",
     },
-    modalButton: {
-        flex: 1,
-        paddingVertical: 12,
-        paddingHorizontal: 20,
-        borderRadius: 8,
-        alignItems: "center",
-        justifyContent: "center",
-        marginHorizontal: 5,
-    },
-    cancelButton: {
-        backgroundColor: "#8E8E93",
-    },
-    saveButton: {
-        backgroundColor: "#007AFF",
-    },
 
-    // TEXT STYLES - Simplified hierarchy
+    // TEXT STYLES - Consolidated hierarchy
+    headerText: {
+        fontSize: 20,
+        fontWeight: "bold",
+        marginBottom: 10,
+        color: "#333",
+    },
+    sectionHeader: {
+        fontSize: 18,
+        fontWeight: "bold",
+        marginBottom: 10,
+        color: "#333",
+    },
+    sectionTitle: {
+        fontSize: 20,
+        fontWeight: "bold",
+        marginBottom: 10,
+    },
     title: {
         fontSize: 20,
         fontWeight: "bold",
@@ -169,6 +181,12 @@ export const cssStyle = StyleSheet.create({
         fontSize: 12,
         color: "#666",
     },
+    skillPenalty: {
+        fontSize: 12,
+        color: "#666",
+        fontStyle: "italic",
+        marginTop: 2,
+    },
     valueText: {
         fontSize: 16,
         fontWeight: "bold",
@@ -184,19 +202,24 @@ export const cssStyle = StyleSheet.create({
         padding: 20,
     },
 
-    // LAYOUT UTILITIES
+    // LAYOUT UTILITIES - Consolidated patterns
     row: {
         flexDirection: "row",
         alignItems: "center",
     },
-    spaceBetween: {
+    headerRow: {
         flexDirection: "row",
         justifyContent: "space-between",
         alignItems: "center",
+        marginBottom: 8,
     },
     centered: {
         alignItems: "center",
         justifyContent: "center",
+    },
+    buttonGroup: {
+        flexDirection: "row",
+        gap: 8,
     },
 
     // INPUT STYLES
@@ -216,19 +239,7 @@ export const cssStyle = StyleSheet.create({
         textAlignVertical: "top",
     },
 
-    // ITEM STYLES - Generic for skills, spells, items, etc.
-    itemContainer: {
-        backgroundColor: "rgba(0, 0, 0, 0.05)",
-        borderRadius: 8,
-        padding: 12,
-        marginBottom: 8,
-    },
-    itemHeader: {
-        flexDirection: "row",
-        justifyContent: "space-between",
-        alignItems: "center",
-        marginBottom: 8,
-    },
+    // SPECIFIC COMPONENT STYLES (when truly unique)
     levelBadge: {
         flexDirection: "row",
         alignItems: "center",
@@ -239,21 +250,14 @@ export const cssStyle = StyleSheet.create({
         minWidth: 60,
         justifyContent: "center",
     },
-
-    // STAT DISPLAY
-    statContainer: {
-        backgroundColor: "rgba(0, 0, 0, 0.05)",
-        borderRadius: 8,
-        padding: 12,
-        alignItems: "center",
-        justifyContent: "center",
-        minWidth: 80,
-    },
-    statRow: {
+    bonusContainer: {
         flexDirection: "row",
-        justifyContent: "space-between",
         alignItems: "center",
-        marginBottom: 8,
+        marginLeft: 4,
+        backgroundColor: "rgba(76, 175, 80, 0.2)",
+        borderRadius: 4,
+        paddingHorizontal: 4,
+        paddingVertical: 2,
     },
     bonusIndicator: {
         flexDirection: "row",
@@ -269,18 +273,11 @@ export const cssStyle = StyleSheet.create({
         color: "#4CAF50",
         fontWeight: "bold",
     },
-
-    // ADJUSTMENT CONTROLS
-    adjustmentRow: {
-        flexDirection: "row",
-        justifyContent: "space-around",
+    divider: {
+        height: 1,
+        backgroundColor: "#E1E1E1",
         width: "100%",
-        marginBottom: 20,
-        gap: 8,
-    },
-    adjustmentButtons: {
-        flexDirection: "row",
-        gap: 8,
+        marginVertical: 10,
     },
 
     // COMBAT ABILITY STYLES
@@ -289,12 +286,6 @@ export const cssStyle = StyleSheet.create({
         borderRadius: 8,
         padding: 12,
         marginBottom: 12,
-    },
-    abilityHeader: {
-        flexDirection: "row",
-        justifyContent: "space-between",
-        alignItems: "center",
-        marginBottom: 8,
     },
     abilityName: {
         fontSize: 16,
@@ -310,15 +301,17 @@ export const cssStyle = StyleSheet.create({
         justifyContent: "space-between",
         alignItems: "center",
         borderTopWidth: 1,
-        borderTopColor: "rgba(0, 0, 0, 0.05)",
+        borderTopColor: "rgba(0, 0, 0, 0.1)",
         paddingTop: 8,
+        marginTop: 8,
     },
     costText: {
         fontSize: 12,
         color: "#666",
     },
     costLabel: {
-        fontWeight: "bold",
+        fontSize: 10,
+        color: "#999",
     },
     passiveTag: {
         fontSize: 10,
@@ -363,58 +356,103 @@ export const cssStyle = StyleSheet.create({
     list: {
         flex: 1,
     },
-    headerRow: {
+
+    // SKILL-SPECIFIC STYLES
+    skillContainer: {
+        padding: 16,
+        backgroundColor: "rgba(255, 255, 255, 0.1)",
+        borderRadius: 8,
+    },
+    sectionContainer: {
+        marginVertical: 10,
+        padding: 16,
+        backgroundColor: "rgba(255, 255, 255, 0.1)",
+        borderRadius: 8,
+    },
+    defensiveSkillsContainer: {
+        marginVertical: 10,
+    },
+    compactSkillRow: {
         flexDirection: "row",
         justifyContent: "space-between",
         alignItems: "center",
-        marginBottom: 10,
-        paddingHorizontal: 5,
+        backgroundColor: "rgba(0, 0, 0, 0.05)",
+        borderRadius: 8,
+        padding: 12,
+        marginBottom: 8,
     },
-    deleteButton: {
-        backgroundColor: "#F44336",
-        width: 24,
-        height: 24,
-        borderRadius: 12,
-        alignItems: "center",
-        justifyContent: "center",
+    skillInfo: {
+        flex: 1,
+        marginRight: 10,
     },
-    deleteButtonText: {
-        color: "white",
-        fontSize: 12,
-        fontWeight: "bold",
-    },
-    addButtonText: {
-        color: "white",
-        fontWeight: "bold",
-        marginLeft: 8,
-    },
-    addButton: {
-        backgroundColor: "#007AFF",
+    skillControls: {
         flexDirection: "row",
         alignItems: "center",
-        paddingHorizontal: 15,
-        paddingVertical: 10,
-        borderRadius: 20,
-        elevation: 3,
-        shadowColor: "#000",
-        shadowOffset: { width: 0, height: 2 },
-        shadowOpacity: 0.1,
-        shadowRadius: 3,
-        marginTop: 15,
+        gap: 10,
     },
-
-    // SKILL-SPECIFIC STYLES
+    tableContainer: {
+        marginVertical: 10,
+    },
+    table: {
+        backgroundColor: "rgba(255, 255, 255, 0.9)",
+        borderRadius: 8,
+    },
+    tableHeader: {
+        backgroundColor: "#f0f0f0",
+        borderTopLeftRadius: 8,
+        borderTopRightRadius: 8,
+        padding: 10,
+    },
+    tableHeaderText: {
+        fontSize: 14,
+        fontWeight: "bold",
+        textAlign: "center",
+        color: "#333",
+    },
+    tableRow: {
+        height: 40,
+        backgroundColor: "rgba(255, 255, 255, 0.9)",
+    },
+    tableRowText: {
+        fontSize: 12,
+        textAlign: "center",
+        color: "#333",
+    },
+    costContainer: {
+        flex: 1,
+    },
+    upgradeControls: {
+        flex: 1,
+        alignItems: "center",
+        marginLeft: 20,
+    },
+    adjustmentRow: {
+        flexDirection: "row",
+        justifyContent: "space-around",
+        width: "100%",
+        marginBottom: 20,
+        gap: 8,
+    },
+    currentValueContainer: {
+        alignItems: "center",
+        minWidth: 80,
+    },
+    currentValue: {
+        fontSize: 24,
+        fontWeight: "bold",
+        color: "#333",
+    },
+    statLabel: {
+        fontSize: 12,
+        color: "#666",
+        fontWeight: "600",
+        marginBottom: 4,
+    },
     skillItem: {
         backgroundColor: "rgba(0, 0, 0, 0.05)",
         borderRadius: 8,
         padding: 12,
         marginBottom: 12,
-    },
-    skillHeader: {
-        flexDirection: "row",
-        justifyContent: "space-between",
-        alignItems: "center",
-        marginBottom: 8,
     },
     skillNameContainer: {
         flex: 1,
@@ -434,51 +472,25 @@ export const cssStyle = StyleSheet.create({
         alignItems: "center",
         gap: 10,
     },
-    levelButton: {
-        width: 30,
-        height: 30,
-        borderRadius: 15,
-        alignItems: "center",
-        justifyContent: "center",
-        backgroundColor: "#007AFF",
-    },
-    decreaseButton: {
-        backgroundColor: "#FF3B30",
-    },
-    increaseButton: {
-        backgroundColor: "#34C759",
-    },
-    levelButtonText: {
-        color: "#FFFFFF",
-        fontSize: 16,
-        fontWeight: "bold",
-    },
     levelDisplay: {
         minWidth: 40,
         alignItems: "center",
     },
-    levelValue: {
-        fontSize: 16,
-        fontWeight: "bold",
-    },
     skillsList: {
         paddingBottom: 20,
-    },
-    sectionTitle: {
-        fontSize: 20,
-        fontWeight: "bold",
-        marginBottom: 10,
     },
     costInfoContainer: {
         alignItems: "flex-end",
     },
-    costInfo: {
-        fontSize: 12,
-        color: "#666",
-        textAlign: "right",
-    },
 
-    // STATUS INDICATORS
+    // STATUS INDICATORS - Consolidated
+    statusIndicator: {
+        fontSize: 12,
+        fontWeight: "bold",
+        paddingHorizontal: 8,
+        paddingVertical: 2,
+        borderRadius: 4,
+    },
     onlineIndicator: {
         fontSize: 12,
         color: "#34C759",
@@ -513,11 +525,6 @@ export const cssStyle = StyleSheet.create({
     },
     suggestionsScrollView: {
         maxHeight: 150,
-    },
-    similarityText: {
-        fontSize: 12,
-        color: "#666",
-        fontStyle: "italic",
     },
     suggestionsContainer: {
         marginTop: 8,
@@ -582,14 +589,6 @@ export const cssStyle = StyleSheet.create({
         height: 20,
     },
 
-    // STATUS INDICATORS
-    statusIndicator: {
-        width: 12,
-        height: 12,
-        borderRadius: 6,
-        marginRight: 8,
-    },
-
     // THEMED TEXT COMPATIBILITY (minimal)
     themedTextDefault: {
         fontSize: 16,
@@ -645,6 +644,10 @@ export const cssStyle = StyleSheet.create({
         borderLeftWidth: 4,
         borderLeftColor: "#4CAF50",
     },
+    headerImage: {
+        alignSelf: "center",
+        marginBottom: 16,
+    },
 
     // LEGACY COMPATIBILITY (minimal)
     attributeRow: {
@@ -657,197 +660,18 @@ export const cssStyle = StyleSheet.create({
         flexDirection: "row",
         marginBottom: 2,
     },
-
-    // COMBAT SCREEN SPECIFIC STYLES
-    headerImage: {
-        alignSelf: "center",
-        marginBottom: 16,
-    },
-    titleContainer: {
-        alignItems: "center",
-        marginBottom: 20,
-    },
-    sectionContainer: {
-        marginVertical: 10,
-        padding: 16,
-        backgroundColor: "rgba(255, 255, 255, 0.1)",
-        borderRadius: 8,
-    },
-    sectionHeader: {
-        fontSize: 18,
-        fontWeight: "bold",
-        marginBottom: 10,
-        color: "#333",
-    },
-    defensiveSkillsContainer: {
-        marginVertical: 10,
-    },
-    compactSkillRow: {
+    itemHeader: {
         flexDirection: "row",
         justifyContent: "space-between",
         alignItems: "center",
+        marginBottom: 8,
+    },
+    statContainer: {
         backgroundColor: "rgba(0, 0, 0, 0.05)",
         borderRadius: 8,
         padding: 12,
-        marginBottom: 8,
-    },
-    skillInfo: {
-        flex: 1,
-        marginRight: 10,
-    },
-    skillPenalty: {
-        fontSize: 12,
-        color: "#666",
-        fontStyle: "italic",
-        marginTop: 2,
-    },
-    skillControls: {
-        flexDirection: "row",
-        alignItems: "center",
-        gap: 10,
-    },
-    skillLevel: {
-        fontSize: 16,
-        fontWeight: "bold",
-        minWidth: 30,
-        textAlign: "center",
-    },
-    tableContainer: {
-        marginVertical: 10,
-    },
-    table: {
-        backgroundColor: "rgba(255, 255, 255, 0.9)",
-        borderRadius: 8,
-    },
-    tableHeader: {
-        backgroundColor: "#f0f0f0",
-        borderTopLeftRadius: 8,
-        borderTopRightRadius: 8,
-        height: 40,
-    },
-    tableHeaderText: {
-        fontSize: 14,
-        fontWeight: "bold",
-        textAlign: "center",
-        color: "#333",
-    },
-    tableRow: {
-        height: 40,
-        backgroundColor: "rgba(255, 255, 255, 0.9)",
-    },
-    tableRowText: {
-        fontSize: 12,
-        textAlign: "center",
-        color: "#333",
-    },
-
-    // MODAL SPECIFIC STYLES
-    modalOverlay: {
-        flex: 1,
-        justifyContent: "center",
-        alignItems: "center",
-        backgroundColor: "rgba(0, 0, 0, 0.5)",
-    },
-    modalContent: {
-        width: "90%",
-        backgroundColor: "white",
-        borderRadius: 12,
-        padding: 20,
-        alignItems: "center",
-        shadowColor: "#000",
-        shadowOffset: { width: 0, height: 2 },
-        shadowOpacity: 0.25,
-        shadowRadius: 4,
-        elevation: 5,
-    },
-    modalActions: {
-        flexDirection: "row",
-        justifyContent: "space-between",
-        width: "100%",
-        marginTop: 20,
-    },
-    modalButtonText: {
-        color: "#FFFFFF",
-        fontWeight: "bold",
-        fontSize: 16,
-    },
-
-    // COMBAT SPECIFIC STYLES
-    costContainer: {
-        flex: 1,
-    },
-    useButton: {
-        backgroundColor: "#4CAF50",
-        paddingHorizontal: 15,
-        paddingVertical: 6,
-        borderRadius: 4,
-        marginLeft: 8,
-    },
-    useButtonText: {
-        color: "white",
-        fontWeight: "bold",
-        fontSize: 12,
-    },
-
-    // WEAPON SKILL MANAGER STYLES
-    pointsSpent: {
-        fontSize: 14,
-        color: "#666",
-        textAlign: "right",
-    },
-
-    // STAT UPGRADER STYLES
-    upgradeControls: {
-        flex: 1,
-        alignItems: "center",
-        marginLeft: 20,
-    },
-    adjustRow: {
-        flexDirection: "row",
-        alignItems: "center",
-        justifyContent: "space-between",
-        width: "100%",
-        gap: 15,
-    },
-    decrementButtons: {
-        flexDirection: "row",
-        gap: 8,
-    },
-    incrementButtons: {
-        flexDirection: "row",
-        gap: 8,
-    },
-    currentValueContainer: {
-        alignItems: "center",
-        minWidth: 80,
-    },
-    currentValue: {
-        fontSize: 24,
-        fontWeight: "bold",
-        color: "#333",
-    },
-    statLabel: {
-        fontSize: 12,
-        color: "#666",
-        fontWeight: "600",
-        marginBottom: 4,
-    },
-    quickButton: {
-        backgroundColor: "#007AFF",
-        borderRadius: 6,
-        paddingHorizontal: 12,
-        paddingVertical: 8,
-        minWidth: 40,
         alignItems: "center",
         justifyContent: "center",
-    },
-    decrementButton: {
-        backgroundColor: "#FF3B30",
-    },
-    divider: {
-        height: 1,
-        backgroundColor: "#E1E1E1",
-        width: "100%",
-        marginVertical: 10,
+        minWidth: 60,
     },
 });

@@ -82,7 +82,7 @@ export const FlawManager = () => {
   const renderFlawItem = ({ item: flaw }: { item: Flaw }) => {
     return (
       <ThemedView key={flaw.id} style={cssStyle.card}>
-        <View style={cssStyle.spaceBetween}>
+        <View style={cssStyle.headerRow}>
           <ThemedText style={cssStyle.title}>{flaw.name}</ThemedText>
           <View style={cssStyle.row}>
             <Pressable style={styles.removeButton} onPress={() => handleRemoveFlaw(flaw.id, flaw.severity)}>
@@ -91,7 +91,7 @@ export const FlawManager = () => {
           </View>
         </View>
         <ThemedText style={cssStyle.subtitle}>{flaw.description}</ThemedText>
-        <View style={cssStyle.spaceBetween}>
+        <View style={cssStyle.headerRow}>
           <ThemedText style={cssStyle.label}>
             Severity: <ThemedText style={cssStyle.valueText}>{flaw.severity}</ThemedText>
           </ThemedText>
@@ -148,7 +148,7 @@ export const FlawManager = () => {
                   onPress={() => setNewFlawSeverity(severity)}
                 >
                   <ThemedText
-                    style={newFlawSeverity === severity ? cssStyle.modalButtonText : undefined}
+                    style={newFlawSeverity === severity ? cssStyle.buttonText : undefined}
                   >
                     {severity}
                   </ThemedText>
@@ -156,16 +156,16 @@ export const FlawManager = () => {
               ))}
             </View>
 
-            <View style={cssStyle.spaceBetween}>
+            <View style={cssStyle.headerRow}>
               <Pressable style={[cssStyle.secondaryButton, { width: "45%" }]} onPress={() => setShowAddFlawModal(false)}>
-                <ThemedText>Cancel</ThemedText>
+                <ThemedText style={cssStyle.buttonText}>Cancel</ThemedText>
               </Pressable>
               <Pressable
                 style={[cssStyle.primaryButton, { width: "45%" }]}
                 onPress={handleAddFlaw}
                 disabled={!newFlawName.trim() || !newFlawDescription.trim()}
               >
-                <ThemedText style={cssStyle.modalButtonText}>Add Flaw</ThemedText>
+                <ThemedText style={cssStyle.buttonText}>Add Flaw</ThemedText>
               </Pressable>
             </View>
           </ThemedView>

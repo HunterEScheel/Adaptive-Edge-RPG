@@ -77,10 +77,10 @@ export function CombatAttacks() {
   // Render an attack item
   const renderAttackItem = ({ item }: { item: Attack }) => (
     <ThemedView style={cssStyle.abilityItem}>
-      <View style={cssStyle.abilityHeader}>
+      <View style={cssStyle.headerRow}>
         <ThemedText style={cssStyle.abilityName}>{item.name}</ThemedText>
-        <Pressable style={cssStyle.deleteButton} onPress={() => handleRemoveAttack(item.id)}>
-          <ThemedText style={cssStyle.deleteButtonText}>X</ThemedText>
+        <Pressable style={[cssStyle.compactButton, cssStyle.dangerButton]} onPress={() => handleRemoveAttack(item.id)}>
+          <ThemedText style={cssStyle.smallButtonText}>X</ThemedText>
         </Pressable>
       </View>
 
@@ -94,11 +94,11 @@ export function CombatAttacks() {
         </View>
 
         <Pressable
-          style={[cssStyle.useButton, (character.base.energy || 0) < item.energyCost && cssStyle.disabledButton]}
+          style={[cssStyle.successButton, (character.base.energy || 0) < item.energyCost && cssStyle.disabledButton]}
           onPress={() => handleUseAttack(item)}
           disabled={(character.base.energy || 0) < item.energyCost}
         >
-          <ThemedText style={cssStyle.useButtonText}>Use</ThemedText>
+          <ThemedText style={cssStyle.smallButtonText}>Use</ThemedText>
         </Pressable>
       </View>
     </ThemedView>
@@ -118,9 +118,9 @@ export function CombatAttacks() {
       />
 
       {/* Add Attack Modal */}
-      <Modal visible={showAddAttackModal} transparent animationType="slide">
+      <Modal animationType="slide" transparent={true} visible={showAddAttackModal} onRequestClose={() => setShowAddAttackModal(false)}>
         <View style={cssStyle.modalOverlay}>
-          <ThemedView style={cssStyle.modalContent}>
+          <View style={cssStyle.modalView}>
             <ThemedText style={cssStyle.modalTitle}>Add New Attack</ThemedText>
 
             <View style={cssStyle.formGroup}>
@@ -152,19 +152,19 @@ export function CombatAttacks() {
               </View>
             </View>
 
-            <View style={cssStyle.modalActions}>
-              <Pressable style={[cssStyle.modalButton, cssStyle.cancelButton]} onPress={() => setShowAddAttackModal(false)}>
-                <ThemedText style={cssStyle.modalButtonText}>Cancel</ThemedText>
+            <View style={cssStyle.modalButtons}>
+              <Pressable style={cssStyle.secondaryButton} onPress={() => setShowAddAttackModal(false)}>
+                <ThemedText style={cssStyle.buttonText}>Cancel</ThemedText>
               </Pressable>
               <Pressable
-                style={[cssStyle.modalButton, cssStyle.saveButton, (!newAttackName.trim() || !newAttackBPCost) && cssStyle.disabledButton]}
+                style={cssStyle.actionButton}
                 onPress={handleAddAttack}
                 disabled={!newAttackName.trim() || !newAttackBPCost}
               >
-                <ThemedText style={cssStyle.modalButtonText}>Add Attack</ThemedText>
+                <ThemedText style={cssStyle.buttonText}>Add Attack</ThemedText>
               </Pressable>
             </View>
-          </ThemedView>
+          </View>
         </View>
       </Modal>
     </>

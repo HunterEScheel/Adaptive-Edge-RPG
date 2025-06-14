@@ -163,8 +163,8 @@ export function StatAdjuster({ statName, fieldName, icon, minValue = 0, maxValue
   function renderModal() {
     return (
       <Modal animationType="slide" transparent={true} visible={modalVisible} onRequestClose={() => setModalVisible(false)}>
-        <View style={cssStyle.centeredView}>
-          <ThemedView style={cssStyle.modalView}>
+        <View style={cssStyle.modalOverlay}>
+          <View style={cssStyle.modalView}>
             <ThemedText style={cssStyle.title}>Adjust {statName}</ThemedText>
 
             <View style={cssStyle.adjustmentRow}>
@@ -211,7 +211,7 @@ export function StatAdjuster({ statName, fieldName, icon, minValue = 0, maxValue
                 <ThemedText style={cssStyle.buttonText}>Save</ThemedText>
               </Pressable>
             </View>
-          </ThemedView>
+          </View>
         </View>
       </Modal>
     );

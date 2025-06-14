@@ -2,23 +2,19 @@ import { calculateSkillCost, calculateTotalSkillCost } from "@/constants/Skills"
 import { RootState } from "@/store/rootReducer";
 import { updateMultipleFields } from "@/store/slices/baseSlice";
 import { updateWeaponSkills } from "@/store/slices/skillsSlice";
-import { FontAwesome } from "@expo/vector-icons";
 import React, { useState } from "react";
-import { Alert, FlatList, Modal, Pressable, ScrollView, TouchableOpacity, View } from "react-native";
+import { Alert, Modal, Pressable, ScrollView, TouchableOpacity, View } from "react-native";
 import { useDispatch, useSelector } from "react-redux";
 import { ThemedText } from "../ThemedText";
 import { ThemedView } from "../ThemedView";
 import { cssStyle } from "@/app/styles/phone";
+import { ListManager } from "../Common/ListManager";
 
 export type WeaponSkill = {
     id: number;
     level: number;
     weaponHeft: "Unarmed" | "2-handed" | "1-handed" | "Versatile";
     weaponType: "Stab" | "Swing" | "Fire" | "Draw";
-};
-export type DefensiveSkill = {
-    skillLevel: number;
-    skillName: "Dodge" | "Parry";
 };
 
 const weaponOptions: WeaponSkill[] = [
@@ -89,6 +85,7 @@ const weaponOptions: WeaponSkill[] = [
         weaponType: "Swing",
     },
 ];
+
 export function WeaponSkillManager() {
     const dispatch = useDispatch();
     const { base } = useSelector((state: RootState) => state.character);
@@ -140,18 +137,17 @@ export function WeaponSkillManager() {
         // Calculate BP cost difference
         const costDifference = increase ? calculateSkillCost(newLevel) : -calculateSkillCost(currentLevel);
 
-        // Check if character has enough build points for increase
+        // Check if player has enough build points for increase
         if (increase && base.buildPointsRemaining < costDifference) {
-            Alert.alert("Not Enough Build Points", `You need ${costDifference} BP to upgrade this skill.`);
+            Alert.alert("Insufficient Build Points", `You need ${costDifference} build points to increase this skill level.`);
             return;
         }
 
-        // Update skill level
+        // Update the skill level
         updatedSkills[index] = { ...skill, level: newLevel };
-
-        // Update skills and adjust build points
         dispatch(updateWeaponSkills(updatedSkills));
-        // Update both buildPointsRemaining and buildPointsSpent
+
+        // Update build points
         dispatch(
             updateMultipleFields([
                 {
@@ -167,67 +163,68 @@ export function WeaponSkillManager() {
     };
 
     const handleDeleteSkill = (skill: WeaponSkill) => {
-        Alert.alert("Delete Skill", `Are you sure you want to delete this skill"?`, [
-            { text: "Cancel", style: "cancel" },
-            {
-                text: "Delete",
-                style: "destructive",
-                onPress: () => {
-                    // Calculate BP refund (full cost of the skill)
-                    const refund = calculateTotalSkillCost(skill.level);
+        Alert.alert(
+            "Delete Skill",
+            `Are you sure you want to delete this ${skill.weaponHeft} ${skill.weaponType} skill?`,
+            [
+                { text: "Cancel", style: "cancel" },
+                {
+                    text: "Delete",
+                    style: "destructive",
+                    onPress: () => {
+                        const updatedSkills = skills.filter((s) => s.id !== skill.id);
+                        dispatch(updateWeaponSkills(updatedSkills));
 
-                    // Remove skill and refund BP
-                    const updatedSkills = skills.filter((s) => s.id !== skill.id);
-                    dispatch(updateWeaponSkills(updatedSkills));
-                    // Update both buildPointsRemaining and buildPointsSpent
-                    dispatch(
-                        updateMultipleFields([
-                            {
-                                field: "buildPointsRemaining",
-                                value: base.buildPointsRemaining + refund,
-                            },
-                            {
-                                field: "buildPointsSpent",
-                                value: base.buildPointsSpent - refund,
-                            },
-                        ])
-                    );
+                        // Refund build points
+                        const refund = calculateTotalSkillCost(skill.level);
+                        dispatch(
+                            updateMultipleFields([
+                                {
+                                    field: "buildPointsRemaining",
+                                    value: base.buildPointsRemaining + refund,
+                                },
+                                {
+                                    field: "buildPointsSpent",
+                                    value: base.buildPointsSpent - refund,
+                                },
+                            ])
+                        );
+                    },
                 },
-            },
-        ]);
+            ]
+        );
     };
 
     const renderSkillItem = ({ item }: { item: WeaponSkill }) => {
-        const nextLevelCost = item.level < 10 ? calculateSkillCost(item.level + 1) : null;
-
         return (
             <View style={cssStyle.skillItem}>
-                <View style={cssStyle.skillHeader}>
-                    <View style={cssStyle.skillNameContainer}>
-                        <ThemedText style={cssStyle.skillName} numberOfLines={1} ellipsizeMode="tail">
-                            {item.weaponHeft} - {item.weaponType}
-                        </ThemedText>
-                    </View>
+                <View style={cssStyle.skillInfo}>
+                    <ThemedText style={cssStyle.skillName}>
+                        {item.weaponHeft} - {item.weaponType}
+                    </ThemedText>
+                    <ThemedText style={cssStyle.smallText}>Cost: {calculateTotalSkillCost(item.level)} BP</ThemedText>
+                </View>
+                <View style={cssStyle.skillControls}>
                     <View style={cssStyle.levelContainer}>
                         <Pressable
-                            style={[cssStyle.levelButton, cssStyle.decreaseButton]}
+                            style={[cssStyle.levelButton, cssStyle.dangerButton]}
                             onPress={() => handleLevelChange(item, false)}
                             disabled={item.level <= 1}
                         >
-                            <ThemedText style={cssStyle.levelButtonText}>-</ThemedText>
+                            <ThemedText style={cssStyle.smallButtonText}>-</ThemedText>
                         </Pressable>
                         <View style={cssStyle.levelDisplay}>
-                            <ThemedText style={cssStyle.levelValue}>{item.level}</ThemedText>
+                            <ThemedText style={cssStyle.valueText}>{item.level}</ThemedText>
                         </View>
                         <Pressable
-                            style={[cssStyle.levelButton, cssStyle.increaseButton]}
+                            style={[cssStyle.levelButton, cssStyle.successButton]}
                             onPress={() => handleLevelChange(item, true)}
                             disabled={item.level >= 10}
                         >
-                            <ThemedText style={cssStyle.levelButtonText}>+</ThemedText>
+                            <ThemedText style={cssStyle.smallButtonText}>+</ThemedText>
                         </Pressable>
-                        <Pressable style={cssStyle.deleteButton} onPress={() => handleDeleteSkill(item)}>
-                            <FontAwesome name="trash" size={14} color="#F44336" />
+                        <Pressable style={[cssStyle.compactButton, cssStyle.dangerButton]} onPress={() => handleDeleteSkill(item)}>
+                            <ThemedText style={cssStyle.smallButtonText}>×</ThemedText>
                         </Pressable>
                     </View>
                 </View>
@@ -236,30 +233,21 @@ export function WeaponSkillManager() {
     };
 
     return (
-        <ThemedView style={cssStyle.container}>
-            <View style={cssStyle.headerRow}>
-                <ThemedText style={cssStyle.sectionTitle}>Weapon Skills</ThemedText>
-                <View>
-                    <ThemedText style={cssStyle.pointsSpent}>{totalSkillPoints} BP spent</ThemedText>
-                </View>
-            </View>
-
-            {skills.length > 0 ? (
-                <FlatList data={skills} renderItem={renderSkillItem} keyExtractor={(item) => item.id.toString()} contentContainerStyle={cssStyle.skillsList} />
-            ) : (
-                <ThemedView style={cssStyle.emptyState}>
-                    <ThemedText style={cssStyle.emptyStateText}>No skills added yet. Add your first skill!</ThemedText>
-                </ThemedView>
-            )}
-
-            <Pressable style={cssStyle.addButton} onPress={() => setModalVisible(true)}>
-                <FontAwesome name="plus" size={20} color="#FFFFFF" />
-                <ThemedText style={cssStyle.addButtonText}>Add Skill</ThemedText>
-            </Pressable>
+        <>
+            <ListManager<WeaponSkill>
+                title="Weapon Skills"
+                description={`${totalSkillPoints} BP spent`}
+                data={skills}
+                renderItem={renderSkillItem}
+                keyExtractor={(item) => item.id.toString()}
+                onAddPress={() => setModalVisible(true)}
+                addButtonText="Add Skill"
+                emptyStateText="No skills added yet. Add your first skill!"
+            />
 
             {/* Add Skill Modal */}
             <Modal animationType="slide" transparent={true} visible={modalVisible} onRequestClose={() => setModalVisible(false)}>
-                <View style={cssStyle.centeredView}>
+                <View style={cssStyle.modalOverlay}>
                     <ThemedView style={cssStyle.modalView}>
                         <View style={cssStyle.modalHeader}>
                             <ThemedText style={cssStyle.modalTitle}>Add New Skill</ThemedText>
@@ -284,13 +272,13 @@ export function WeaponSkillManager() {
                         </View>
 
                         <View style={cssStyle.modalButtons}>
-                            <Pressable style={[cssStyle.modalButton, cssStyle.cancelButton]} onPress={() => setModalVisible(false)}>
+                            <Pressable style={cssStyle.secondaryButton} onPress={() => setModalVisible(false)}>
                                 <ThemedText style={cssStyle.buttonText}>Cancel</ThemedText>
                             </Pressable>
                         </View>
                     </ThemedView>
                 </View>
             </Modal>
-        </ThemedView>
+        </>
     );
 }

@@ -58,7 +58,7 @@ export function CurrentStatAdjuster({ statType, compact = false }: CurrentStatAd
   const renderModal = () => {
     return (
       <Modal animationType="slide" transparent={true} visible={modalVisible} onRequestClose={() => setModalVisible(false)}>
-        <View style={cssStyle.centeredView}>
+        <View style={cssStyle.modalOverlay}>
           <ThemedView style={cssStyle.modalView}>
             <ThemedText style={cssStyle.title}>Adjust Current {statName}</ThemedText>
 

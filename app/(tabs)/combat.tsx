@@ -6,11 +6,13 @@ import { ThemedText } from "@/components/ThemedText";
 import { ThemedView } from "@/components/ThemedView";
 import { Weapon } from "@/constants/Item";
 import { RootState } from "@/store/rootReducer";
-import { ScrollView } from "react-native";
+import { updateDodge, updateParry } from "@/store/slices/skillsSlice";
+import { Pressable, ScrollView } from "react-native";
 import { Row, Rows, Table } from "react-native-table-component";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 
 export default function CombatScreen() {
+    const dispatch = useDispatch();
     const character = useSelector((state: RootState) => state.character);
 
     // Get only equipped weapons
@@ -61,37 +63,58 @@ export default function CombatScreen() {
         return bonus >= 0 ? `+${bonus}` : `${bonus}`;
     };
 
+    // Handle skill level changes
+    const handleSkillChange = (skillName: "dodge" | "parry", delta: number) => {
+        const currentLevel = character.skills[skillName] || 0;
+        const newLevel = Math.max(0, currentLevel + delta);
+        skillName === "dodge" ? dispatch(updateDodge(newLevel)) : dispatch(updateParry(newLevel));
+    };
+
     return (
         <ScrollView>
             <ThemedView>
                 {/* Defensive Skills Section */}
                 <ThemedView style={cssStyle.sectionContainer}>
                     <ThemedText style={cssStyle.sectionHeader}>Defensive Skills</ThemedText>
-                    <ThemedView style={cssStyle.defensiveSkillsContainer}>
+                    <ThemedView style={cssStyle.headerRow}>
                         {/* Dodge Skill */}
-                        <ThemedView style={cssStyle.compactSkillRow}>
+                        <ThemedView style={[cssStyle.compactSkillRow, { flex: 1, marginRight: 8 }]}>
                             <ThemedView style={cssStyle.skillInfo}>
                                 <ThemedText style={cssStyle.skillName}>Dodge</ThemedText>
                                 <ThemedText style={cssStyle.skillDescription}>Adds to AC</ThemedText>
-                                <ThemedText style={cssStyle.skillPenalty}>
-                                    {character.inventory.armor?.armorClassification === "Medium" ? "Medium Armor: -1" : ""}
-                                    {character.inventory.armor?.armorClassification === "Heavy" ? "Heavy Armor: 0" : ""}
-                                </ThemedText>
+                                {character.inventory.armor?.armorClassification === "Medium" && (
+                                    <ThemedText style={cssStyle.skillPenalty}>Medium Armor: -1</ThemedText>
+                                )}
+                                {character.inventory.armor?.armorClassification === "Heavy" && (
+                                    <ThemedText style={cssStyle.skillPenalty}>Heavy Armor: 0</ThemedText>
+                                )}
                             </ThemedView>
                             <ThemedView style={cssStyle.skillControls}>
-                                <ThemedText style={cssStyle.skillLevel}>{character.skills.dodge}</ThemedText>
+                                <Pressable style={[cssStyle.levelButton, cssStyle.dangerButton]} onPress={() => handleSkillChange("dodge", -1)}>
+                                    <ThemedText style={cssStyle.smallButtonText}>-</ThemedText>
+                                </Pressable>
+                                <ThemedText style={cssStyle.valueText}>{character.skills.dodge || 0}</ThemedText>
+                                <Pressable style={cssStyle.levelButton} onPress={() => handleSkillChange("dodge", 1)}>
+                                    <ThemedText style={cssStyle.smallButtonText}>+</ThemedText>
+                                </Pressable>
                             </ThemedView>
                         </ThemedView>
 
                         {/* Parry Skill */}
-                        <ThemedView style={cssStyle.compactSkillRow}>
+                        <ThemedView style={[cssStyle.compactSkillRow, { flex: 1, marginLeft: 8 }]}>
                             <ThemedView style={cssStyle.skillInfo}>
                                 <ThemedText style={cssStyle.skillName}>Parry</ThemedText>
                                 <ThemedText style={cssStyle.skillDescription}>1 Action (response)</ThemedText>
-                                <ThemedText style={cssStyle.skillPenalty}>Subtract 1d4 + {character.skills.parry} from attack</ThemedText>
+                                <ThemedText style={cssStyle.skillPenalty}>Subtract 1d4 + {character.skills.parry || 0} from attack</ThemedText>
                             </ThemedView>
                             <ThemedView style={cssStyle.skillControls}>
-                                <ThemedText style={cssStyle.skillLevel}>{character.skills.parry}</ThemedText>
+                                <Pressable style={[cssStyle.levelButton, cssStyle.dangerButton]} onPress={() => handleSkillChange("parry", -1)}>
+                                    <ThemedText style={cssStyle.smallButtonText}>-</ThemedText>
+                                </Pressable>
+                                <ThemedText style={cssStyle.valueText}>{character.skills.parry || 0}</ThemedText>
+                                <Pressable style={cssStyle.levelButton} onPress={() => handleSkillChange("parry", 1)}>
+                                    <ThemedText style={cssStyle.smallButtonText}>+</ThemedText>
+                                </Pressable>
                             </ThemedView>
                         </ThemedView>
                     </ThemedView>

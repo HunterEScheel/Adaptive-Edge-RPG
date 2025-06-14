@@ -126,8 +126,8 @@ export function MagicSchoolManager() {
                 <ThemedText style={cssStyle.title}>{item.name}</ThemedText>
                 <ThemedText style={cssStyle.subtitle}>{item.description}</ThemedText>
             </View>
-            <Pressable style={cssStyle.deleteButton} onPress={() => handleRemoveSchool(item.id)}>
-                <FontAwesome name="trash" size={18} color="#F44336" />
+            <Pressable style={[cssStyle.compactButton, cssStyle.dangerButton]} onPress={() => handleRemoveSchool(item.id)}>
+                <ThemedText style={cssStyle.smallButtonText}>×</ThemedText>
             </Pressable>
         </View>
     );
@@ -148,28 +148,26 @@ export function MagicSchoolManager() {
             />
 
             <Modal animationType="slide" transparent={true} visible={modalVisible} onRequestClose={() => setModalVisible(false)}>
-                <ScrollView>
-                    <View style={cssStyle.centeredView}>
-                        <ThemedView style={cssStyle.modalView}>
-                            <ThemedText style={cssStyle.modalTitle}>Learn Magic School (25 BP)</ThemedText>
-                            <FlatList
-                                data={availableSchools}
-                                keyExtractor={(item) => item.name}
-                                renderItem={({ item }: { item: Omit<MagicSchool, "id"> }) => (
-                                    <Pressable style={cssStyle.card} onPress={() => handleLearnSchool(item)}>
-                                        <ThemedText style={cssStyle.title}>{item.name}</ThemedText>
-                                        <ThemedText style={cssStyle.subtitle}>{item.description}</ThemedText>
-                                    </Pressable>
-                                )}
-                                ListEmptyComponent={<ThemedText style={cssStyle.emptyText}>You've learned all available magic schools!</ThemedText>}
-                            />
+                <View style={cssStyle.modalOverlay}>
+                    <View style={cssStyle.modalView}>
+                        <ThemedText style={cssStyle.modalTitle}>Learn Magic School (25 BP)</ThemedText>
+                        <FlatList
+                            data={availableSchools}
+                            keyExtractor={(item) => item.name}
+                            renderItem={({ item }: { item: Omit<MagicSchool, "id"> }) => (
+                                <Pressable style={cssStyle.card} onPress={() => handleLearnSchool(item)}>
+                                    <ThemedText style={cssStyle.title}>{item.name}</ThemedText>
+                                    <ThemedText style={cssStyle.subtitle}>{item.description}</ThemedText>
+                                </Pressable>
+                            )}
+                            ListEmptyComponent={<ThemedText style={cssStyle.emptyText}>You've learned all available magic schools!</ThemedText>}
+                        />
 
-                            <Pressable style={cssStyle.secondaryButton} onPress={() => setModalVisible(false)}>
-                                <ThemedText style={cssStyle.modalButtonText}>Close</ThemedText>
-                            </Pressable>
-                        </ThemedView>
-                    </View>{" "}
-                </ScrollView>
+                        <Pressable style={cssStyle.dangerButton} onPress={() => setModalVisible(false)}>
+                            <ThemedText style={cssStyle.buttonText}>Close</ThemedText>
+                        </Pressable>
+                    </View>
+                </View>
             </Modal>
         </>
     );

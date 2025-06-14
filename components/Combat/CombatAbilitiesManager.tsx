@@ -143,10 +143,10 @@ export function CombatAbilitiesManager() {
   // Render an attack item
   const renderAttackItem = ({ item }: { item: Attack }) => (
     <ThemedView style={cssStyle.abilityItem}>
-      <View style={cssStyle.abilityHeader}>
+      <View style={cssStyle.headerRow}>
         <ThemedText style={cssStyle.abilityName}>{item.name}</ThemedText>
-        <Pressable style={cssStyle.deleteButton} onPress={() => handleRemoveAttack(item.id)}>
-          <ThemedText style={cssStyle.deleteButtonText}>X</ThemedText>
+        <Pressable style={[cssStyle.compactButton, cssStyle.dangerButton]} onPress={() => handleRemoveAttack(item.id)}>
+          <ThemedText style={cssStyle.smallButtonText}>×</ThemedText>
         </Pressable>
       </View>
 
@@ -166,10 +166,10 @@ export function CombatAbilitiesManager() {
   // Render a passive ability item
   const renderPassiveItem = ({ item }: { item: Passive }) => (
     <ThemedView style={cssStyle.abilityItem}>
-      <View style={cssStyle.abilityHeader}>
+      <View style={cssStyle.headerRow}>
         <ThemedText style={cssStyle.abilityName}>{item.name}</ThemedText>
-        <Pressable style={cssStyle.deleteButton} onPress={() => handleRemovePassive(item.id)}>
-          <ThemedText style={cssStyle.deleteButtonText}>X</ThemedText>
+        <Pressable style={[cssStyle.compactButton, cssStyle.dangerButton]} onPress={() => handleRemovePassive(item.id)}>
+          <ThemedText style={cssStyle.smallButtonText}>×</ThemedText>
         </Pressable>
       </View>
 
@@ -246,7 +246,7 @@ export function CombatAbilitiesManager() {
 
       {/* Add Button */}
       <Pressable
-        style={cssStyle.addButton}
+        style={cssStyle.actionButton}
         onPress={() => {
           if (activeTab === "attacks") {
             setShowAddAttackModal(true);
@@ -256,7 +256,7 @@ export function CombatAbilitiesManager() {
         }}
       >
         <FontAwesome name="plus" size={16} color="white" />
-        <ThemedText style={cssStyle.addButtonText}>
+        <ThemedText style={cssStyle.buttonText}>
           Add {activeTab === "attacks" ? "Attack" : "Passive"}
         </ThemedText>
       </Pressable>
@@ -268,7 +268,7 @@ export function CombatAbilitiesManager() {
         visible={showAddAttackModal}
         onRequestClose={() => setShowAddAttackModal(false)}
       >
-        <View style={cssStyle.centeredView}>
+        <View style={cssStyle.modalOverlay}>
           <ThemedView style={cssStyle.modalView}>
             <ThemedText style={cssStyle.title}>Add New Attack</ThemedText>
 
@@ -346,7 +346,7 @@ export function CombatAbilitiesManager() {
         visible={showAddPassiveModal}
         onRequestClose={() => setShowAddPassiveModal(false)}
       >
-        <View style={cssStyle.centeredView}>
+        <View style={cssStyle.modalOverlay}>
           <ThemedView style={cssStyle.modalView}>
             <ThemedText style={cssStyle.title}>Add New Passive Ability</ThemedText>
 

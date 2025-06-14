@@ -54,10 +54,10 @@ export function CombatPassives() {
   // Render a passive ability item
   const renderPassiveItem = ({ item }: { item: Passive }) => (
     <ThemedView style={cssStyle.abilityItem}>
-      <View style={cssStyle.abilityHeader}>
+      <View style={cssStyle.headerRow}>
         <ThemedText style={cssStyle.abilityName}>{item.name}</ThemedText>
-        <Pressable style={cssStyle.deleteButton} onPress={() => handleRemovePassive(item.id)}>
-          <ThemedText style={cssStyle.deleteButtonText}>X</ThemedText>
+        <Pressable style={[cssStyle.compactButton, cssStyle.dangerButton]} onPress={() => handleRemovePassive(item.id)}>
+          <ThemedText style={cssStyle.smallButtonText}>×</ThemedText>
         </Pressable>
       </View>
 
@@ -88,7 +88,7 @@ export function CombatPassives() {
       {/* Add Passive Modal */}
       <Modal visible={showAddPassiveModal} transparent animationType="slide">
         <View style={cssStyle.modalOverlay}>
-          <ThemedView style={cssStyle.modalContent}>
+          <ThemedView style={cssStyle.modalView}>
             <ThemedText style={cssStyle.modalTitle}>Add New Passive Ability</ThemedText>
 
             <View style={cssStyle.formGroup}>
@@ -113,16 +113,16 @@ export function CombatPassives() {
               <TextInput style={cssStyle.input} value={newPassiveBPCost} onChangeText={setNewPassiveBPCost} placeholder="15" placeholderTextColor="#999" keyboardType="number-pad" />
             </View>
 
-            <View style={cssStyle.modalActions}>
-              <Pressable style={[cssStyle.modalButton, cssStyle.cancelButton]} onPress={() => setShowAddPassiveModal(false)}>
-                <ThemedText style={cssStyle.modalButtonText}>Cancel</ThemedText>
+            <View style={cssStyle.modalButtons}>
+              <Pressable style={cssStyle.secondaryButton} onPress={() => setShowAddPassiveModal(false)}>
+                <ThemedText style={cssStyle.buttonText}>Cancel</ThemedText>
               </Pressable>
               <Pressable
-                style={[cssStyle.modalButton, cssStyle.saveButton, (!newPassiveName.trim() || !newPassiveBPCost) && cssStyle.disabledButton]}
+                style={cssStyle.actionButton}
                 onPress={handleAddPassive}
                 disabled={!newPassiveName.trim() || !newPassiveBPCost}
               >
-                <ThemedText style={cssStyle.modalButtonText}>Add Passive</ThemedText>
+                <ThemedText style={cssStyle.buttonText}>Add Passive</ThemedText>
               </Pressable>
             </View>
           </ThemedView>

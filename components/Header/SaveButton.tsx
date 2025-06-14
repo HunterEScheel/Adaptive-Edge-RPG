@@ -38,17 +38,17 @@ export function SaveButton({ compact = false }: SaveButtonProps) {
 
       <Modal visible={showSaveDialog} transparent animationType="fade">
         <View style={cssStyle.modalOverlay}>
-          <ThemedView style={cssStyle.modal}>
+          <ThemedView style={cssStyle.modalView}>
             <ThemedText style={cssStyle.modalTitle}>Save Character</ThemedText>
             <TextInput style={cssStyle.input} placeholder="Enter file name" value={fileName} onChangeText={setFileName} autoFocus />
 
-            <View style={cssStyle.spaceBetween}>
+            <View style={cssStyle.headerRow}>
               <Pressable style={[cssStyle.secondaryButton, { width: "45%" }]} onPress={() => setShowSaveDialog(false)}>
                 <ThemedText>Cancel</ThemedText>
               </Pressable>
 
               <Pressable style={[cssStyle.primaryButton, { width: "45%" }]} onPress={handleSave}>
-                <ThemedText style={cssStyle.modalButtonText}>Save</ThemedText>
+                <ThemedText style={cssStyle.buttonText}>Save</ThemedText>
               </Pressable>
             </View>
           </ThemedView>

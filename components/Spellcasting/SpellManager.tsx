@@ -108,7 +108,7 @@ export function SpellManager() {
 
     const renderSpellItem = ({ item: spell }: { item: Spell }) => (
         <View style={cssStyle.card}>
-            <View style={cssStyle.spaceBetween}>
+            <View style={cssStyle.headerRow}>
                 <View style={{ flex: 1 }}>
                     <ThemedText style={cssStyle.subtitle}>{spell.name}</ThemedText>
                     <ThemedText style={[cssStyle.bodyText, { fontStyle: "italic", color: "#4CAF50" }]}>{spell.school}</ThemedText>
@@ -172,8 +172,8 @@ export function SpellManager() {
             />
 
             <Modal animationType="slide" transparent={true} visible={modalVisible} onRequestClose={() => setModalVisible(false)}>
-                <View style={cssStyle.centeredView}>
-                    <ThemedView style={cssStyle.modalView}>
+                <Pressable style={cssStyle.modalOverlay} onPress={() => setModalVisible(false)}>
+                    <View style={cssStyle.modalView}>
                         <ThemedText style={cssStyle.title}>Learn New Spell</ThemedText>
 
                         <FlatList
@@ -181,7 +181,7 @@ export function SpellManager() {
                             keyExtractor={(item) => item.name}
                             renderItem={({ item }: { item: Omit<Spell, "id"> }) => (
                                 <Pressable style={cssStyle.card} onPress={() => handleLearnSpell(item)}>
-                                    <View style={cssStyle.spaceBetween}>
+                                    <View style={cssStyle.headerRow}>
                                         <ThemedText style={cssStyle.subtitle}>{item.name}</ThemedText>
                                         <ThemedText style={[cssStyle.subtitle, { color: "#4CAF50" }]}>{item.buildPointCost} BP</ThemedText>
                                     </View>
@@ -211,8 +211,8 @@ export function SpellManager() {
                         <Pressable style={cssStyle.dangerButton} onPress={() => setModalVisible(false)}>
                             <ThemedText style={cssStyle.buttonText}>Close</ThemedText>
                         </Pressable>
-                    </ThemedView>
-                </View>
+                    </View>
+                </Pressable>
             </Modal>
         </>
     );

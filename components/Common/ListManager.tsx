@@ -1,5 +1,5 @@
 import React from "react";
-import { FlatList, Pressable, View } from "react-native";
+import { FlatList, Pressable, View, TouchableOpacity, Text } from "react-native";
 import { FontAwesome } from "@expo/vector-icons";
 import { ThemedText } from "../ThemedText";
 import { ThemedView } from "../ThemedView";
@@ -31,7 +31,7 @@ export function ListManager<T>({
       {/* Header with title and description */}
       <View style={cssStyle.headerRow}>
         <ThemedText style={cssStyle.sectionTitle}>{title}</ThemedText>
-        <ThemedText style={cssStyle.pointsSpent}>{description}</ThemedText>
+        <ThemedText style={cssStyle.smallText}>{description}</ThemedText>
       </View>
 
       {/* List content */}
@@ -49,10 +49,13 @@ export function ListManager<T>({
       )}
 
       {/* Add button */}
-      <Pressable style={cssStyle.addButton} onPress={onAddPress}>
+      <TouchableOpacity
+        style={cssStyle.actionButton}
+        onPress={onAddPress}
+      >
         <FontAwesome name="plus" size={16} color="white" />
-        <ThemedText style={cssStyle.addButtonText}>{addButtonText}</ThemedText>
-      </Pressable>
+        <ThemedText style={cssStyle.buttonText}>{addButtonText}</ThemedText>
+      </TouchableOpacity>
     </View>
   );
 }

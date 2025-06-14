@@ -81,9 +81,9 @@ export function StatUpgrader({ statType, compact = false, visible, onClose }: St
     if (compact) {
         return (
             <>
-                <Pressable style={[cssStyle.addButton, { backgroundColor: statColor }]} onPress={openModal} accessibilityLabel={`Upgrade max ${statName}`}>
+                <Pressable style={[cssStyle.actionButton, { backgroundColor: statColor }]} onPress={openModal} accessibilityLabel={`Upgrade max ${statName}`}>
                     <IconSymbol name={icon} size={16} color="#FFFFFF" />
-                    <ThemedText style={cssStyle.addButtonText}>+</ThemedText>
+                    <ThemedText style={cssStyle.buttonText}>+</ThemedText>
                 </Pressable>
 
                 {renderModal()}
@@ -95,72 +95,68 @@ export function StatUpgrader({ statType, compact = false, visible, onClose }: St
 
     function renderModal() {
         return (
-            <Modal animationType="slide" transparent={true} visible={modalVisible} onRequestClose={handleClose}>
-                <Pressable style={cssStyle.modalOverlay} onPress={handleClose}>
-                    <View style={cssStyle.centeredView}>
-                        <Pressable>
-                            <ThemedView style={cssStyle.modalView}>
-                                <ThemedText style={cssStyle.modalTitle}>Upgrade Max {statName}</ThemedText>
+            <Modal animationType="slide" transparent={true} visible={modalVisible} onRequestClose={() => setModalVisible(false)}>
+                <Pressable style={cssStyle.modalOverlay} onPress={() => setModalVisible(false)}>
+                    <View style={cssStyle.modalView}>
+                        <ThemedText style={cssStyle.modalTitle}>Upgrade Max {statName}</ThemedText>
 
-                                <View style={cssStyle.container}>
-                                    <ThemedText style={cssStyle.skillDescription}>
-                                        Adjust your maximum {statName.toLowerCase()}. Each point costs {costPerPoint} BP. You'll get a refund when decreasing
-                                        the value.
-                                    </ThemedText>
-                                </View>
+                        <View style={cssStyle.container}>
+                            <ThemedText style={cssStyle.skillDescription}>
+                                Adjust your maximum {statName.toLowerCase()}. Each point costs {costPerPoint} BP. You'll get a refund when decreasing
+                                the value.
+                            </ThemedText>
+                        </View>
 
-                                <View style={cssStyle.adjustmentRow}>
-                                    <Pressable style={[cssStyle.cancelButton]} onPress={handleClose}>
-                                        <ThemedText>Cancel</ThemedText>
-                                    </Pressable>
+                        <View style={cssStyle.adjustmentRow}>
+                            <Pressable style={cssStyle.secondaryButton} onPress={handleClose}>
+                                <ThemedText>Cancel</ThemedText>
+                            </Pressable>
 
-                                    <View style={cssStyle.upgradeControls}>
-                                        <View style={cssStyle.divider} />
+                            <View style={cssStyle.upgradeControls}>
+                                <View style={cssStyle.divider} />
 
-                                        <View style={cssStyle.adjustRow}>
-                                            <View style={cssStyle.decrementButtons}>
-                                                <Pressable
-                                                    style={[cssStyle.quickButton, cssStyle.decrementButton]}
-                                                    onPress={() => handleAdjust(-5)}
-                                                    disabled={currentValue <= 10}
-                                                >
-                                                    <ThemedText style={cssStyle.buttonText}>-5</ThemedText>
-                                                </Pressable>
-                                                <Pressable
-                                                    style={[cssStyle.quickButton, cssStyle.decrementButton]}
-                                                    onPress={() => handleAdjust(-1)}
-                                                    disabled={currentValue <= 10}
-                                                >
-                                                    <ThemedText style={cssStyle.buttonText}>-1</ThemedText>
-                                                </Pressable>
-                                            </View>
+                                <View style={cssStyle.headerRow}>
+                                    <View style={cssStyle.buttonGroup}>
+                                        <Pressable
+                                            style={[cssStyle.levelButton, cssStyle.dangerButton]}
+                                            onPress={() => handleAdjust(-5)}
+                                            disabled={currentValue <= 10}
+                                        >
+                                            <ThemedText style={cssStyle.buttonText}>-5</ThemedText>
+                                        </Pressable>
+                                        <Pressable
+                                            style={[cssStyle.levelButton, cssStyle.dangerButton]}
+                                            onPress={() => handleAdjust(-1)}
+                                            disabled={currentValue <= 10}
+                                        >
+                                            <ThemedText style={cssStyle.buttonText}>-1</ThemedText>
+                                        </Pressable>
+                                    </View>
 
-                                            <View style={cssStyle.currentValueContainer}>
-                                                <ThemedText style={cssStyle.statLabel}>Max {statName}</ThemedText>
-                                                <ThemedText style={cssStyle.currentValue}>{currentValue}</ThemedText>
-                                            </View>
+                                    <View style={cssStyle.currentValueContainer}>
+                                        <ThemedText style={cssStyle.statLabel}>Max {statName}</ThemedText>
+                                        <ThemedText style={cssStyle.currentValue}>{currentValue}</ThemedText>
+                                    </View>
 
-                                            <View style={cssStyle.increaseButton}>
-                                                <Pressable
-                                                    style={[cssStyle.quickButton, cssStyle.increaseButton]}
-                                                    onPress={() => handleAdjust(1)}
-                                                    disabled={character.base.buildPointsRemaining < costPerPoint}
-                                                >
-                                                    <ThemedText style={cssStyle.buttonText}>+1</ThemedText>
-                                                </Pressable>
-                                                <Pressable
-                                                    style={[cssStyle.quickButton, cssStyle.increaseButton]}
-                                                    onPress={() => handleAdjust(5)}
-                                                    disabled={character.base.buildPointsRemaining < costPerPoint * 5}
-                                                >
-                                                    <ThemedText style={cssStyle.buttonText}>+5</ThemedText>
-                                                </Pressable>
-                                            </View>
-                                        </View>
+                                    <View style={cssStyle.buttonGroup}>
+                                        <Pressable
+                                            style={[cssStyle.levelButton, cssStyle.successButton]}
+                                            onPress={() => handleAdjust(1)}
+                                            disabled={character.base.buildPointsRemaining < costPerPoint}
+                                        >
+                                            <ThemedText style={cssStyle.buttonText}>+1</ThemedText>
+                                        </Pressable>
+                                        <Pressable
+                                            style={[cssStyle.levelButton, cssStyle.successButton]}
+                                            onPress={() => handleAdjust(5)}
+                                            disabled={character.base.buildPointsRemaining < costPerPoint * 5}
+                                        >
+                                            <ThemedText style={cssStyle.buttonText}>+5</ThemedText>
+                                        </Pressable>
                                     </View>
                                 </View>
-                            </ThemedView>
-                        </Pressable>
+                            </View>
+                        </View>
                     </View>
                 </Pressable>
             </Modal>

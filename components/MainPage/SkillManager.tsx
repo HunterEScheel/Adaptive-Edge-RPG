@@ -321,7 +321,7 @@ export function SkillManager() {
 
         return (
             <View style={cssStyle.skillItem}>
-                <View style={cssStyle.skillHeader}>
+                <View style={cssStyle.headerRow}>
                     <View style={cssStyle.skillNameContainer}>
                         <ThemedText style={cssStyle.skillName} numberOfLines={1} ellipsizeMode="tail">
                             {item.name}
@@ -333,26 +333,29 @@ export function SkillManager() {
                         )}
                     </View>
                     <View style={cssStyle.levelContainer}>
-                        <Pressable
-                            style={[cssStyle.levelButton, cssStyle.decreaseButton]}
+                        <TouchableOpacity
+                            style={[cssStyle.levelButton, cssStyle.dangerButton]}
                             onPress={() => handleLevelChange(item, false)}
                             disabled={item.level <= 1}
                         >
-                            <ThemedText style={cssStyle.levelButtonText}>-</ThemedText>
-                        </Pressable>
+                            <ThemedText style={cssStyle.smallButtonText}>-</ThemedText>
+                        </TouchableOpacity>
                         <View style={cssStyle.levelDisplay}>
-                            <ThemedText style={cssStyle.levelValue}>{item.level}</ThemedText>
+                            <ThemedText style={cssStyle.valueText}>{item.level}</ThemedText>
                         </View>
-                        <Pressable
-                            style={[cssStyle.levelButton, cssStyle.increaseButton]}
+                        <TouchableOpacity
+                            style={[cssStyle.levelButton, cssStyle.successButton]}
                             onPress={() => handleLevelChange(item, true)}
                             disabled={item.level >= 10}
                         >
-                            <ThemedText style={cssStyle.levelButtonText}>+</ThemedText>
-                        </Pressable>
-                        <Pressable style={cssStyle.deleteButton} onPress={() => handleDeleteSkill(item)}>
+                            <ThemedText style={cssStyle.smallButtonText}>+</ThemedText>
+                        </TouchableOpacity>
+                        <TouchableOpacity
+                            style={[cssStyle.compactButton, cssStyle.dangerButton]}
+                            onPress={() => handleDeleteSkill(item)}
+                        >
                             <FontAwesome name="trash" size={14} color="#F44336" />
-                        </Pressable>
+                        </TouchableOpacity>
                     </View>
                 </View>
             </View>
@@ -374,8 +377,8 @@ export function SkillManager() {
 
             {/* Add Skill Modal */}
             <Modal animationType="slide" transparent={true} visible={addModalVisible} onRequestClose={() => setAddModalVisible(false)}>
-                <View style={cssStyle.centeredView}>
-                    <ThemedView style={cssStyle.modalView}>
+                <View style={cssStyle.modalOverlay}>
+                    <View style={cssStyle.modalView}>
                         <View style={cssStyle.modalHeader}>
                             <ThemedText style={cssStyle.modalTitle}>Add New Skill</ThemedText>
                             {isOnline ? (
@@ -405,7 +408,7 @@ export function SkillManager() {
                                         {suggestions.map((suggestion, index) => (
                                             <TouchableOpacity key={index} style={cssStyle.suggestionItem} onPress={() => selectSuggestion(suggestion.skill)}>
                                                 <ThemedText>{suggestion.skill}</ThemedText>
-                                                <ThemedText style={cssStyle.similarityText}>{Math.round(suggestion.similarity * 100)}% match</ThemedText>
+                                                <ThemedText style={cssStyle.smallText}>{Math.round(suggestion.similarity * 100)}% match</ThemedText>
                                             </TouchableOpacity>
                                         ))}
                                     </ScrollView>
@@ -432,7 +435,7 @@ export function SkillManager() {
 
                         <View style={cssStyle.modalButtons}>
                             <TouchableOpacity
-                                style={[cssStyle.modalButton, cssStyle.cancelButton]}
+                                style={[cssStyle.secondaryButton]}
                                 onPress={() => {
                                     setNewSkillName("");
                                     setNewSkillDescription("");
@@ -444,14 +447,14 @@ export function SkillManager() {
                                 <ThemedText style={cssStyle.buttonText}>Cancel</ThemedText>
                             </TouchableOpacity>
                             <TouchableOpacity
-                                style={[cssStyle.modalButton, cssStyle.saveButton]}
+                                style={[cssStyle.actionButton]}
                                 onPress={handleAddCustomSkill}
                                 disabled={!newSkillName.trim() || base.buildPointsRemaining < 1}
                             >
                                 <ThemedText style={cssStyle.buttonText}>Add Skill</ThemedText>
                             </TouchableOpacity>
                         </View>
-                    </ThemedView>
+                    </View>
                 </View>
             </Modal>
         </>
