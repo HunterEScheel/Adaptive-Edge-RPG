@@ -2,10 +2,11 @@ import { RootState } from "@/store/rootReducer";
 import { updateField, updateMultipleFields } from "@/store/slices/baseSlice";
 import FontAwesome from "@expo/vector-icons/FontAwesome";
 import React, { useState } from "react";
-import { Modal, Pressable, StyleSheet, TextInput, View } from "react-native";
+import { Modal, Pressable, TextInput, View } from "react-native";
 import { useDispatch, useSelector } from "react-redux";
 import { ThemedText } from "../ThemedText";
 import { ThemedView } from "../ThemedView";
+import { cssStyle } from "@/app/styles/phone";
 
 interface StatAdjusterProps {
   statName: string;
@@ -115,61 +116,84 @@ export function StatAdjuster({ statName, fieldName, icon, minValue = 0, maxValue
     }
   };
 
+  if (compact) {
+    return (
+      <>
+        <Pressable
+          style={[cssStyle.statContainer, { minWidth: 70, height: 70, padding: 8 }]}
+          onPress={() => setModalVisible(true)}
+          accessibilityLabel={`Adjust ${statName}`}
+        >
+          {icon && <FontAwesome name={icon as any} style={{ fontSize: 16, marginBottom: 4 }} />}
+          <View style={cssStyle.row}>
+            <ThemedText style={[cssStyle.valueText, { fontSize: 18 }]}>{currentValue}</ThemedText>
+            {hasEquipmentBonus && (
+              <View style={cssStyle.bonusIndicator}>
+                <FontAwesome name="plus" size={6} color="#4CAF50" />
+                <ThemedText style={cssStyle.bonusText}>{equipmentBonus}</ThemedText>
+              </View>
+            )}
+          </View>
+          <ThemedText style={[cssStyle.smallText, { fontSize: 12, marginTop: 4 }]}>{statName}</ThemedText>
+        </Pressable>
+        {renderModal()}
+      </>
+    );
+  }
+
   return (
     <>
-      <Pressable style={[styles.statContainer, compact ? styles.compactContainer : null]} onPress={() => setModalVisible(true)}>
-        {icon ? <ThemedText style={[styles.statIcon, compact ? styles.compactIcon : null]}>{icon}</ThemedText> : null}
-        <View style={styles.valueContainer}>
-          <ThemedText style={[styles.statValue, compact ? styles.compactValue : null]}>{currentValue}</ThemedText>
+      <Pressable style={cssStyle.statContainer} onPress={() => setModalVisible(true)} accessibilityLabel={`Adjust ${statName}`}>
+        {icon && <FontAwesome name={icon as any} style={{ fontSize: 20, marginBottom: 4 }} />}
+        <View style={cssStyle.row}>
+          <ThemedText style={cssStyle.valueText}>{currentValue}</ThemedText>
           {hasEquipmentBonus && (
-            <View style={styles.bonusIndicator}>
-              <FontAwesome name="shield" size={compact ? 8 : 10} color="#4CAF50" />
-              <ThemedText style={styles.bonusText}>+{equipmentBonus}</ThemedText>
+            <View style={cssStyle.bonusIndicator}>
+              <FontAwesome name="plus" size={8} color="#4CAF50" />
+              <ThemedText style={cssStyle.bonusText}>{equipmentBonus}</ThemedText>
             </View>
           )}
         </View>
-        <ThemedText style={[styles.statName, compact ? styles.compactName : null]}>{statName}</ThemedText>
+        <ThemedText style={[cssStyle.label, { fontSize: 14, marginTop: 4 }]}>{statName}</ThemedText>
       </Pressable>
+      {renderModal()}
+    </>
+  );
 
+  function renderModal() {
+    return (
       <Modal animationType="slide" transparent={true} visible={modalVisible} onRequestClose={() => setModalVisible(false)}>
-        <View style={styles.centeredView}>
-          <ThemedView style={styles.modalView}>
-            <ThemedText style={styles.modalTitle}>Adjust {statName}</ThemedText>
+        <View style={cssStyle.centeredView}>
+          <ThemedView style={cssStyle.modalView}>
+            <ThemedText style={cssStyle.title}>Adjust {statName}</ThemedText>
 
-            <View style={styles.quickAdjustRow}>
-              {fieldName === "movement" ? (
-                // For speed, show buttons that increment by 1 (which will be multiplied by 5 internally)
+            <View style={cssStyle.adjustmentRow}>
+              {showBy5 && (
                 <>
-                  <Pressable style={[styles.quickButton, styles.decrementButton]} onPress={() => handleIncrement(-1)}>
-                    <ThemedText style={styles.quickButtonText}>-5</ThemedText>
-                  </Pressable>
-                  <Pressable style={[styles.quickButton, styles.incrementButton]} onPress={() => handleIncrement(1)}>
-                    <ThemedText style={styles.quickButtonText}>+5</ThemedText>
+                  <Pressable style={[cssStyle.compactButton, cssStyle.dangerButton]} onPress={() => handleIncrement(-5)}>
+                    <ThemedText style={cssStyle.smallButtonText}>-5</ThemedText>
                   </Pressable>
                 </>
-              ) : (
-                // For other stats, show the standard increment buttons
+              )}
+              <Pressable style={[cssStyle.compactButton, cssStyle.dangerButton]} onPress={() => handleIncrement(-1)}>
+                <ThemedText style={cssStyle.smallButtonText}>-1</ThemedText>
+              </Pressable>
+              <Pressable style={[cssStyle.compactButton, cssStyle.successButton]} onPress={() => handleIncrement(1)}>
+                <ThemedText style={cssStyle.smallButtonText}>+1</ThemedText>
+              </Pressable>
+              {showBy5 && (
                 <>
-                  <Pressable style={[styles.quickButton, styles.decrementButton]} onPress={() => handleIncrement(-5)}>
-                    <ThemedText style={styles.quickButtonText}>-5</ThemedText>
-                  </Pressable>
-                  <Pressable style={[styles.quickButton, styles.decrementButton]} onPress={() => handleIncrement(-1)}>
-                    <ThemedText style={styles.quickButtonText}>-1</ThemedText>
-                  </Pressable>
-                  <Pressable style={[styles.quickButton, styles.incrementButton]} onPress={() => handleIncrement(1)}>
-                    <ThemedText style={styles.quickButtonText}>+1</ThemedText>
-                  </Pressable>
-                  <Pressable style={[styles.quickButton, styles.incrementButton]} onPress={() => handleIncrement(5)}>
-                    <ThemedText style={styles.quickButtonText}>+5</ThemedText>
+                  <Pressable style={[cssStyle.compactButton, cssStyle.successButton]} onPress={() => handleIncrement(5)}>
+                    <ThemedText style={cssStyle.smallButtonText}>+5</ThemedText>
                   </Pressable>
                 </>
               )}
             </View>
 
-            <View style={styles.inputRow}>
-              <ThemedText style={styles.currentValue}>Current: {currentValue}</ThemedText>
+            <View style={cssStyle.formRow}>
+              <ThemedText style={cssStyle.valueText}>Current: {currentValue}</ThemedText>
               <TextInput
-                style={styles.input}
+                style={cssStyle.input}
                 onChangeText={setNewValue}
                 value={newValue}
                 placeholder="New value"
@@ -179,161 +203,17 @@ export function StatAdjuster({ statName, fieldName, icon, minValue = 0, maxValue
               />
             </View>
 
-            <View style={styles.buttonRow}>
-              <Pressable style={[styles.button, styles.buttonCancel]} onPress={() => setModalVisible(false)}>
-                <ThemedText style={styles.buttonText}>Cancel</ThemedText>
+            <View style={cssStyle.modalButtons}>
+              <Pressable style={cssStyle.secondaryButton} onPress={() => setModalVisible(false)}>
+                <ThemedText style={cssStyle.buttonText}>Cancel</ThemedText>
               </Pressable>
-              <Pressable style={[styles.button, styles.buttonSave]} onPress={handleSave}>
-                <ThemedText style={styles.buttonText}>Save</ThemedText>
+              <Pressable style={cssStyle.actionButton} onPress={handleSave}>
+                <ThemedText style={cssStyle.buttonText}>Save</ThemedText>
               </Pressable>
             </View>
           </ThemedView>
         </View>
       </Modal>
-    </>
-  );
+    );
+  }
 }
-
-const styles = StyleSheet.create({
-  compactContainer: {
-    padding: 8,
-    minWidth: 70,
-    height: 70,
-  },
-  compactIcon: {
-    fontSize: 16,
-  },
-  compactValue: {
-    fontSize: 18,
-  },
-  compactName: {
-    fontSize: 12,
-  },
-  statContainer: {
-    backgroundColor: "rgba(0, 0, 0, 0.05)",
-    borderRadius: 8,
-    padding: 12,
-    alignItems: "center",
-    justifyContent: "center",
-    minWidth: 80,
-  },
-  statIcon: {
-    fontSize: 20,
-    marginBottom: 4,
-  },
-  statValue: {
-    fontSize: 24,
-    fontWeight: "bold",
-  },
-  valueContainer: {
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "center",
-  },
-  bonusIndicator: {
-    flexDirection: "row",
-    alignItems: "center",
-    marginLeft: 4,
-    backgroundColor: "rgba(76, 175, 80, 0.2)",
-    borderRadius: 2,
-    paddingHorizontal: 2,
-  },
-  bonusText: {
-    fontSize: 10,
-    color: "#4CAF50",
-    fontWeight: "bold",
-    marginLeft: 1,
-  },
-  statName: {
-    fontSize: 14,
-    marginTop: 4,
-  },
-  centeredView: {
-    flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
-    backgroundColor: "rgba(0, 0, 0, 0.5)",
-  },
-  modalView: {
-    width: "80%",
-    borderRadius: 10,
-    padding: 20,
-    alignItems: "center",
-    shadowColor: "#000",
-    shadowOffset: {
-      width: 0,
-      height: 2,
-    },
-    shadowOpacity: 0.25,
-    shadowRadius: 4,
-    elevation: 5,
-  },
-  modalTitle: {
-    fontSize: 20,
-    fontWeight: "bold",
-    marginBottom: 15,
-  },
-  quickAdjustRow: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    width: "100%",
-    marginBottom: 20,
-  },
-  quickButton: {
-    padding: 10,
-    borderRadius: 5,
-    flex: 1,
-    marginHorizontal: 2,
-    alignItems: "center",
-  },
-  decrementButton: {
-    backgroundColor: "#F44336",
-  },
-  incrementButton: {
-    backgroundColor: "#4CAF50",
-  },
-  quickButtonText: {
-    color: "white",
-    fontWeight: "bold",
-  },
-  inputRow: {
-    flexDirection: "row",
-    alignItems: "center",
-    width: "100%",
-    marginBottom: 20,
-  },
-  currentValue: {
-    flex: 1,
-    fontSize: 16,
-  },
-  input: {
-    flex: 1,
-    borderWidth: 1,
-    borderColor: "#ccc",
-    borderRadius: 5,
-    padding: 10,
-    backgroundColor: "#fff",
-  },
-  buttonRow: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    width: "100%",
-  },
-  button: {
-    padding: 12,
-    borderRadius: 5,
-    flex: 1,
-    marginHorizontal: 5,
-    alignItems: "center",
-  },
-  buttonCancel: {
-    backgroundColor: "#ccc",
-  },
-  buttonSave: {
-    backgroundColor: "#007AFF",
-  },
-  buttonText: {
-    color: "white",
-    fontWeight: "bold",
-  },
-});

@@ -1,12 +1,14 @@
 import React, { useState } from "react";
-import { Modal, Pressable, ScrollView, StyleSheet, TextInput, View } from "react-native";
+import { Modal, Pressable, ScrollView, TextInput, View } from "react-native";
 import { useDispatch, useSelector } from "react-redux";
 
+import { ListManager } from "@/components/Common/ListManager";
 import { RootState } from "@/store/rootReducer";
-import { FlawSeverity, addFlaw, removeFlaw } from "@/store/slices/abilitiesSlice";
+import { FlawSeverity, addFlaw, removeFlaw, Flaw } from "@/store/slices/abilitiesSlice";
 import { updateMultipleFields } from "@/store/slices/baseSlice";
 import { ThemedText } from "../ThemedText";
 import { ThemedView } from "../ThemedView";
+import { cssStyle } from "../../app/styles/phone";
 
 export const FlawManager = () => {
   const dispatch = useDispatch();
@@ -77,275 +79,114 @@ export const FlawManager = () => {
     }
   };
 
-  const renderFlaws = () => {
-    if (flaws.length === 0) {
-      return (
-        <ThemedView style={styles.emptyState}>
-          <ThemedText>No flaws added yet. Add flaws to gain build points.</ThemedText>
-        </ThemedView>
-      );
-    }
-
-    return flaws.map((flaw) => (
-      <View key={flaw.id} style={styles.flawItem}>
-        <View style={styles.flawHeader}>
-          <ThemedText style={styles.flawName}>{flaw.name}</ThemedText>
-          <View style={styles.flawControls}>
-            <Pressable
-              style={[styles.removeButton, buildPoints < getBuildPointsForSeverity(flaw.severity) ? styles.disabledButton : {}]}
-              onPress={() => handleRemoveFlaw(flaw.id, flaw.severity)}
-              disabled={buildPoints < getBuildPointsForSeverity(flaw.severity)}
-            >
-              <ThemedText style={styles.removeButtonText}>X</ThemedText>
+  const renderFlawItem = ({ item: flaw }: { item: Flaw }) => {
+    return (
+      <ThemedView key={flaw.id} style={cssStyle.card}>
+        <View style={cssStyle.spaceBetween}>
+          <ThemedText style={cssStyle.title}>{flaw.name}</ThemedText>
+          <View style={cssStyle.row}>
+            <Pressable style={styles.removeButton} onPress={() => handleRemoveFlaw(flaw.id, flaw.severity)}>
+              <ThemedText style={styles.removeButtonText}>×</ThemedText>
             </Pressable>
           </View>
         </View>
-        <ThemedText style={styles.flawDescription}>{flaw.description}</ThemedText>
-        <View style={styles.flawFooter}>
-          <ThemedText style={styles.flawSeverity}>
-            Severity: <ThemedText style={styles.severityValue}>{flaw.severity}</ThemedText>
+        <ThemedText style={cssStyle.subtitle}>{flaw.description}</ThemedText>
+        <View style={cssStyle.spaceBetween}>
+          <ThemedText style={cssStyle.label}>
+            Severity: <ThemedText style={cssStyle.valueText}>{flaw.severity}</ThemedText>
           </ThemedText>
-          <ThemedText style={styles.flawBuildPoints}>{getBuildPointsForSeverity(flaw.severity)} BP</ThemedText>
+          <ThemedText style={cssStyle.valueText}>{getBuildPointsForSeverity(flaw.severity)} BP</ThemedText>
         </View>
-      </View>
-    ));
+      </ThemedView>
+    );
   };
 
   return (
-    <ThemedView style={styles.container}>
-      <View style={styles.header}>
-        <ThemedText style={styles.title}>Character Flaws</ThemedText>
-        <Pressable style={styles.addButton} onPress={() => setShowAddFlawModal(true)}>
-          <ThemedText style={styles.addButtonText}>Add Flaw</ThemedText>
-        </Pressable>
-      </View>
-
-      <ScrollView style={styles.flawsContainer}>{renderFlaws()}</ScrollView>
+    <>
+      <ListManager<Flaw>
+        title="Character Flaws"
+        description={`${flaws.length} flaw${flaws.length !== 1 ? 's' : ''} • ${flaws.reduce((total, flaw) => total + getBuildPointsForSeverity(flaw.severity), 0)} BP gained`}
+        data={flaws}
+        renderItem={renderFlawItem}
+        keyExtractor={(item) => item.id}
+        onAddPress={() => setShowAddFlawModal(true)}
+        addButtonText="Add Flaw"
+        emptyStateText="No flaws added yet"
+      />
 
       {/* Add Flaw Modal */}
       <Modal animationType="slide" transparent={true} visible={showAddFlawModal} onRequestClose={() => setShowAddFlawModal(false)}>
-        <View style={styles.modalOverlay}>
-          <ThemedView style={styles.modalContent}>
-            <ThemedText style={styles.modalTitle}>Add New Flaw</ThemedText>
+        <View style={cssStyle.modalOverlay}>
+          <ThemedView style={cssStyle.modalView}>
+            <ThemedText style={cssStyle.modalTitle}>Add New Flaw</ThemedText>
 
-            <View style={styles.formGroup}>
-              <ThemedText style={styles.label}>Name:</ThemedText>
-              <TextInput style={styles.input} value={newFlawName} onChangeText={setNewFlawName} placeholder="Flaw name" placeholderTextColor="#999" />
+            <TextInput
+              style={cssStyle.input}
+              placeholder="Flaw name"
+              value={newFlawName}
+              onChangeText={setNewFlawName}
+            />
+
+            <TextInput
+              style={[cssStyle.input, { height: 80 }]}
+              placeholder="Description"
+              value={newFlawDescription}
+              onChangeText={setNewFlawDescription}
+              multiline
+            />
+
+            <ThemedText style={cssStyle.label}>Severity:</ThemedText>
+            <View style={cssStyle.row}>
+              {(["quirk", "flaw", "vice"] as FlawSeverity[]).map((severity) => (
+                <Pressable
+                  key={severity}
+                  style={[
+                    cssStyle.secondaryButton,
+                    { marginRight: 10 },
+                    newFlawSeverity === severity && cssStyle.primaryButton,
+                  ]}
+                  onPress={() => setNewFlawSeverity(severity)}
+                >
+                  <ThemedText
+                    style={newFlawSeverity === severity ? cssStyle.modalButtonText : undefined}
+                  >
+                    {severity}
+                  </ThemedText>
+                </Pressable>
+              ))}
             </View>
 
-            <View style={styles.formGroup}>
-              <ThemedText style={styles.label}>Description:</ThemedText>
-              <TextInput
-                style={[styles.input, styles.textArea]}
-                value={newFlawDescription}
-                onChangeText={setNewFlawDescription}
-                placeholder="Describe the flaw"
-                placeholderTextColor="#999"
-                multiline
-                numberOfLines={3}
-              />
-            </View>
-
-            <View style={styles.formGroup}>
-              <ThemedText style={styles.label}>Severity:</ThemedText>
-              <View style={styles.severityOptions}>
-                <Pressable style={[styles.severityButton, newFlawSeverity === "quirk" && styles.selectedSeverity]} onPress={() => setNewFlawSeverity("quirk")}>
-                  <ThemedText style={styles.severityButtonText}>Quirk (10 BP)</ThemedText>
-                </Pressable>
-
-                <Pressable style={[styles.severityButton, newFlawSeverity === "flaw" && styles.selectedSeverity]} onPress={() => setNewFlawSeverity("flaw")}>
-                  <ThemedText style={styles.severityButtonText}>Flaw (25 BP)</ThemedText>
-                </Pressable>
-
-                <Pressable style={[styles.severityButton, newFlawSeverity === "vice" && styles.selectedSeverity]} onPress={() => setNewFlawSeverity("vice")}>
-                  <ThemedText style={styles.severityButtonText}>Vice (40 BP)</ThemedText>
-                </Pressable>
-              </View>
-            </View>
-
-            <View style={styles.modalActions}>
-              <Pressable style={[styles.modalButton, styles.cancelButton]} onPress={() => setShowAddFlawModal(false)}>
-                <ThemedText style={styles.modalButtonText}>Cancel</ThemedText>
+            <View style={cssStyle.spaceBetween}>
+              <Pressable style={[cssStyle.secondaryButton, { width: "45%" }]} onPress={() => setShowAddFlawModal(false)}>
+                <ThemedText>Cancel</ThemedText>
               </Pressable>
               <Pressable
-                style={[styles.modalButton, styles.addButton, (!newFlawName.trim() || !newFlawDescription.trim()) && styles.disabledButton]}
+                style={[cssStyle.primaryButton, { width: "45%" }]}
                 onPress={handleAddFlaw}
                 disabled={!newFlawName.trim() || !newFlawDescription.trim()}
               >
-                <ThemedText style={styles.modalButtonText}>Add Flaw</ThemedText>
+                <ThemedText style={cssStyle.modalButtonText}>Add Flaw</ThemedText>
               </Pressable>
             </View>
           </ThemedView>
         </View>
       </Modal>
-    </ThemedView>
+    </>
   );
 };
 
-const styles = StyleSheet.create({
-  container: {
-    marginVertical: 10,
-  },
-  header: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
-    marginBottom: 10,
-    paddingHorizontal: 5,
-  },
-  title: {
-    fontSize: 20,
-    fontWeight: "bold",
-  },
-  addButton: {
-    backgroundColor: "#4CAF50",
-    paddingHorizontal: 15,
-    paddingVertical: 8,
-    borderRadius: 5,
-  },
-  addButtonText: {
-    color: "white",
-    fontWeight: "bold",
-  },
-  flawsContainer: {
-    maxHeight: 350,
-  },
-  emptyState: {
-    padding: 20,
-    alignItems: "center",
-    justifyContent: "center",
-    backgroundColor: "rgba(0, 0, 0, 0.05)",
-    borderRadius: 5,
-  },
-  flawItem: {
-    backgroundColor: "rgba(0, 0, 0, 0.05)",
-    borderRadius: 5,
-    padding: 12,
-    marginBottom: 10,
-  },
-  flawHeader: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
-    marginBottom: 5,
-  },
-  flawName: {
-    fontWeight: "bold",
-    fontSize: 16,
-    flex: 1,
-  },
-  flawControls: {
-    flexDirection: "row",
-    alignItems: "center",
-  },
+const styles = {
   removeButton: {
     backgroundColor: "#F44336",
     width: 24,
     height: 24,
     borderRadius: 12,
-    alignItems: "center",
-    justifyContent: "center",
+    alignItems: "center" as const,
+    justifyContent: "center" as const,
   },
   removeButtonText: {
     color: "white",
     fontSize: 12,
-    fontWeight: "bold",
+    fontWeight: "bold" as const,
   },
-  flawDescription: {
-    marginBottom: 8,
-    fontSize: 14,
-  },
-  flawFooter: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-  },
-  flawSeverity: {
-    fontSize: 12,
-  },
-  severityValue: {
-    fontWeight: "bold",
-    textTransform: "capitalize",
-  },
-  flawBuildPoints: {
-    fontSize: 12,
-    fontWeight: "bold",
-  },
-  modalOverlay: {
-    flex: 1,
-    backgroundColor: "rgba(0, 0, 0, 0.5)",
-    justifyContent: "center",
-    alignItems: "center",
-  },
-  modalContent: {
-    width: "80%",
-    padding: 20,
-    borderRadius: 10,
-  },
-  modalTitle: {
-    fontSize: 18,
-    fontWeight: "bold",
-    marginBottom: 15,
-    textAlign: "center",
-  },
-  formGroup: {
-    marginBottom: 15,
-  },
-  label: {
-    marginBottom: 5,
-    fontWeight: "500",
-  },
-  input: {
-    borderWidth: 1,
-    borderColor: "#ccc",
-    borderRadius: 5,
-    padding: 10,
-    color: "black",
-  },
-  textArea: {
-    minHeight: 80,
-    textAlignVertical: "top",
-  },
-  severityOptions: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-  },
-  severityButton: {
-    flex: 1,
-    padding: 10,
-    backgroundColor: "#eee",
-    borderRadius: 5,
-    alignItems: "center",
-    margin: 2,
-  },
-  selectedSeverity: {
-    backgroundColor: "#2196F3",
-  },
-  severityButtonText: {
-    fontSize: 12,
-    fontWeight: "500",
-  },
-  modalActions: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    marginTop: 20,
-  },
-  modalButton: {
-    paddingVertical: 10,
-    paddingHorizontal: 15,
-    borderRadius: 5,
-    flex: 1,
-    alignItems: "center",
-    marginHorizontal: 5,
-  },
-  cancelButton: {
-    backgroundColor: "#777",
-  },
-  disabledButton: {
-    backgroundColor: "#ccc",
-    opacity: 0.7,
-  },
-  modalButtonText: {
-    color: "white",
-    fontWeight: "bold",
-  },
-});
+};

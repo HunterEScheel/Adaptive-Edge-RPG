@@ -1,11 +1,12 @@
 import { saveCharacter } from "@/components/Utility/FilePick";
 import { RootState } from "@/store/rootReducer";
 import { useState } from "react";
-import { Modal, Pressable, StyleSheet, TextInput, View } from "react-native";
+import { Modal, Pressable, TextInput, View } from "react-native";
 import { useSelector } from "react-redux";
 import { ThemedText } from "../ThemedText";
 import { ThemedView } from "../ThemedView";
 import { IconSymbol } from "../ui/IconSymbol";
+import { cssStyle } from "../../app/styles/phone";
 
 type SaveButtonProps = {
   compact?: boolean;
@@ -28,47 +29,47 @@ export function SaveButton({ compact = false }: SaveButtonProps) {
   };
 
   return (
-    <View>
+    <ThemedView>
       <Pressable style={compact ? styles.compactSaveButton : styles.saveButton} onPress={() => setShowSaveDialog(true)}>
         <View>
-          <IconSymbol name="square.and.arrow.down" size={compact ? 18 : 24} color="#FFFFFF" />
+          <IconSymbol name="square.and.arrow.down" size={compact ? 18 : 22} color="white" />
         </View>
       </Pressable>
 
-      <Modal animationType="fade" transparent={true} visible={showSaveDialog} onRequestClose={() => setShowSaveDialog(false)}>
-        <View style={styles.modalOverlay}>
-          <ThemedView style={styles.saveDialog}>
-            <ThemedText style={styles.dialogTitle}>Save Character</ThemedText>
+      <Modal visible={showSaveDialog} transparent animationType="fade">
+        <View style={cssStyle.modalOverlay}>
+          <ThemedView style={cssStyle.modal}>
+            <ThemedText style={cssStyle.modalTitle}>Save Character</ThemedText>
+            <TextInput style={cssStyle.input} placeholder="Enter file name" value={fileName} onChangeText={setFileName} autoFocus />
 
-            <TextInput style={styles.fileNameInput} placeholder="Enter file name (optional)" value={fileName} onChangeText={setFileName} autoFocus />
-
-            <View style={styles.buttonRow}>
-              <Pressable style={[styles.dialogButton, styles.cancelButton]} onPress={() => setShowSaveDialog(false)}>
+            <View style={cssStyle.spaceBetween}>
+              <Pressable style={[cssStyle.secondaryButton, { width: "45%" }]} onPress={() => setShowSaveDialog(false)}>
                 <ThemedText>Cancel</ThemedText>
               </Pressable>
 
-              <Pressable style={[styles.dialogButton, styles.confirmButton]} onPress={handleSave}>
-                <ThemedText style={styles.confirmText}>Save</ThemedText>
+              <Pressable style={[cssStyle.primaryButton, { width: "45%" }]} onPress={handleSave}>
+                <ThemedText style={cssStyle.modalButtonText}>Save</ThemedText>
               </Pressable>
             </View>
           </ThemedView>
         </View>
       </Modal>
-    </View>
+    </ThemedView>
   );
 }
 
-const styles = StyleSheet.create({
+// Keep only component-specific styles that don't have generic equivalents
+const styles = {
   saveButton: {
-    position: "absolute",
+    position: "absolute" as const,
     top: 40,
     right: 20,
     backgroundColor: "#007AFF",
     width: 40,
     height: 40,
     borderRadius: 20,
-    justifyContent: "center",
-    alignItems: "center",
+    justifyContent: "center" as const,
+    alignItems: "center" as const,
     zIndex: 100,
   },
   compactSaveButton: {
@@ -76,56 +77,7 @@ const styles = StyleSheet.create({
     width: 36,
     height: 36,
     borderRadius: 18,
-    justifyContent: "center",
-    alignItems: "center",
+    justifyContent: "center" as const,
+    alignItems: "center" as const,
   },
-  modalOverlay: {
-    flex: 1,
-    backgroundColor: "rgba(0, 0, 0, 0.5)",
-    justifyContent: "center",
-    alignItems: "center",
-  },
-  saveDialog: {
-    width: "80%",
-    backgroundColor: "#FFFFFF",
-    padding: 20,
-    borderRadius: 10,
-    elevation: 5,
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.25,
-    shadowRadius: 3.84,
-  },
-  dialogTitle: {
-    fontSize: 18,
-    fontWeight: "bold",
-    marginBottom: 15,
-    textAlign: "center",
-  },
-  fileNameInput: {
-    borderWidth: 1,
-    borderColor: "#CCCCCC",
-    borderRadius: 5,
-    padding: 10,
-    marginBottom: 20,
-  },
-  buttonRow: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-  },
-  dialogButton: {
-    padding: 10,
-    borderRadius: 5,
-    width: "45%",
-    alignItems: "center",
-  },
-  cancelButton: {
-    backgroundColor: "#EEEEEE",
-  },
-  confirmButton: {
-    backgroundColor: "#007AFF",
-  },
-  confirmText: {
-    color: "#FFFFFF",
-  },
-});
+};

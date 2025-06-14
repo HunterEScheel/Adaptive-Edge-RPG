@@ -4,13 +4,14 @@ import { eItemClassifications, Equipment, iItem, itemClassifications, Weapon } f
 import { addEquipment, addWeapon } from "@/store/slices/inventorySlice";
 import { FontAwesome } from "@expo/vector-icons";
 import React, { useCallback, useEffect, useState } from "react";
-import { Alert, Dimensions, Modal, Pressable, ScrollView, StyleSheet, View } from "react-native";
+import { Alert, Dimensions, Modal, Pressable, ScrollView, View } from "react-native";
 import { Dropdown } from "react-native-element-dropdown";
 import { useDispatch } from "react-redux";
 import { AddArmor } from "./AddArmor";
 import { AddConsumable } from "./AddConsumable";
 import { AddEquipment } from "./AddEquipment";
 import { AddWeapon } from "./AddWeapon";
+import { cssStyle } from "@/app/styles/phone";
 
 // Simple ID generator function that doesn't require crypto
 const generateId = () => Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15);
@@ -27,7 +28,7 @@ const EquipmentForm = React.memo(({ onChange }: { onChange: (item: Partial<iItem
   return <AddEquipment onChange={onChange} />;
 });
 
-const ArmorForm = React.memo(({ onChange }: { onChange: (item: Partial<iItem>) => void }) => {
+const ArmorForm = React.memo(({ onChange }: { onChange: (item: any) => void }) => {
   return <AddArmor onChange={onChange} />;
 });
 
@@ -96,48 +97,47 @@ export function AddItemForm({ open, setOpen, onClose }: AddItemFormProps) {
 
   return (
     <Modal animationType="slide" transparent={true} visible={isOpen} onRequestClose={handleClose}>
-      <View style={styles.centeredView}>
-        <ThemedView style={styles.modalView}>
-          <View style={styles.modalHeader}>
-            <ThemedText style={styles.modalTitle}>Add New Item</ThemedText>
-            <Pressable style={styles.closeButton} onPress={handleClose}>
+      <View style={cssStyle.centeredView}>
+        <ThemedView style={cssStyle.modalView}>
+          <View style={cssStyle.modalHeader}>
+            <ThemedText style={cssStyle.title}>Add New Item</ThemedText>
+            <Pressable style={cssStyle.compactButton} onPress={handleClose}>
               <FontAwesome name="times" size={20} color="#FFF" />
             </Pressable>
           </View>
 
-          <View style={styles.formSection}>
-            <ThemedText style={styles.sectionLabel}>Item Type</ThemedText>
+          <View style={cssStyle.formGroup}>
+            <ThemedText style={cssStyle.subtitle}>Item Type</ThemedText>
             <Dropdown
               data={itemClassifications}
-              style={styles.dropdown}
-              placeholderStyle={styles.placeholderStyle}
-              selectedTextStyle={styles.selectedTextStyle}
-              iconStyle={styles.iconStyle}
+              style={cssStyle.dropdown}
+              placeholderStyle={cssStyle.placeholderStyle}
+              selectedTextStyle={cssStyle.selectedTextStyle}
+              iconStyle={cssStyle.iconStyle}
+              labelField="label"
+              valueField="value"
+              placeholder="Select item type"
+              value={itemClass}
               onChange={(item) => {
                 setItemClass(item.value);
-                setItemData((prev) => ({ ...prev, class: item.value }));
               }}
-              value={itemClass}
-              labelField={"name"}
-              valueField={"value"}
-              renderLeftIcon={() => <FontAwesome name="list-ul" size={16} color="#555" style={{ marginRight: 10 }} />}
             />
           </View>
 
-          <ScrollView style={styles.formContent} contentContainerStyle={styles.formContentContainer}>
-            {itemClass === eItemClassifications.weapon ? <WeaponForm onChange={handleItemChange} /> : null}
-            {itemClass === eItemClassifications.equipment ? <EquipmentForm onChange={handleItemChange} /> : null}
-            {itemClass === eItemClassifications.armor ? <ArmorForm onChange={handleItemChange} /> : null}
-            {itemClass === eItemClassifications.consumable ? <ConsumableForm onChange={handleItemChange} /> : null}
-            {itemClass === eItemClassifications.other ? <OtherForm /> : null}
+          <ScrollView style={cssStyle.formContent} contentContainerStyle={cssStyle.formContentContainer}>
+            {itemClass === eItemClassifications.weapon && <WeaponForm onChange={handleItemChange} />}
+            {itemClass === eItemClassifications.equipment && <EquipmentForm onChange={handleItemChange} />}
+            {itemClass === eItemClassifications.armor && <ArmorForm onChange={handleItemChange} />}
+            {itemClass === eItemClassifications.consumable && <ConsumableForm onChange={handleItemChange} />}
+            {itemClass === eItemClassifications.other && <OtherForm />}
           </ScrollView>
 
-          <View style={styles.buttonRow}>
-            <Pressable style={styles.cancelButton} onPress={handleClose}>
-              <ThemedText style={styles.buttonText}>Cancel</ThemedText>
+          <View style={cssStyle.modalButtons}>
+            <Pressable style={cssStyle.secondaryButton} onPress={handleClose}>
+              <ThemedText style={cssStyle.buttonText}>Cancel</ThemedText>
             </Pressable>
             <Pressable
-              style={styles.saveButton}
+              style={cssStyle.successButton}
               onPress={() => {
                 // Validate item data
                 if (!itemData.name) {
@@ -167,7 +167,7 @@ export function AddItemForm({ open, setOpen, onClose }: AddItemFormProps) {
                 handleClose();
               }}
             >
-              <ThemedText style={styles.buttonText}>Add Item</ThemedText>
+              <ThemedText style={cssStyle.buttonText}>Add Item</ThemedText>
             </Pressable>
           </View>
         </ThemedView>
@@ -175,118 +175,3 @@ export function AddItemForm({ open, setOpen, onClose }: AddItemFormProps) {
     </Modal>
   );
 }
-
-const styles = StyleSheet.create({
-  centeredView: {
-    flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
-    backgroundColor: "rgba(0, 0, 0, 0.5)",
-    paddingVertical: height * 0.05,
-  },
-  modalView: {
-    width: "90%",
-    maxHeight: "90%",
-    borderRadius: 12,
-    padding: 0,
-    overflow: "hidden",
-    shadowColor: "#000",
-    shadowOffset: {
-      width: 0,
-      height: 2,
-    },
-    shadowOpacity: 0.25,
-    shadowRadius: 4,
-    elevation: 5,
-  },
-  modalHeader: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
-    width: "100%",
-    padding: 15,
-    backgroundColor: "#4a4a4a",
-  },
-  modalTitle: {
-    fontSize: 18,
-    fontWeight: "bold",
-    color: "#FFF",
-  },
-  closeButton: {
-    width: 30,
-    height: 30,
-    borderRadius: 15,
-    backgroundColor: "rgba(255, 255, 255, 0.2)",
-    justifyContent: "center",
-    alignItems: "center",
-  },
-  formSection: {
-    width: "100%",
-    padding: 15,
-    borderBottomWidth: 1,
-    borderBottomColor: "#e0e0e0",
-  },
-  sectionLabel: {
-    fontSize: 16,
-    fontWeight: "bold",
-    marginBottom: 10,
-  },
-  dropdown: {
-    height: 50,
-    borderColor: "#c0c0c0",
-    borderWidth: 1,
-    borderRadius: 8,
-    paddingHorizontal: 12,
-    backgroundColor: "#f9f9f9",
-  },
-  placeholderStyle: {
-    fontSize: 16,
-    color: "#888",
-  },
-  selectedTextStyle: {
-    fontSize: 16,
-    color: "#333",
-  },
-  iconStyle: {
-    width: 20,
-    height: 20,
-  },
-  formContent: {
-    width: "100%",
-    padding: 15,
-    flexGrow: 1,
-  },
-  buttonRow: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    width: "100%",
-    padding: 15,
-    borderTopWidth: 1,
-    borderTopColor: "#e0e0e0",
-  },
-  cancelButton: {
-    flex: 1,
-    padding: 12,
-    marginRight: 8,
-    borderRadius: 8,
-    backgroundColor: "#9e9e9e",
-    alignItems: "center",
-  },
-  saveButton: {
-    flex: 1,
-    padding: 12,
-    marginLeft: 8,
-    borderRadius: 8,
-    backgroundColor: "#4CAF50",
-    alignItems: "center",
-  },
-  buttonText: {
-    color: "white",
-    fontWeight: "bold",
-    fontSize: 16,
-  },
-  formContentContainer: {
-    flexGrow: 1,
-    paddingBottom: 10,
-  },
-});

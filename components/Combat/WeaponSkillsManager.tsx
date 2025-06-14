@@ -4,10 +4,12 @@ import { updateMultipleFields } from "@/store/slices/baseSlice";
 import { updateWeaponSkills } from "@/store/slices/skillsSlice";
 import { FontAwesome } from "@expo/vector-icons";
 import React, { useState } from "react";
-import { Alert, FlatList, Modal, Pressable, ScrollView, StyleSheet, TouchableOpacity, View } from "react-native";
+import { Alert, FlatList, Modal, Pressable, ScrollView, TouchableOpacity, View } from "react-native";
 import { useDispatch, useSelector } from "react-redux";
 import { ThemedText } from "../ThemedText";
 import { ThemedView } from "../ThemedView";
+import { cssStyle } from "@/app/styles/phone";
+
 export type WeaponSkill = {
     id: number;
     level: number;
@@ -199,32 +201,32 @@ export function WeaponSkillManager() {
         const nextLevelCost = item.level < 10 ? calculateSkillCost(item.level + 1) : null;
 
         return (
-            <View style={styles.skillItem}>
-                <View style={styles.skillHeader}>
-                    <View style={styles.skillNameContainer}>
-                        <ThemedText style={styles.skillName} numberOfLines={1} ellipsizeMode="tail">
+            <View style={cssStyle.skillItem}>
+                <View style={cssStyle.skillHeader}>
+                    <View style={cssStyle.skillNameContainer}>
+                        <ThemedText style={cssStyle.skillName} numberOfLines={1} ellipsizeMode="tail">
                             {item.weaponHeft} - {item.weaponType}
                         </ThemedText>
                     </View>
-                    <View style={styles.levelContainer}>
+                    <View style={cssStyle.levelContainer}>
                         <Pressable
-                            style={[styles.levelButton, styles.decreaseButton]}
+                            style={[cssStyle.levelButton, cssStyle.decreaseButton]}
                             onPress={() => handleLevelChange(item, false)}
                             disabled={item.level <= 1}
                         >
-                            <ThemedText style={styles.levelButtonText}>-</ThemedText>
+                            <ThemedText style={cssStyle.levelButtonText}>-</ThemedText>
                         </Pressable>
-                        <View style={styles.levelDisplay}>
-                            <ThemedText style={styles.levelValue}>{item.level}</ThemedText>
+                        <View style={cssStyle.levelDisplay}>
+                            <ThemedText style={cssStyle.levelValue}>{item.level}</ThemedText>
                         </View>
                         <Pressable
-                            style={[styles.levelButton, styles.increaseButton]}
+                            style={[cssStyle.levelButton, cssStyle.increaseButton]}
                             onPress={() => handleLevelChange(item, true)}
                             disabled={item.level >= 10}
                         >
-                            <ThemedText style={styles.levelButtonText}>+</ThemedText>
+                            <ThemedText style={cssStyle.levelButtonText}>+</ThemedText>
                         </Pressable>
-                        <Pressable style={styles.deleteButton} onPress={() => handleDeleteSkill(item)}>
+                        <Pressable style={cssStyle.deleteButton} onPress={() => handleDeleteSkill(item)}>
                             <FontAwesome name="trash" size={14} color="#F44336" />
                         </Pressable>
                     </View>
@@ -234,40 +236,40 @@ export function WeaponSkillManager() {
     };
 
     return (
-        <ThemedView style={styles.container}>
-            <View style={styles.headerRow}>
-                <ThemedText style={styles.sectionTitle}>Weapon Skills</ThemedText>
+        <ThemedView style={cssStyle.container}>
+            <View style={cssStyle.headerRow}>
+                <ThemedText style={cssStyle.sectionTitle}>Weapon Skills</ThemedText>
                 <View>
-                    <ThemedText style={styles.pointsSpent}>{totalSkillPoints} BP spent</ThemedText>
+                    <ThemedText style={cssStyle.pointsSpent}>{totalSkillPoints} BP spent</ThemedText>
                 </View>
             </View>
 
             {skills.length > 0 ? (
-                <FlatList data={skills} renderItem={renderSkillItem} keyExtractor={(item) => item.id.toString()} contentContainerStyle={styles.skillsList} />
+                <FlatList data={skills} renderItem={renderSkillItem} keyExtractor={(item) => item.id.toString()} contentContainerStyle={cssStyle.skillsList} />
             ) : (
-                <ThemedView style={styles.emptyState}>
-                    <ThemedText style={styles.emptyStateText}>No skills added yet. Add your first skill!</ThemedText>
+                <ThemedView style={cssStyle.emptyState}>
+                    <ThemedText style={cssStyle.emptyStateText}>No skills added yet. Add your first skill!</ThemedText>
                 </ThemedView>
             )}
 
-            <Pressable style={styles.addButton} onPress={() => setModalVisible(true)}>
+            <Pressable style={cssStyle.addButton} onPress={() => setModalVisible(true)}>
                 <FontAwesome name="plus" size={20} color="#FFFFFF" />
-                <ThemedText style={styles.addButtonText}>Add Skill</ThemedText>
+                <ThemedText style={cssStyle.addButtonText}>Add Skill</ThemedText>
             </Pressable>
 
             {/* Add Skill Modal */}
             <Modal animationType="slide" transparent={true} visible={modalVisible} onRequestClose={() => setModalVisible(false)}>
-                <View style={styles.centeredView}>
-                    <ThemedView style={styles.modalView}>
-                        <View style={styles.modalHeader}>
-                            <ThemedText style={styles.modalTitle}>Add New Skill</ThemedText>
+                <View style={cssStyle.centeredView}>
+                    <ThemedView style={cssStyle.modalView}>
+                        <View style={cssStyle.modalHeader}>
+                            <ThemedText style={cssStyle.modalTitle}>Add New Skill</ThemedText>
                         </View>
 
-                        <View style={styles.formGroup}>
-                            <View style={styles.suggestionsContainer}>
+                        <View style={cssStyle.formGroup}>
+                            <View style={cssStyle.suggestionsContainer}>
                                 <ScrollView>
                                     {weaponOptions.map((weapon, index) => (
-                                        <TouchableOpacity key={index} style={styles.suggestionItem} onPress={() => selectWeaponSkill(weapon)}>
+                                        <TouchableOpacity key={index} style={cssStyle.suggestionItem} onPress={() => selectWeaponSkill(weapon)}>
                                             <ThemedText>
                                                 {weapon.weaponHeft} - {weapon.weaponType}
                                             </ThemedText>
@@ -277,13 +279,13 @@ export function WeaponSkillManager() {
                             </View>
                         </View>
 
-                        <View style={styles.costInfoContainer}>
+                        <View style={cssStyle.costInfoContainer}>
                             <ThemedText>Cost: {calculateSkillCost(1)} BP</ThemedText>
                         </View>
 
-                        <View style={styles.modalButtons}>
-                            <Pressable style={[styles.modalButton, styles.cancelButton]} onPress={() => setModalVisible(false)}>
-                                <ThemedText style={styles.buttonText}>Cancel</ThemedText>
+                        <View style={cssStyle.modalButtons}>
+                            <Pressable style={[cssStyle.modalButton, cssStyle.cancelButton]} onPress={() => setModalVisible(false)}>
+                                <ThemedText style={cssStyle.buttonText}>Cancel</ThemedText>
                             </Pressable>
                         </View>
                     </ThemedView>
@@ -292,274 +294,3 @@ export function WeaponSkillManager() {
         </ThemedView>
     );
 }
-
-const styles = StyleSheet.create({
-    pointsRemaining: {
-        fontSize: 14,
-        color: "#666",
-        textAlign: "right",
-    },
-    container: {
-        flex: 1,
-        padding: 16,
-    },
-    headerRow: {
-        flexDirection: "row",
-        justifyContent: "space-between",
-        alignItems: "center",
-        marginBottom: 16,
-    },
-    sectionTitle: {
-        fontSize: 20,
-        fontWeight: "bold",
-    },
-    pointsSpent: {
-        fontSize: 14,
-        color: "#666",
-    },
-    skillsList: {
-        paddingBottom: 80, // Space for add button
-    },
-    skillItem: {
-        backgroundColor: "rgba(0, 0, 0, 0.05)",
-        borderRadius: 8,
-        padding: 12,
-        marginBottom: 12,
-    },
-    skillHeader: {
-        flexDirection: "row",
-        justifyContent: "space-between",
-        alignItems: "center",
-    },
-    skillNameContainer: {
-        flex: 1,
-        marginRight: 8,
-        justifyContent: "center",
-    },
-    skillName: {
-        fontSize: 14,
-        fontWeight: "bold",
-    },
-    levelContainer: {
-        flexDirection: "row",
-        alignItems: "center",
-    },
-    levelButton: {
-        width: 24,
-        height: 24,
-        borderRadius: 12,
-        justifyContent: "center",
-        alignItems: "center",
-    },
-    decreaseButton: {
-        backgroundColor: "#F44336",
-    },
-    increaseButton: {
-        backgroundColor: "#4CAF50",
-    },
-    levelButtonText: {
-        color: "#FFFFFF",
-        fontSize: 14,
-        fontWeight: "bold",
-    },
-    levelDisplay: {
-        alignItems: "center",
-        marginHorizontal: 4,
-        width: 20,
-    },
-    levelValue: {
-        fontSize: 14,
-        fontWeight: "bold",
-        textAlign: "center",
-    },
-    skillDescription: {
-        fontSize: 12,
-        color: "#666",
-    },
-    skillFooter: {
-        flexDirection: "row",
-        justifyContent: "space-between",
-        alignItems: "center",
-        marginTop: 8,
-        paddingTop: 8,
-        borderTopWidth: 1,
-        borderTopColor: "rgba(0, 0, 0, 0.1)",
-    },
-    costInfo: {
-        fontSize: 12,
-        color: "#666",
-    },
-    costInfoContainer: {
-        marginBottom: 16,
-    },
-    deleteButton: {
-        padding: 4,
-        marginLeft: 4,
-    },
-    emptyState: {
-        padding: 24,
-        alignItems: "center",
-        justifyContent: "center",
-        backgroundColor: "rgba(0, 0, 0, 0.05)",
-        borderRadius: 8,
-    },
-    emptyStateText: {
-        color: "#666",
-        textAlign: "center",
-    },
-    addButton: {
-        position: "absolute",
-        bottom: 16,
-        right: 16,
-        backgroundColor: "#007AFF",
-        borderRadius: 24,
-        paddingVertical: 12,
-        paddingHorizontal: 16,
-        flexDirection: "row",
-        alignItems: "center",
-        elevation: 4,
-        shadowColor: "#000",
-        shadowOffset: { width: 0, height: 2 },
-        shadowOpacity: 0.25,
-        shadowRadius: 3.84,
-    },
-    addButtonText: {
-        color: "#FFFFFF",
-        fontWeight: "bold",
-        marginLeft: 8,
-    },
-    centeredView: {
-        flex: 1,
-        justifyContent: "center",
-        alignItems: "center",
-        backgroundColor: "rgba(0, 0, 0, 0.5)",
-    },
-    modalView: {
-        width: "90%",
-        maxWidth: 500,
-        borderRadius: 10,
-        padding: 20,
-        shadowColor: "#000",
-        shadowOffset: {
-            width: 0,
-            height: 2,
-        },
-        shadowOpacity: 0.25,
-        shadowRadius: 4,
-        elevation: 5,
-    },
-    modalTitle: {
-        fontSize: 20,
-        fontWeight: "bold",
-        marginBottom: 16,
-        textAlign: "center",
-    },
-    formGroup: {
-        marginBottom: 16,
-    },
-    label: {
-        marginBottom: 4,
-        fontSize: 14,
-    },
-    input: {
-        backgroundColor: "#FFFFFF",
-        borderWidth: 1,
-        borderColor: "#CCCCCC",
-        borderRadius: 4,
-        padding: 10,
-        fontSize: 16,
-    },
-    textArea: {
-        height: 80,
-        textAlignVertical: "top",
-    },
-    dropdown: {
-        height: 50,
-        backgroundColor: "#FFFFFF",
-        borderWidth: 1,
-        borderColor: "#CCCCCC",
-        borderRadius: 4,
-        paddingHorizontal: 10,
-    },
-    placeholderStyle: {
-        color: "#999",
-    },
-    selectedTextStyle: {
-        color: "#000",
-    },
-    modalButtons: {
-        flexDirection: "row",
-        justifyContent: "space-between",
-        marginTop: 16,
-    },
-    modalButton: {
-        flex: 1,
-        padding: 12,
-        borderRadius: 4,
-        alignItems: "center",
-        marginHorizontal: 4,
-    },
-    cancelButton: {
-        backgroundColor: "#CCCCCC",
-    },
-    saveButton: {
-        backgroundColor: "#007AFF",
-    },
-    buttonText: {
-        color: "#FFFFFF",
-        fontWeight: "bold",
-    },
-    modalHeader: {
-        flexDirection: "row",
-        justifyContent: "space-between",
-        alignItems: "center",
-        marginBottom: 16,
-    },
-    onlineIndicator: {
-        color: "#4CAF50",
-        fontSize: 14,
-        fontWeight: "bold",
-    },
-    offlineIndicator: {
-        color: "#F44336",
-        fontSize: 14,
-        fontWeight: "bold",
-    },
-    inputContainer: {
-        flexDirection: "row",
-        alignItems: "center",
-    },
-    inputIndicator: {
-        position: "absolute",
-        right: 10,
-    },
-    suggestionsContainer: {
-        marginTop: 8,
-        marginBottom: 16,
-        backgroundColor: "#F8F9FA",
-        borderRadius: 4,
-        padding: 8,
-        borderWidth: 1,
-        borderColor: "#E1E1E1",
-        maxHeight: 200,
-    },
-    suggestionsScrollView: {
-        maxHeight: 180,
-    },
-    suggestionsTitle: {
-        fontSize: 14,
-        fontWeight: "bold",
-        marginBottom: 4,
-    },
-    suggestionItem: {
-        flexDirection: "row",
-        justifyContent: "space-between",
-        padding: 10,
-        borderBottomWidth: 1,
-        borderBottomColor: "#E1E1E1",
-    },
-    similarityText: {
-        fontSize: 12,
-        color: "#666",
-    },
-});
