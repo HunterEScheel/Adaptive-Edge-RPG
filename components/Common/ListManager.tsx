@@ -3,7 +3,7 @@ import { FlatList, Pressable, View, TouchableOpacity, Text } from "react-native"
 import { FontAwesome } from "@expo/vector-icons";
 import { ThemedText } from "../ThemedText";
 import { ThemedView } from "../ThemedView";
-import { cssStyle } from "@/app/styles/phone";
+import { cssStyle } from "@/app/styles/responsive";
 
 interface ListManagerProps<T> {
   title: string;

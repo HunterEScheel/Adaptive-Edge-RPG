@@ -1,4 +1,4 @@
-import { cssStyle } from "@/app/styles/phone";
+import { cssStyle } from "@/app/styles/responsive";
 import { ListManager } from "@/components/Common/ListManager";
 import { RootState } from "@/store/rootReducer";
 import { updateMultipleFields } from "@/store/slices/baseSlice";

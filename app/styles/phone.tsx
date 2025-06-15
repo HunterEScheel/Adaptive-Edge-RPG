@@ -6,9 +6,9 @@
  * For component-specific tweaks, use inline styles or extend these base styles.
  */
 import { StyleSheet } from "react-native";
-import { app_theme } from "./theme";
+import { app_theme, ResponsiveStylesheet } from "./theme";
 
-export const cssStyle = StyleSheet.create({
+export const cssStyle = StyleSheet.create<ResponsiveStylesheet>({
     // BUTTONS - Consolidated and theme-consistent
     button: {
         borderRadius: 8,
@@ -17,11 +17,9 @@ export const cssStyle = StyleSheet.create({
         justifyContent: "center",
     },
     primaryButton: {
-        color: app_theme.primary_component_text,
         backgroundColor: app_theme.primary_component_bg,
     },
     secondaryButton: {
-        color: app_theme.secondary_component_text,
         backgroundColor: app_theme.secondary_component_bg,
     },
     actionButton: {

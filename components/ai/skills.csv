@@ -33,20 +33,20 @@ Artist Scene Design
 Artist Sculpting
 Artist Woodworking
 Astronomy
+Astrology
+Astrophysics
 Autohypnosis
-Battlesuit
 Bicycling
 Cloning
 Genetic Engineering
 Tissue Engineering
 Biology Earthlike
 Biology Gas Giants
-Hostile Terrestrial
 Biology Ice Dwarfs
 Biology Ice Worlds 
 Biology Rock Worlds
 Blind Fighting
-Large Powerboat
+Boating Large Powerboat
 Boating Motorboat
 Boating Sailboat
 Boating Unpowered
@@ -105,7 +105,6 @@ Economics
 Electrician
 Communications
 Electronic Warfare
-Force Shields
 Matter Transmitters
 Media
 Medicine
@@ -119,7 +118,6 @@ Computers
 Engineer Artillery
 Engineer Civil
 Engineer Clockwork
-Engineer Combat
 Engineer Electrical
 Engineer Electronics
 Engineer Materials
@@ -139,9 +137,10 @@ Erotic Art
 Escape
 Esoteric Medicine
 Exorcism
+Explosives Magic
 Explosives Demolition
-Disposal
 Explosives Fireworks
+Disposal
 Demolition
 Falconry
 Farming
@@ -167,41 +166,33 @@ Fortune-Telling Tarot
 Forward Observer
 Free Fall
 Freight Handling
+Garrote
 Gambling
 Games
 Gardening
 Geography Physical
 Geography Political
 Geography Regional
-Geology Earthlike
-Geology Gas Giants
-Geology Ice Dwarfs
-Geology Ice Worlds
-Geology Rock Worlds
+Geology
 Gesture
-Group
-Choreography
+Group Choreography
 Conducting
 Directing
 Fight Choreography
-Gunner Beams
-Gunner Cannon
-Gunner Catapult
-Gunner Machine Gun
-Gunner Rockets
-Grenade Launcher
-Light Machine Gun
-Guns Musket
-Guns Pistol
-Guns Rifle
-Guns Shotgun
-Guns Submachine Gun
+Weapons Engineer Heavy
+Weapons Engineer Versatile
+Weapons Engineer Drawn
+Weapons Engineer Artillery
+Weapons Engineer Shotgun
+Weapons Engineer Handguns
+Weapons Engineer Rifles
+Weapons Engineer Rockets
 Hazardous Materials Biological
 Hazardous Materials Chemical
 Hazardous Materials Radioactive
 Heraldry
 Herb Lore
-Hidden Lore
+Hidden Lore General
 Hidden Lore Conspiracies
 Hidden Lore Demon Lore
 Hidden Lore Faerie Lore
@@ -211,7 +202,6 @@ History
 Holdout
 Housekeeping
 Hypnotism
-Immovable Stance
 Intelligence Analysis
 Interrogation
 Intimidation
@@ -362,21 +352,14 @@ Submariner
 Sumo Wrestling
 Surgery
 Survival Arctic
-Survival Bank
-Survival Deep Ocean Vent
 Survival Desert
 Survival Fresh-Water Lake
 Survival Island/Beach
-Survival Jungle
+Survival Jungle/Forest
 Survival Mountain
 Survival Open Ocean
 Survival Plains
 Survival Reef
-Survival River/Stream
-Survival Salt-Water Sea 
-Survival Swampland
-Survival Tropical Lagoon
-Survival Woodlands
 Swimming
 Symbol Drawing
 Tactics
@@ -385,12 +368,6 @@ Teamster
 Thaumatology
 Theology
 Throwing
-Thrown Weapon Dart
-Thrown Weapon Harpoon
-Thrown Weapon Knife
-Thrown Weapon Shuriken
-Thrown Weapon Spear
-Thrown Weapon Stick
 Tracking
 Traps
 Typing
@@ -402,4 +379,3 @@ Weather Sense
 Weird Science
 Wrestling
 Writing
-Zen Archery

@@ -1,11 +1,13 @@
-import { cssStyle } from "@/app/styles/phone";
+import { cssStyle } from "@/app/styles/responsive";
 import { CombatAttacks } from "@/components/Combat/CombatAttacks";
 import { CombatPassives } from "@/components/Combat/CombatPassives";
 import { WeaponSkillManager } from "@/components/Combat/WeaponSkillsManager";
 import { ThemedText } from "@/components/ThemedText";
 import { ThemedView } from "@/components/ThemedView";
 import { Weapon } from "@/constants/Item";
+import { calculateSkillCost } from "@/constants/Skills";
 import { RootState } from "@/store/rootReducer";
+import { updateMultipleFields } from "@/store/slices/baseSlice";
 import { updateDodge, updateParry } from "@/store/slices/skillsSlice";
 import { Pressable, ScrollView } from "react-native";
 import { Row, Rows, Table } from "react-native-table-component";
@@ -67,7 +69,19 @@ export default function CombatScreen() {
     const handleSkillChange = (skillName: "dodge" | "parry", delta: number) => {
         const currentLevel = character.skills[skillName] || 0;
         const newLevel = Math.max(0, currentLevel + delta);
-        skillName === "dodge" ? dispatch(updateDodge(newLevel)) : dispatch(updateParry(newLevel));
+        const cost = calculateSkillCost(newLevel);
+        if (character.base.buildPointsRemaining < cost) {
+            alert(`Not enough build points to upgrade ${skillName}. Need ${cost} more.`);
+            return;
+        } else {
+            dispatch(
+                updateMultipleFields([
+                    { field: "buildPointsRemaining", value: character.base.buildPointsRemaining - cost },
+                    { field: "buildPointsSpent", value: character.base.buildPointsSpent + cost },
+                ])
+            );
+            skillName === "dodge" ? dispatch(updateDodge(newLevel)) : dispatch(updateParry(newLevel));
+        }
     };
 
     return (
@@ -90,11 +104,17 @@ export default function CombatScreen() {
                                 )}
                             </ThemedView>
                             <ThemedView style={cssStyle.skillControls}>
-                                <Pressable style={[cssStyle.levelButton, cssStyle.dangerButton]} onPress={() => handleSkillChange("dodge", -1)}>
+                                <Pressable
+                                    style={[cssStyle.centered, cssStyle.levelButton, cssStyle.dangerButton]}
+                                    onPress={() => handleSkillChange("dodge", -1)}
+                                >
                                     <ThemedText style={cssStyle.smallButtonText}>-</ThemedText>
                                 </Pressable>
                                 <ThemedText style={cssStyle.valueText}>{character.skills.dodge || 0}</ThemedText>
-                                <Pressable style={cssStyle.levelButton} onPress={() => handleSkillChange("dodge", 1)}>
+                                <Pressable
+                                    style={[cssStyle.centered, cssStyle.levelButton, cssStyle.successButton]}
+                                    onPress={() => handleSkillChange("dodge", 1)}
+                                >
                                     <ThemedText style={cssStyle.smallButtonText}>+</ThemedText>
                                 </Pressable>
                             </ThemedView>
@@ -108,11 +128,17 @@ export default function CombatScreen() {
                                 <ThemedText style={cssStyle.skillPenalty}>Subtract 1d4 + {character.skills.parry || 0} from attack</ThemedText>
                             </ThemedView>
                             <ThemedView style={cssStyle.skillControls}>
-                                <Pressable style={[cssStyle.levelButton, cssStyle.dangerButton]} onPress={() => handleSkillChange("parry", -1)}>
+                                <Pressable
+                                    style={[cssStyle.centered, cssStyle.levelButton, cssStyle.dangerButton]}
+                                    onPress={() => handleSkillChange("parry", -1)}
+                                >
                                     <ThemedText style={cssStyle.smallButtonText}>-</ThemedText>
                                 </Pressable>
                                 <ThemedText style={cssStyle.valueText}>{character.skills.parry || 0}</ThemedText>
-                                <Pressable style={cssStyle.levelButton} onPress={() => handleSkillChange("parry", 1)}>
+                                <Pressable
+                                    style={[cssStyle.centered, cssStyle.levelButton, cssStyle.successButton]}
+                                    onPress={() => handleSkillChange("parry", 1)}
+                                >
                                     <ThemedText style={cssStyle.smallButtonText}>+</ThemedText>
                                 </Pressable>
                             </ThemedView>
