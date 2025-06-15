@@ -101,7 +101,7 @@ export function AddItemForm({ open, setOpen, onClose }: AddItemFormProps) {
                 <ThemedView style={cssStyle.modalView}>
                     <View style={cssStyle.modalHeader}>
                         <ThemedText style={cssStyle.title}>Add New Item</ThemedText>
-                        <Pressable style={cssStyle.compactButton} onPress={handleClose}>
+                        <Pressable style={cssStyle.centered} onPress={handleClose}>
                             <FontAwesome name="times" size={20} color="#FFF" />
                         </Pressable>
                     </View>
@@ -137,7 +137,7 @@ export function AddItemForm({ open, setOpen, onClose }: AddItemFormProps) {
                             <ThemedText style={cssStyle.buttonText}>Cancel</ThemedText>
                         </Pressable>
                         <Pressable
-                            style={cssStyle.successButton}
+                            style={cssStyle.primaryButton}
                             onPress={() => {
                                 // Validate item data
                                 if (!itemData.name) {

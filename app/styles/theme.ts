@@ -1,8 +1,8 @@
 import { ImageStyle, TextStyle, ViewStyle } from "react-native";
 
 export const app_theme = {
-    primary_component_bg: "#35F",
-    secondary_component_bg: "#5F3",
+    primary_component_bg: "#5A3",
+    secondary_component_bg: "#821",
     primary_component_text: "#AAF",
     secondary_component_text: "#AAF",
 };
@@ -65,7 +65,7 @@ export interface ResponsiveStylesheet {
     // SPECIFIC COMPONENT STYLES
     levelBadge: ViewStyle;
     bonusContainer: ViewStyle;
-    bonusIndicator: TextStyle;
+    bonusIndicator: ViewStyle;
     bonusText: TextStyle;
     divider: ViewStyle;
 

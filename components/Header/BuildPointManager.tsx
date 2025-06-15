@@ -83,7 +83,7 @@ export function BuildPointManager({ compact = false }: BuildPointManagerProps) {
             {compact ? (
                 <>
                     <Pressable
-                        style={[cssStyle.compactButton, { backgroundColor: "rgba(0, 122, 255, 0.1)", borderWidth: 1, borderColor: "rgba(0, 122, 255, 0.3)" }]}
+                        style={[cssStyle.centered, { backgroundColor: "rgba(0, 122, 255, 0.1)", borderWidth: 1, borderColor: "rgba(0, 122, 255, 0.3)" }]}
                         onPress={openModal}
                         accessibilityLabel="Manage build points"
                     >
@@ -102,7 +102,7 @@ export function BuildPointManager({ compact = false }: BuildPointManagerProps) {
                                 {/* Current BP Display */}
                                 <View style={[cssStyle.row, cssStyle.card, { backgroundColor: "rgba(0, 122, 255, 0.1)" }]}>
                                     <Pressable
-                                        style={[cssStyle.compactButton, cssStyle.dangerButton]}
+                                        style={[cssStyle.centered, cssStyle.secondaryButton]}
                                         onPress={() => setPointsInput((parseInt(pointsInput) - 1).toString())}
                                     >
                                         <IconSymbol name="minus" size={16} color="#FFFFFF" />
@@ -111,7 +111,7 @@ export function BuildPointManager({ compact = false }: BuildPointManagerProps) {
                                     <ThemedText style={[cssStyle.largeValue, { color: "#007AFF", padding: 30 }]}>{pointsInput}</ThemedText>
 
                                     <Pressable
-                                        style={[cssStyle.compactButton, cssStyle.successButton]}
+                                        style={[cssStyle.centered, cssStyle.primaryButton]}
                                         onPress={() => setPointsInput((parseInt(pointsInput) + 1).toString())}
                                     >
                                         <IconSymbol name="plus" size={16} color="#FFFFFF" />
@@ -120,22 +120,22 @@ export function BuildPointManager({ compact = false }: BuildPointManagerProps) {
 
                                 {/* Quick Adjustment Buttons */}
                                 <View style={cssStyle.adjustmentRow}>
-                                    <Pressable style={[cssStyle.compactButton, cssStyle.dangerButton]} onPress={() => handleDirectUpdate(-10)}>
+                                    <Pressable style={[cssStyle.centered, cssStyle.secondaryButton]} onPress={() => handleDirectUpdate(-10)}>
                                         <ThemedText style={cssStyle.smallButtonText}>-10</ThemedText>
                                     </Pressable>
-                                    <Pressable style={[cssStyle.compactButton, cssStyle.dangerButton]} onPress={() => handleDirectUpdate(-5)}>
+                                    <Pressable style={[cssStyle.centered, cssStyle.secondaryButton]} onPress={() => handleDirectUpdate(-5)}>
                                         <ThemedText style={cssStyle.smallButtonText}>-5</ThemedText>
                                     </Pressable>
-                                    <Pressable style={[cssStyle.compactButton, cssStyle.dangerButton]} onPress={() => handleDirectUpdate(-1)}>
+                                    <Pressable style={[cssStyle.centered, cssStyle.secondaryButton]} onPress={() => handleDirectUpdate(-1)}>
                                         <ThemedText style={cssStyle.smallButtonText}>-1</ThemedText>
                                     </Pressable>
-                                    <Pressable style={[cssStyle.compactButton, cssStyle.successButton]} onPress={() => handleDirectUpdate(1)}>
+                                    <Pressable style={[cssStyle.centered, cssStyle.primaryButton]} onPress={() => handleDirectUpdate(1)}>
                                         <ThemedText style={cssStyle.smallButtonText}>+1</ThemedText>
                                     </Pressable>
-                                    <Pressable style={[cssStyle.compactButton, cssStyle.successButton]} onPress={() => handleDirectUpdate(5)}>
+                                    <Pressable style={[cssStyle.centered, cssStyle.primaryButton]} onPress={() => handleDirectUpdate(5)}>
                                         <ThemedText style={cssStyle.smallButtonText}>+5</ThemedText>
                                     </Pressable>
-                                    <Pressable style={[cssStyle.compactButton, cssStyle.successButton]} onPress={() => handleDirectUpdate(10)}>
+                                    <Pressable style={[cssStyle.centered, cssStyle.primaryButton]} onPress={() => handleDirectUpdate(10)}>
                                         <ThemedText style={cssStyle.smallButtonText}>+10</ThemedText>
                                     </Pressable>
                                 </View>
@@ -159,7 +159,7 @@ export function BuildPointManager({ compact = false }: BuildPointManagerProps) {
                                     <Pressable style={cssStyle.secondaryButton} onPress={() => setModalVisible(false)}>
                                         <ThemedText style={cssStyle.buttonText}>Cancel</ThemedText>
                                     </Pressable>
-                                    <Pressable style={cssStyle.actionButton} onPress={handleSetPoints}>
+                                    <Pressable style={cssStyle.primaryButton} onPress={handleSetPoints}>
                                         <ThemedText style={cssStyle.buttonText}>Save</ThemedText>
                                     </Pressable>
                                 </View>
@@ -175,10 +175,10 @@ export function BuildPointManager({ compact = false }: BuildPointManagerProps) {
                             <ThemedText style={cssStyle.label}>Build Points</ThemedText>
                         </View>
                         <View style={cssStyle.row}>
-                            <Pressable style={[cssStyle.compactButton, cssStyle.dangerButton]} onPress={handleDecrement}>
+                            <Pressable style={[cssStyle.centered, cssStyle.secondaryButton]} onPress={handleDecrement}>
                                 <IconSymbol name="minus" size={16} color="#FFFFFF" />
                             </Pressable>
-                            <Pressable style={[cssStyle.compactButton, cssStyle.successButton]} onPress={handleIncrement}>
+                            <Pressable style={[cssStyle.centered, cssStyle.primaryButton]} onPress={handleIncrement}>
                                 <IconSymbol name="plus" size={16} color="#FFFFFF" />
                             </Pressable>
                         </View>
@@ -193,7 +193,7 @@ export function BuildPointManager({ compact = false }: BuildPointManagerProps) {
                                 {/* Current BP Display */}
                                 <View style={[cssStyle.row, cssStyle.card, { backgroundColor: "rgba(0, 122, 255, 0.1)" }]}>
                                     <Pressable
-                                        style={[cssStyle.compactButton, cssStyle.dangerButton]}
+                                        style={[cssStyle.centered, cssStyle.secondaryButton]}
                                         onPress={() => setPointsInput((parseInt(pointsInput) - 1).toString())}
                                     >
                                         <IconSymbol name="minus" size={16} color="#FFFFFF" />
@@ -202,7 +202,7 @@ export function BuildPointManager({ compact = false }: BuildPointManagerProps) {
                                     <ThemedText style={[cssStyle.largeValue, { color: "#007AFF", padding: 30 }]}>{pointsInput}</ThemedText>
 
                                     <Pressable
-                                        style={[cssStyle.compactButton, cssStyle.successButton]}
+                                        style={[cssStyle.centered, cssStyle.primaryButton]}
                                         onPress={() => setPointsInput((parseInt(pointsInput) + 1).toString())}
                                     >
                                         <IconSymbol name="plus" size={16} color="#FFFFFF" />
@@ -211,22 +211,22 @@ export function BuildPointManager({ compact = false }: BuildPointManagerProps) {
 
                                 {/* Quick Adjustment Buttons */}
                                 <View style={cssStyle.adjustmentRow}>
-                                    <Pressable style={[cssStyle.compactButton, cssStyle.dangerButton]} onPress={() => handleDirectUpdate(-10)}>
+                                    <Pressable style={[cssStyle.centered, cssStyle.secondaryButton]} onPress={() => handleDirectUpdate(-10)}>
                                         <ThemedText style={cssStyle.smallButtonText}>-10</ThemedText>
                                     </Pressable>
-                                    <Pressable style={[cssStyle.compactButton, cssStyle.dangerButton]} onPress={() => handleDirectUpdate(-5)}>
+                                    <Pressable style={[cssStyle.centered, cssStyle.secondaryButton]} onPress={() => handleDirectUpdate(-5)}>
                                         <ThemedText style={cssStyle.smallButtonText}>-5</ThemedText>
                                     </Pressable>
-                                    <Pressable style={[cssStyle.compactButton, cssStyle.dangerButton]} onPress={() => handleDirectUpdate(-1)}>
+                                    <Pressable style={[cssStyle.centered, cssStyle.secondaryButton]} onPress={() => handleDirectUpdate(-1)}>
                                         <ThemedText style={cssStyle.smallButtonText}>-1</ThemedText>
                                     </Pressable>
-                                    <Pressable style={[cssStyle.compactButton, cssStyle.successButton]} onPress={() => handleDirectUpdate(1)}>
+                                    <Pressable style={[cssStyle.centered, cssStyle.primaryButton]} onPress={() => handleDirectUpdate(1)}>
                                         <ThemedText style={cssStyle.smallButtonText}>+1</ThemedText>
                                     </Pressable>
-                                    <Pressable style={[cssStyle.compactButton, cssStyle.successButton]} onPress={() => handleDirectUpdate(5)}>
+                                    <Pressable style={[cssStyle.centered, cssStyle.primaryButton]} onPress={() => handleDirectUpdate(5)}>
                                         <ThemedText style={cssStyle.smallButtonText}>+5</ThemedText>
                                     </Pressable>
-                                    <Pressable style={[cssStyle.compactButton, cssStyle.successButton]} onPress={() => handleDirectUpdate(10)}>
+                                    <Pressable style={[cssStyle.centered, cssStyle.primaryButton]} onPress={() => handleDirectUpdate(10)}>
                                         <ThemedText style={cssStyle.smallButtonText}>+10</ThemedText>
                                     </Pressable>
                                 </View>
@@ -250,7 +250,7 @@ export function BuildPointManager({ compact = false }: BuildPointManagerProps) {
                                     <Pressable style={cssStyle.secondaryButton} onPress={() => setModalVisible(false)}>
                                         <ThemedText style={cssStyle.buttonText}>Cancel</ThemedText>
                                     </Pressable>
-                                    <Pressable style={cssStyle.actionButton} onPress={handleSetPoints}>
+                                    <Pressable style={cssStyle.primaryButton} onPress={handleSetPoints}>
                                         <ThemedText style={cssStyle.buttonText}>Save</ThemedText>
                                     </Pressable>
                                 </View>

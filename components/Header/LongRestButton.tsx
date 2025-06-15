@@ -61,7 +61,7 @@ export function LongRestButton({ compact = false }: LongRestButtonProps) {
     if (compact) {
         return (
             <>
-                <Pressable style={[cssStyle.compactButton, { backgroundColor: "#6C3483" }]} onPress={handleLongRest} accessibilityLabel="Take a long rest">
+                <Pressable style={[cssStyle.centered, { backgroundColor: "#6C3483" }]} onPress={handleLongRest} accessibilityLabel="Take a long rest">
                     <IconSymbol name="moon.stars.fill" size={18} color="#6C3483" />
                 </Pressable>
 
@@ -89,7 +89,7 @@ export function LongRestButton({ compact = false }: LongRestButtonProps) {
                                     <ThemedText style={cssStyle.buttonText}>Cancel</ThemedText>
                                 </Pressable>
 
-                                <Pressable style={[cssStyle.actionButton, { backgroundColor: "#6C3483" }]} onPress={processRest}>
+                                <Pressable style={[cssStyle.primaryButton, { backgroundColor: "#6C3483" }]} onPress={processRest}>
                                     <ThemedText style={cssStyle.buttonText}>Rest</ThemedText>
                                 </Pressable>
                             </View>
@@ -102,7 +102,7 @@ export function LongRestButton({ compact = false }: LongRestButtonProps) {
 
     return (
         <>
-            <Pressable style={[cssStyle.actionButton, { backgroundColor: "#6C3483" }]} onPress={handleLongRest} accessibilityLabel="Take a long rest">
+            <Pressable style={[cssStyle.primaryButton, { backgroundColor: "#6C3483" }]} onPress={handleLongRest} accessibilityLabel="Take a long rest">
                 <View style={cssStyle.row}>
                     <IconSymbol name="moon.stars.fill" size={24} color="#FFFFFF" />
                     <ThemedText style={cssStyle.buttonText}>Long Rest</ThemedText>
@@ -133,7 +133,7 @@ export function LongRestButton({ compact = false }: LongRestButtonProps) {
                                 <ThemedText style={cssStyle.buttonText}>Cancel</ThemedText>
                             </Pressable>
 
-                            <Pressable style={[cssStyle.actionButton, { backgroundColor: "#6C3483" }]} onPress={processRest}>
+                            <Pressable style={[cssStyle.primaryButton, { backgroundColor: "#6C3483" }]} onPress={processRest}>
                                 <ThemedText style={cssStyle.buttonText}>Rest</ThemedText>
                             </Pressable>
                         </View>

@@ -1,6 +1,6 @@
 /**
  * Desktop-optimized styles for the app.
- * 
+ *
  * Based on phone.tsx but with larger sizes and spacing appropriate for desktop screens.
  * Use these styles throughout the app to avoid duplication and keep a consistent look.
  */
@@ -10,7 +10,7 @@ import { app_theme, ResponsiveStylesheet } from "./theme";
 export const cssStyle = StyleSheet.create<ResponsiveStylesheet>({
     // BUTTONS - Desktop-optimized sizes
     button: {
-        borderRadius: 12,
+        borderRadius: 6,
         padding: 16,
         alignItems: "center",
         justifyContent: "center",
@@ -21,33 +21,13 @@ export const cssStyle = StyleSheet.create<ResponsiveStylesheet>({
     secondaryButton: {
         backgroundColor: app_theme.secondary_component_bg,
     },
-    actionButton: {
-        backgroundColor: "#007AFF",
-        borderRadius: 12,
-        display: "flex",
-        flexDirection: "row",
-        alignItems: "center",
-        justifyContent: "center",
-    },
-    dangerButton: {
-        backgroundColor: "#F44336",
-    },
-    successButton: {
-        backgroundColor: "#4CAF50",
-    },
     disabledButton: {
         backgroundColor: "#ccc",
     },
-    compactButton: {
+    centered: {
         width: 44,
         height: 44,
-        borderRadius: 22,
-    },
-    levelButton: {
-        width: 38,
-        height: 38,
-        borderRadius: 19,
-        backgroundColor: "#007AFF",
+        borderRadius: 5,
     },
     buttonText: {
         color: "#FFFFFF",
@@ -210,10 +190,6 @@ export const cssStyle = StyleSheet.create<ResponsiveStylesheet>({
         justifyContent: "space-between",
         alignItems: "center",
     },
-    centered: {
-        alignItems: "center",
-        justifyContent: "center",
-    },
     buttonGroup: {
         flexDirection: "row",
         gap: 12,
@@ -255,9 +231,10 @@ export const cssStyle = StyleSheet.create<ResponsiveStylesheet>({
         marginTop: 8,
     },
     bonusIndicator: {
-        color: "#4CAF50",
-        fontSize: 14,
-        fontWeight: "bold",
+        flexDirection: "row",
+        alignItems: "center",
+        marginLeft: 8,
+        marginTop: 8,
     },
     bonusText: {
         color: "#4CAF50",

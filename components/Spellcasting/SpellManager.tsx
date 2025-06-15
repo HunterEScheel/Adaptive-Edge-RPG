@@ -8,7 +8,6 @@ import React, { useState } from "react";
 import { Alert, FlatList, Modal, Pressable, View } from "react-native";
 import { useDispatch, useSelector } from "react-redux";
 import { ThemedText } from "../ThemedText";
-import { ThemedView } from "../ThemedView";
 
 // List of available spells organized by school
 const AVAILABLE_SPELLS: Omit<Spell, "id">[] = [
@@ -162,7 +161,7 @@ export function SpellManager() {
         <>
             <ListManager<Spell>
                 title="Spells"
-                description={`${magic.spells?.length || 0} spell${(magic.spells?.length || 0) !== 1 ? 's' : ''} learned`}
+                description={`${magic.spells?.length || 0} spell${(magic.spells?.length || 0) !== 1 ? "s" : ""} learned`}
                 data={magic.spells || []}
                 renderItem={renderSpellItem}
                 keyExtractor={(item) => item.id}
@@ -188,14 +187,8 @@ export function SpellManager() {
                                     <ThemedText style={[cssStyle.bodyText, { fontStyle: "italic" }]}>{item.school}</ThemedText>
                                     <ThemedText style={cssStyle.bodyText}>{item.description}</ThemedText>
                                     <View style={[cssStyle.row, { flexWrap: "wrap" }]}>
-                                        <ThemedText style={cssStyle.valueText}>
-                                            Energy: {item.energyCost}
-                                        </ThemedText>
-                                        {item.damage ? (
-                                            <ThemedText style={cssStyle.valueText}>
-                                                Damage: {item.damage}
-                                            </ThemedText>
-                                        ) : null}
+                                        <ThemedText style={cssStyle.valueText}>Energy: {item.energyCost}</ThemedText>
+                                        {item.damage ? <ThemedText style={cssStyle.valueText}>Damage: {item.damage}</ThemedText> : null}
                                     </View>
                                 </Pressable>
                             )}
@@ -208,7 +201,7 @@ export function SpellManager() {
                             }
                         />
 
-                        <Pressable style={cssStyle.dangerButton} onPress={() => setModalVisible(false)}>
+                        <Pressable style={cssStyle.secondaryButton} onPress={() => setModalVisible(false)}>
                             <ThemedText style={cssStyle.buttonText}>Close</ThemedText>
                         </Pressable>
                     </View>

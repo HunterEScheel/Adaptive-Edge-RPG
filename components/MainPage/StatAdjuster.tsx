@@ -180,20 +180,20 @@ export function StatAdjuster({ statName, fieldName, icon, minValue = 0, maxValue
                         <View style={cssStyle.adjustmentRow}>
                             {showBy5 && (
                                 <>
-                                    <Pressable style={[cssStyle.compactButton, cssStyle.dangerButton]} onPress={() => handleIncrement(-5)}>
+                                    <Pressable style={[cssStyle.centered, cssStyle.secondaryButton]} onPress={() => handleIncrement(-5)}>
                                         <ThemedText style={cssStyle.smallButtonText}>-5</ThemedText>
                                     </Pressable>
                                 </>
                             )}
-                            <Pressable style={[cssStyle.compactButton, cssStyle.dangerButton]} onPress={() => handleIncrement(-1)}>
+                            <Pressable style={[cssStyle.centered, cssStyle.secondaryButton]} onPress={() => handleIncrement(-1)}>
                                 <ThemedText style={cssStyle.smallButtonText}>-1</ThemedText>
                             </Pressable>
-                            <Pressable style={[cssStyle.compactButton, cssStyle.successButton]} onPress={() => handleIncrement(1)}>
+                            <Pressable style={[cssStyle.centered, cssStyle.primaryButton]} onPress={() => handleIncrement(1)}>
                                 <ThemedText style={cssStyle.smallButtonText}>+1</ThemedText>
                             </Pressable>
                             {showBy5 && (
                                 <>
-                                    <Pressable style={[cssStyle.compactButton, cssStyle.successButton]} onPress={() => handleIncrement(5)}>
+                                    <Pressable style={[cssStyle.centered, cssStyle.primaryButton]} onPress={() => handleIncrement(5)}>
                                         <ThemedText style={cssStyle.smallButtonText}>+5</ThemedText>
                                     </Pressable>
                                 </>
@@ -217,7 +217,7 @@ export function StatAdjuster({ statName, fieldName, icon, minValue = 0, maxValue
                             <Pressable style={cssStyle.secondaryButton} onPress={() => setModalVisible(false)}>
                                 <ThemedText style={cssStyle.buttonText}>Cancel</ThemedText>
                             </Pressable>
-                            <Pressable style={cssStyle.actionButton} onPress={handleSave}>
+                            <Pressable style={cssStyle.primaryButton} onPress={handleSave}>
                                 <ThemedText style={cssStyle.buttonText}>Save</ThemedText>
                             </Pressable>
                         </View>

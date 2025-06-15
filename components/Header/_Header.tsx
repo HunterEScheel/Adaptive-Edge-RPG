@@ -1,7 +1,8 @@
+import { cssStyle } from "@/app/styles/phone";
 import { RootState } from "@/store/rootReducer";
 import { updateMultipleFields } from "@/store/slices/baseSlice";
 import React, { useState } from "react";
-import { Pressable, StyleSheet, TextInput, View } from "react-native";
+import { Pressable, TextInput, View } from "react-native";
 import { useDispatch, useSelector } from "react-redux";
 import { StatAdjuster } from "../MainPage/StatAdjuster";
 import { StatUpgrader } from "../MainPage/StatUpgrader";
@@ -55,35 +56,35 @@ export function CharacterHeader() {
 
     if (!base) {
         return (
-            <View style={styles.container}>
+            <View style={cssStyle.container}>
                 <ThemedText>Loading...</ThemedText>
             </View>
         );
     }
 
     return (
-        <ThemedView style={styles.container}>
-            <View style={styles.topRow}>
+        <ThemedView style={cssStyle.container}>
+            <View style={cssStyle.headerRow}>
                 {/* Character Name (Editable) */}
-                <View style={styles.nameContainer}>
+                <View style={[cssStyle.costInfoContainer]}>
                     {isEditingName ? (
-                        <View style={styles.nameEditContainer}>
-                            <TextInput style={styles.nameInput} value={nameValue} onChangeText={setNameValue} autoFocus onBlur={handleNameEdit} />
+                        <View style={cssStyle.skillNameContainer}>
+                            <TextInput style={cssStyle.input} value={nameValue} onChangeText={setNameValue} autoFocus onBlur={handleNameEdit} />
                         </View>
                     ) : (
                         <Pressable onPress={handleNameClick}>
-                            <ThemedText type="subtitle" style={styles.characterName}>
+                            <ThemedText type="subtitle" style={cssStyle.input}>
                                 {base.name || "Unnamed Character"}
-                                <ThemedText style={styles.editIcon}> ✎</ThemedText>
+                                <ThemedText style={cssStyle.iconStyle}> ✎</ThemedText>
                             </ThemedText>
                         </Pressable>
                     )}
                 </View>
 
                 {/* Header Actions */}
-                <View style={styles.headerActions}>
+                <View style={cssStyle.itemHeader}>
                     <LongRestButton compact={true} />
-                    <View style={styles.headerSaveButton}>
+                    <View style={cssStyle.primaryButton}>
                         <SaveButton compact={true} />
                     </View>
                     <PresetManagerButton compact={true} />
@@ -91,15 +92,15 @@ export function CharacterHeader() {
                 </View>
             </View>
 
-            <View style={styles.contentContainer}>
+            <View style={cssStyle.container}>
                 {/* Left Side - Ability Scores */}
-                <View style={styles.abilityScoresContainer}>
-                    <View style={styles.abilityScoreRow}>
+                <View style={cssStyle.formContentContainer}>
+                    <View style={cssStyle.attributeRow}>
                         <StatAdjuster statName="STR" fieldName="str" minValue={-4} maxValue={5} compact={true} />
                         <StatAdjuster statName="DEX" fieldName="dex" minValue={-4} maxValue={5} compact={true} />
                         <StatAdjuster statName="CON" fieldName="con" minValue={-4} maxValue={5} compact={true} />
                     </View>
-                    <View style={styles.abilityScoreRow}>
+                    <View style={cssStyle.attributeRow}>
                         <StatAdjuster statName="INT" fieldName="int" minValue={-4} maxValue={5} compact={true} />
                         <StatAdjuster statName="WIS" fieldName="wis" minValue={-4} maxValue={5} compact={true} />
                         <StatAdjuster statName="CHA" fieldName="cha" minValue={-4} maxValue={5} compact={true} />
@@ -107,66 +108,64 @@ export function CharacterHeader() {
                 </View>
 
                 {/* Right Side - Character Stats */}
-                <View style={styles.statsContainer}>
-                    <View style={styles.statsRow}>
+                <View style={cssStyle.container}>
+                    <View style={cssStyle.formRow}>
                         {/* HP with current/max display */}
-                        <View style={[styles.statItem, styles.largeStatItem]}>
-                            <ThemedText style={styles.statLabel}>HP</ThemedText>
-                            <View style={styles.statValueContainer}>
-                                <View style={styles.currentValueContainer}>
+                        <View style={[cssStyle.statContainer, cssStyle.tableHeader]}>
+                            <ThemedText style={cssStyle.statLabel}>HP</ThemedText>
+                            <View style={[cssStyle.statContainer, cssStyle.row]}>
+                                <View style={cssStyle.currentValueContainer}>
                                     <Pressable
-                                        style={[styles.adjustButton, styles.healButton]}
+                                        style={[cssStyle.button, cssStyle.primaryButton]}
                                         onPress={() => handleHeal("hp")}
                                         disabled={base.hitPoints >= base.maxHitPoints}
                                     >
-                                        <ThemedText style={styles.adjustButtonText}>HEAL</ThemedText>
+                                        <ThemedText style={cssStyle.bodyText}>HEAL</ThemedText>
                                     </Pressable>
-                                    <ThemedText style={styles.statValue}>{base.hitPoints}</ThemedText>
+                                    <ThemedText style={cssStyle.headerText}>{base.hitPoints}</ThemedText>
                                     <Pressable
-                                        style={[styles.adjustButton, styles.damageButton]}
+                                        style={[cssStyle.button, cssStyle.secondaryButton]}
                                         onPress={() => handleDamage("hp")}
                                         disabled={base.hitPoints <= 0}
                                     >
-                                        <ThemedText style={styles.adjustButtonText}>DAMAGE</ThemedText>
+                                        <ThemedText style={cssStyle.bodyText}>DAMAGE</ThemedText>
                                     </Pressable>
                                 </View>
-                                <ThemedText style={styles.statSeparator}>/</ThemedText>
-                                <Pressable onPress={() => setHpModalVisible(true)} style={styles.maxValueButton}>
-                                    <ThemedText style={[styles.statValue, styles.maxValue]}>{base.maxHitPoints}</ThemedText>
+                                <ThemedText style={cssStyle.statLabel}>/</ThemedText>
+                                <Pressable onPress={() => setHpModalVisible(true)} style={cssStyle.primaryButton}>
+                                    <ThemedText style={cssStyle.statLabel}>{base.maxHitPoints}</ThemedText>
                                 </Pressable>
                                 <StatUpgrader statType="hp" visible={hpModalVisible} onClose={() => setHpModalVisible(false)} />
                             </View>
                         </View>
                         {/* Energy with current/max display */}
-                        <View style={[styles.statItem, styles.largeStatItem]}>
-                            <ThemedText style={styles.statLabel}>Energy</ThemedText>
-                            <View style={styles.statValueContainer}>
-                                <View style={styles.currentValueContainer}>
-                                    <Pressable
-                                        style={[styles.adjustButton, styles.healButton]}
-                                        onPress={() => handleHeal("energy")}
-                                        disabled={base.energy >= base.maxEnergy}
-                                    >
-                                        <ThemedText style={styles.adjustButtonText}>ABSORB</ThemedText>
-                                    </Pressable>
-                                    <ThemedText style={styles.statValue}>{base.energy}</ThemedText>
-                                    <Pressable
-                                        style={[styles.adjustButton, styles.damageButton]}
-                                        onPress={() => handleDamage("energy")}
-                                        disabled={base.energy <= 0}
-                                    >
-                                        <ThemedText style={styles.adjustButtonText}>EXPEND</ThemedText>
-                                    </Pressable>
-                                </View>
-                                <ThemedText style={styles.statSeparator}>/</ThemedText>
-                                <Pressable onPress={() => setEnergyModalVisible(true)} style={styles.maxValueButton}>
-                                    <ThemedText style={[styles.statValue, styles.maxValue]}>{base.maxEnergy}</ThemedText>
+                        <View style={[cssStyle.statContainer]}>
+                            <ThemedText style={cssStyle.statLabel}>Energy</ThemedText>
+                            <View style={cssStyle.currentValueContainer}>
+                                <Pressable
+                                    style={[cssStyle.centered, cssStyle.primaryButton]}
+                                    onPress={() => handleHeal("energy")}
+                                    disabled={base.energy >= base.maxEnergy}
+                                >
+                                    <ThemedText style={cssStyle.bodyText}>ABSORB</ThemedText>
                                 </Pressable>
-                                <StatUpgrader statType="energy" visible={energyModalVisible} onClose={() => setEnergyModalVisible(false)} />
+                                <ThemedText style={cssStyle.valueText}>{base.energy}</ThemedText>
+                                <Pressable
+                                    style={[cssStyle.centered, cssStyle.secondaryButton]}
+                                    onPress={() => handleDamage("energy")}
+                                    disabled={base.energy <= 0}
+                                >
+                                    <ThemedText style={cssStyle.bodyText}>EXPEND</ThemedText>
+                                </Pressable>
                             </View>
+                            <ThemedText style={cssStyle.bodyText}>/</ThemedText>
+                            <Pressable onPress={() => setEnergyModalVisible(true)} style={cssStyle.primaryButton}>
+                                <ThemedText style={[cssStyle.valueText]}>{base.maxEnergy}</ThemedText>
+                            </Pressable>
+                            <StatUpgrader statType="energy" visible={energyModalVisible} onClose={() => setEnergyModalVisible(false)} />
                         </View>
                         {/* AC */}
-                        <View style={[styles.statItem, styles.smallStatItem]}>
+                        <View style={[cssStyle.statContainer, cssStyle.centered]}>
                             <Pressable onPress={() => setAcBreakdownModalVisible(true)}>
                                 <ThemedText>AC: {calculateTotalAC(character)}</ThemedText>
                             </Pressable>
@@ -177,7 +176,7 @@ export function CharacterHeader() {
                         </View>
 
                         {/* Speed */}
-                        <View style={[styles.statItem, styles.smallStatItem]}>
+                        <View style={[cssStyle.statContainer, cssStyle.centered]}>
                             <StatAdjuster statName="Speed" fieldName="movement" compact={true} />
                         </View>
                     </View>
@@ -186,146 +185,3 @@ export function CharacterHeader() {
         </ThemedView>
     );
 }
-
-const styles = StyleSheet.create({
-    container: {
-        paddingTop: 40, // Extra padding for system icons
-        paddingBottom: 10,
-        paddingHorizontal: 15,
-        borderBottomWidth: 1,
-        borderBottomColor: "#ccc",
-    },
-    topRow: {
-        flexDirection: "row",
-        justifyContent: "space-between",
-        alignItems: "center",
-        marginBottom: 10,
-    },
-    nameContainer: {
-        flex: 1,
-    },
-    nameEditContainer: {
-        flexDirection: "row",
-        alignItems: "center",
-    },
-    nameInput: {
-        fontSize: 18,
-        fontWeight: "bold",
-        borderBottomWidth: 1,
-        borderBottomColor: "#007AFF",
-        paddingVertical: 4,
-        flex: 1,
-    },
-    saveNameButton: {
-        padding: 8,
-    },
-    characterName: {
-        fontSize: 18,
-        fontWeight: "bold",
-    },
-    editIcon: {
-        fontSize: 14,
-        color: "#007AFF",
-    },
-    buildPointsContainer: {
-        marginLeft: 10,
-    },
-    headerActions: {
-        flexDirection: "row",
-        alignItems: "center",
-        gap: 8,
-    },
-    headerSaveButton: {
-        marginHorizontal: 4,
-    },
-    contentContainer: {
-        flexDirection: "row",
-        justifyContent: "flex-start",
-        paddingTop: 10,
-    },
-    abilityScoresContainer: {
-        flex: 0.4,
-        flexDirection: "column",
-    },
-    abilityScoreRow: {
-        flexDirection: "row",
-        justifyContent: "flex-start",
-        gap: 12,
-    },
-    statsContainer: {
-        flex: 1,
-        paddingLeft: 40,
-    },
-    statsRow: {
-        flexDirection: "row",
-        justifyContent: "flex-start",
-        alignItems: "center",
-        gap: 8,
-    },
-    statItem: {
-        flex: 1,
-    },
-    largeStatItem: {
-        maxWidth: 140,
-    },
-    smallStatItem: {
-        maxWidth: 65,
-        transform: [{ scale: 0.85 }],
-        marginHorizontal: -4,
-    },
-    statIcon: {
-        fontSize: 18,
-        marginBottom: 2,
-    },
-    statLabel: {
-        fontSize: 12,
-        fontWeight: "bold",
-        marginBottom: 2,
-    },
-    statValueContainer: {
-        flexDirection: "row",
-        alignItems: "center",
-    },
-    statValue: {
-        fontSize: 18,
-        fontWeight: "bold",
-    },
-    maxValue: {
-        textDecorationLine: "underline",
-        color: "#007AFF",
-    },
-    currentValueContainer: {
-        flexDirection: "column",
-        alignItems: "center",
-        gap: 4,
-    },
-    adjustButton: {
-        paddingVertical: 3,
-        paddingHorizontal: 6,
-        borderRadius: 4,
-        minWidth: 54,
-        opacity: 1,
-    },
-    healButton: {
-        backgroundColor: "#4CAF50",
-    },
-    damageButton: {
-        backgroundColor: "#f44336",
-    },
-    adjustButtonText: {
-        color: "white",
-        fontSize: 11,
-        fontWeight: "bold",
-        textAlign: "center",
-    },
-    statSeparator: {
-        fontSize: 18,
-        fontWeight: "bold",
-        marginHorizontal: 3,
-    },
-    maxValueButton: {
-        padding: 6,
-        borderRadius: 4,
-        marginLeft: -2,
-    },
-});

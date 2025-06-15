@@ -1,3 +1,4 @@
+import { cssStyle } from "@/app/styles/responsive";
 import { ThemedText } from "@/components/ThemedText";
 import { ThemedView } from "@/components/ThemedView";
 import { ImportFile } from "@/components/Utility/FilePick";
@@ -11,93 +12,75 @@ import { NotesState } from "@/store/slices/notesSlice";
 import { SkillsState } from "@/store/slices/skillsSlice";
 import { useRouter } from "expo-router";
 import React, { useState } from "react";
-import { Button, StyleSheet } from "react-native";
+import { Button } from "react-native";
 import { useDispatch } from "react-redux";
 
 export default function WelcomeScreen() {
-  const [showImport, setShowImport] = useState(false);
-  const dispatch = useDispatch();
-  const router = useRouter();
+    const [showImport, setShowImport] = useState(false);
+    const dispatch = useDispatch();
+    const router = useRouter();
 
-  const handleCreateNewCharacter = () => {
-    // Create a new default character
-    const newCharacter: Character = {
-      base: {} as BaseState,
-      inventory: {} as InventoryState,
-      abilities: {} as AbilitiesState,
-      magic: {} as MagicState,
-      notes: {} as NotesState,
-      skills: {} as SkillsState,
+    const handleCreateNewCharacter = () => {
+        // Create a new default character
+        const newCharacter: Character = {
+            base: {} as BaseState,
+            inventory: {} as InventoryState,
+            abilities: {} as AbilitiesState,
+            magic: {} as MagicState,
+            notes: {} as NotesState,
+            skills: {} as SkillsState,
+        };
+
+        // Set the character in Redux and mark as loaded
+        dispatch(setCharacter(newCharacter));
+        dispatch(setCharacterLoaded());
+
+        // Use a timeout to ensure the state is updated before navigation
+        // This is a workaround for the race condition
+        setTimeout(() => {
+            try {
+                router.replace("/(tabs)");
+            } catch (err) {
+                console.error("Navigation error:", err);
+            }
+        }, 100);
     };
 
-    // Set the character in Redux and mark as loaded
-    dispatch(setCharacter(newCharacter));
-    dispatch(setCharacterLoaded());
+    const handleImportSuccess = () => {
+        // Mark character as loaded
+        dispatch(setCharacterLoaded());
 
-    // Use a timeout to ensure the state is updated before navigation
-    // This is a workaround for the race condition
-    setTimeout(() => {
-      try {
-        router.replace("/(tabs)");
-      } catch (err) {
-        console.error("Navigation error:", err);
-      }
-    }, 100);
-  };
+        // Use a timeout to ensure the state is updated before navigation
+        // This is a workaround for the race condition
+        setTimeout(() => {
+            try {
+                router.replace("/(tabs)");
+            } catch (err) {
+                console.error("Navigation error:", err);
+            }
+        }, 100);
+    };
 
-  const handleImportSuccess = () => {
-    // Mark character as loaded
-    dispatch(setCharacterLoaded());
+    return (
+        <ThemedView style={cssStyle.container}>
+            <ThemedText type="title" style={cssStyle.title}>
+                GURPS & Dragons
+            </ThemedText>
 
-    // Use a timeout to ensure the state is updated before navigation
-    // This is a workaround for the race condition
-    setTimeout(() => {
-      try {
-        router.replace("/(tabs)");
-      } catch (err) {
-        console.error("Navigation error:", err);
-      }
-    }, 100);
-  };
+            <ThemedText style={cssStyle.subtitle}>Welcome to your character sheet app</ThemedText>
 
-  return (
-    <ThemedView style={styles.container}>
-      <ThemedText type="title" style={styles.title}>
-        GURPS & Dragons
-      </ThemedText>
+            {!showImport ? (
+                <>
+                    <Button title="Create New Character" onPress={handleCreateNewCharacter} />
 
-      <ThemedText style={styles.subtitle}>Welcome to your character sheet app</ThemedText>
-
-      {!showImport ? (
-        <>
-          <Button title="Create New Character" onPress={handleCreateNewCharacter} />
-
-          <Button title="Import Existing Character" onPress={() => setShowImport(true)} />
-        </>
-      ) : (
-        <>
-          <ImportFile onImportSuccess={handleImportSuccess} />
-          <Button title="Back" onPress={() => setShowImport(false)} />
-        </>
-      )}
-    </ThemedView>
-  );
+                    <Button title="Import Existing Character" onPress={() => setShowImport(true)} />
+                </>
+            ) : (
+                <>
+                    <ImportFile onImportSuccess={handleImportSuccess} />
+                    <Button title="Back" onPress={() => setShowImport(false)} />
+                </>
+            )}
+        </ThemedView>
+    );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    alignItems: "center",
-    justifyContent: "center",
-    padding: 20,
-  },
-  title: {
-    fontSize: 32,
-    fontWeight: "bold",
-    marginBottom: 10,
-  },
-  subtitle: {
-    fontSize: 18,
-    marginBottom: 30,
-  },
-});

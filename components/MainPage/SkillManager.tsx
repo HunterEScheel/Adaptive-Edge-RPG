@@ -7,11 +7,10 @@ import { updateMultipleFields } from "@/store/slices/baseSlice";
 import { addSkill, removeSkill, updateSkillLevel } from "@/store/slices/skillsSlice";
 import { FontAwesome } from "@expo/vector-icons";
 import React, { useCallback, useEffect, useState } from "react";
-import { ActivityIndicator, Alert, Modal, Pressable, ScrollView, TextInput, TouchableOpacity, View } from "react-native";
+import { ActivityIndicator, Alert, Modal, ScrollView, TextInput, TouchableOpacity, View } from "react-native";
 import { useDispatch, useSelector } from "react-redux";
 import { cssStyle } from "../../app/styles/phone";
 import { ThemedText } from "../ThemedText";
-import { ThemedView } from "../ThemedView";
 
 // Simple ID generator function
 const generateId = () => Math.random().toString(36).substring(2, 15);
@@ -334,7 +333,7 @@ export function SkillManager() {
                     </View>
                     <View style={cssStyle.levelContainer}>
                         <TouchableOpacity
-                            style={[cssStyle.levelButton, cssStyle.dangerButton]}
+                            style={[cssStyle.centered, cssStyle.secondaryButton]}
                             onPress={() => handleLevelChange(item, false)}
                             disabled={item.level <= 1}
                         >
@@ -344,16 +343,13 @@ export function SkillManager() {
                             <ThemedText style={cssStyle.valueText}>{item.level}</ThemedText>
                         </View>
                         <TouchableOpacity
-                            style={[cssStyle.levelButton, cssStyle.successButton]}
+                            style={[cssStyle.centered, cssStyle.primaryButton]}
                             onPress={() => handleLevelChange(item, true)}
                             disabled={item.level >= 10}
                         >
                             <ThemedText style={cssStyle.smallButtonText}>+</ThemedText>
                         </TouchableOpacity>
-                        <TouchableOpacity
-                            style={[cssStyle.compactButton, cssStyle.dangerButton]}
-                            onPress={() => handleDeleteSkill(item)}
-                        >
+                        <TouchableOpacity style={[cssStyle.centered, cssStyle.secondaryButton]} onPress={() => handleDeleteSkill(item)}>
                             <FontAwesome name="trash" size={14} color="#F44336" />
                         </TouchableOpacity>
                     </View>
@@ -447,7 +443,7 @@ export function SkillManager() {
                                 <ThemedText style={cssStyle.buttonText}>Cancel</ThemedText>
                             </TouchableOpacity>
                             <TouchableOpacity
-                                style={[cssStyle.actionButton]}
+                                style={[cssStyle.primaryButton]}
                                 onPress={handleAddCustomSkill}
                                 disabled={!newSkillName.trim() || base.buildPointsRemaining < 1}
                             >

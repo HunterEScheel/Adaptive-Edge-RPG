@@ -5,7 +5,6 @@ import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 import React, { useState } from "react";
 import { Alert, FlatList, Pressable, TextInput, View } from "react-native";
 import { useDispatch, useSelector } from "react-redux";
-import { Collapsible } from "../Collapsible";
 import { ThemedText } from "../ThemedText";
 import { ThemedView } from "../ThemedView";
 
@@ -98,7 +97,7 @@ export const GeneralNotes: React.FC = () => {
                         <Pressable style={[cssStyle.button, cssStyle.primaryButton]} onPress={handleUpdateNote}>
                             <ThemedText style={cssStyle.buttonText}>Save</ThemedText>
                         </Pressable>
-                        <Pressable style={[cssStyle.button, cssStyle.dangerButton]} onPress={() => setEditingNote(null)}>
+                        <Pressable style={[cssStyle.button, cssStyle.secondaryButton]} onPress={() => setEditingNote(null)}>
                             <ThemedText style={cssStyle.buttonText}>Cancel</ThemedText>
                         </Pressable>
                     </View>
@@ -114,10 +113,10 @@ export const GeneralNotes: React.FC = () => {
                 </ThemedText>
                 <ThemedText style={cssStyle.bodyText}>{item.content}</ThemedText>
                 <View style={cssStyle.buttonGroup}>
-                    <Pressable style={cssStyle.actionButton} onPress={() => startEditingNote(item)}>
+                    <Pressable style={cssStyle.primaryButton} onPress={() => startEditingNote(item)}>
                         <MaterialIcons name="edit" size={20} color="#444" />
                     </Pressable>
-                    <Pressable style={cssStyle.dangerButton} onPress={() => handleDeleteNote(item.id)}>
+                    <Pressable style={cssStyle.secondaryButton} onPress={() => handleDeleteNote(item.id)}>
                         <MaterialIcons name="delete" size={20} color="#ff4444" />
                     </Pressable>
                 </View>
@@ -127,54 +126,52 @@ export const GeneralNotes: React.FC = () => {
 
     return (
         <ThemedView style={cssStyle.container}>
-            <Collapsible title="General Notes">
-                <ThemedView style={cssStyle.noteCard}>
-                    {notes.length === 0 && !isAddingNote ? (
-                        <ThemedText style={cssStyle.emptyText}>No notes yet. Add your first note!</ThemedText>
-                    ) : (
-                        <FlatList
-                            data={notes}
-                            keyExtractor={(item) => item.id}
-                            renderItem={renderNote}
-                            contentContainerStyle={cssStyle.list}
-                            scrollEnabled={false} // Let parent scroll view handle scrolling
-                        />
-                    )}
+            <ThemedView style={cssStyle.noteCard}>
+                {notes.length === 0 && !isAddingNote ? (
+                    <ThemedText style={cssStyle.emptyText}>No notes yet. Add your first note!</ThemedText>
+                ) : (
+                    <FlatList
+                        data={notes}
+                        keyExtractor={(item) => item.id}
+                        renderItem={renderNote}
+                        contentContainerStyle={cssStyle.list}
+                        scrollEnabled={false} // Let parent scroll view handle scrolling
+                    />
+                )}
 
-                    {isAddingNote ? (
-                        <ThemedView style={cssStyle.formContentContainer}>
-                            <TextInput
-                                style={cssStyle.input}
-                                value={newNoteTitle}
-                                onChangeText={setNewNoteTitle}
-                                placeholder="Note Title"
-                                placeholderTextColor="#aaa"
-                            />
-                            <TextInput
-                                style={cssStyle.input}
-                                value={newNoteContent}
-                                onChangeText={setNewNoteContent}
-                                placeholder="Note Content"
-                                placeholderTextColor="#aaa"
-                                multiline
-                            />
-                            <View style={cssStyle.buttonGroup}>
-                                <Pressable style={[cssStyle.button, cssStyle.successButton]} onPress={handleAddNote}>
-                                    <ThemedText style={cssStyle.buttonText}>Add</ThemedText>
-                                </Pressable>
-                                <Pressable style={[cssStyle.button, cssStyle.dangerButton]} onPress={() => setIsAddingNote(false)}>
-                                    <ThemedText style={cssStyle.buttonText}>Cancel</ThemedText>
-                                </Pressable>
-                            </View>
-                        </ThemedView>
-                    ) : (
-                        <Pressable style={cssStyle.successButton} onPress={() => setIsAddingNote(true)}>
-                            <MaterialIcons name="add" size={24} color="#fff" />
-                            <ThemedText style={cssStyle.buttonText}>Add Note</ThemedText>
-                        </Pressable>
-                    )}
-                </ThemedView>
-            </Collapsible>
+                {isAddingNote ? (
+                    <ThemedView style={cssStyle.formContentContainer}>
+                        <TextInput
+                            style={cssStyle.input}
+                            value={newNoteTitle}
+                            onChangeText={setNewNoteTitle}
+                            placeholder="Note Title"
+                            placeholderTextColor="#aaa"
+                        />
+                        <TextInput
+                            style={cssStyle.input}
+                            value={newNoteContent}
+                            onChangeText={setNewNoteContent}
+                            placeholder="Note Content"
+                            placeholderTextColor="#aaa"
+                            multiline
+                        />
+                        <View style={cssStyle.buttonGroup}>
+                            <Pressable style={[cssStyle.button, cssStyle.primaryButton]} onPress={handleAddNote}>
+                                <ThemedText style={cssStyle.buttonText}>Add</ThemedText>
+                            </Pressable>
+                            <Pressable style={[cssStyle.button, cssStyle.secondaryButton]} onPress={() => setIsAddingNote(false)}>
+                                <ThemedText style={cssStyle.buttonText}>Cancel</ThemedText>
+                            </Pressable>
+                        </View>
+                    </ThemedView>
+                ) : (
+                    <Pressable style={cssStyle.primaryButton} onPress={() => setIsAddingNote(true)}>
+                        <MaterialIcons name="add" size={24} color="#fff" />
+                        <ThemedText style={cssStyle.buttonText}>Add Note</ThemedText>
+                    </Pressable>
+                )}
+            </ThemedView>
         </ThemedView>
     );
 };

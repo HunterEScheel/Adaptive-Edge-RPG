@@ -3,7 +3,7 @@ import { eItemClassifications, Equipment, iItem } from "@/constants/Item";
 import { ePlayerStat, pStatOptions } from "@/constants/Stats";
 import { FontAwesome } from "@expo/vector-icons";
 import React, { useEffect, useRef, useState } from "react";
-import { Dimensions, ScrollView, StyleSheet, View } from "react-native";
+import { Dimensions, ScrollView, View } from "react-native";
 import BouncyCheckbox from "react-native-bouncy-checkbox";
 import { Dropdown } from "react-native-element-dropdown";
 import { default as VersatileInput } from "../../Input";
@@ -180,83 +180,3 @@ export function AddEquipment({ onChange }: AddEquipmentProps) {
         </ScrollView>
     );
 }
-
-const styles = StyleSheet.create({
-    scrollContainer: {
-        width: "100%",
-        flexGrow: 1,
-    },
-    container: {
-        width: "100%",
-        gap: 12,
-        paddingVertical: 10,
-        paddingBottom: 20,
-    },
-    sectionTitle: {
-        fontSize: 18,
-        fontWeight: "bold",
-        marginBottom: 8,
-    },
-    sectionContainer: {
-        width: "100%",
-        marginBottom: 16,
-        borderBottomWidth: 1,
-        borderBottomColor: "#eaeaea",
-        paddingBottom: 12,
-    },
-    sectionSubtitle: {
-        fontSize: 16,
-        fontWeight: "600",
-        marginBottom: 12,
-        color: "#555",
-    },
-    formRow: {
-        flexDirection: "row",
-        justifyContent: "space-between",
-        width: "100%",
-        gap: 10,
-        marginBottom: 10,
-        flexWrap: width < 400 ? "wrap" : "nowrap",
-    },
-    fullWidth: {
-        width: "100%",
-    },
-    halfWidth: {
-        width: width < 400 ? "100%" : "48%",
-        marginBottom: width < 400 ? 10 : 0,
-    },
-    checkboxContainer: {
-        flexDirection: "row",
-        alignItems: "center",
-        marginRight: 10,
-    },
-    checkboxText: {
-        textDecorationLine: "none",
-        fontSize: 14,
-        color: "#333",
-    },
-    checkboxIcon: {
-        borderRadius: 4,
-    },
-    label: {
-        fontSize: 14,
-        marginBottom: 5,
-        color: "#333",
-    },
-    dropdown: {
-        height: 40,
-        borderColor: "#ccc",
-        borderWidth: 1,
-        borderRadius: 5,
-        paddingHorizontal: 10,
-        backgroundColor: "#fff",
-    },
-    placeholderStyle: {
-        fontSize: 14,
-        color: "#999",
-    },
-    selectedTextStyle: {
-        fontSize: 14,
-        color: "#333",
-    },
-});

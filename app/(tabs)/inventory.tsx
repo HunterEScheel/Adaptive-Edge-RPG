@@ -1,4 +1,3 @@
-import { Collapsible } from "@/components/Collapsible";
 import { AddItemForm } from "@/components/InventoryPage/AddItemForm/AddItemForm";
 import { GoldManager } from "@/components/InventoryPage/GoldManager";
 import { ThemedText } from "@/components/ThemedText";
@@ -7,10 +6,11 @@ import { RootState } from "@/store/rootReducer";
 import { toggleAttunementEquipment, toggleEquipEquipment, toggleEquipWeapon } from "@/store/slices/inventorySlice";
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 import { useState } from "react";
-import { Pressable, StyleSheet, View } from "react-native";
+import { Pressable, View } from "react-native";
 
 import { Row, Rows, Table, TableWrapper } from "react-native-table-component";
 import { useDispatch, useSelector } from "react-redux";
+import { cssStyle } from "../styles/responsive";
 
 type Props = {
     onPress: () => void;
@@ -18,11 +18,9 @@ type Props = {
 
 function CircleButton({ onPress }: Props) {
     return (
-        <View style={styles.circleButtonContainer}>
-            <Pressable style={styles.circleButton} onPress={onPress}>
-                <MaterialIcons name="add" size={38} color="#25292e" />
-            </Pressable>
-        </View>
+        <Pressable style={cssStyle.centered} onPress={onPress}>
+            <MaterialIcons name="add" size={38} color="#25292e" />
+        </Pressable>
     );
 }
 
@@ -61,11 +59,13 @@ export default function InventoryScreen() {
     const consumableHeaders = ["Item", "Effect", "Qty", "Value"];
 
     // Create custom cell renderer for equip toggle button
-    const renderEquipToggle = (isChecked: boolean, onPress: () => void) => (
-        <Pressable style={[styles.toggleButton, isChecked ? styles.buttonActive : styles.buttonInactive]} onPress={onPress}>
-            <ThemedText style={styles.toggleText}>{isChecked ? "Unequip" : "Equip"}</ThemedText>
-        </Pressable>
-    );
+    const renderEquipToggle = (isChecked: boolean, onPress: () => void) => {
+        return (
+            <Pressable style={[cssStyle.centered, isChecked ? cssStyle.secondaryButton : cssStyle.primaryButton]} onPress={onPress}>
+                <ThemedText style={cssStyle.buttonText}>{isChecked ? "Unequip" : "Equip"}</ThemedText>
+            </Pressable>
+        );
+    };
 
     // Create custom cell renderer for attunement toggle button
     const renderAttuneToggle = (isChecked: boolean, isRequired: boolean, onPress: () => void, disabled: boolean = false) => {
@@ -75,11 +75,11 @@ export default function InventoryScreen() {
 
         return (
             <Pressable
-                style={[styles.toggleButton, isChecked ? styles.buttonActive : styles.buttonInactive, disabled && styles.toggleDisabled]}
+                style={[cssStyle.centered, isChecked ? cssStyle.secondaryButton : cssStyle.primaryButton, disabled && cssStyle.disabledButton]}
                 onPress={disabled ? undefined : onPress}
                 disabled={disabled}
             >
-                <ThemedText style={styles.toggleText}>{isChecked ? "ON" : "OFF"}</ThemedText>
+                <ThemedText style={cssStyle.buttonText}>{isChecked ? "ON" : "OFF"}</ThemedText>
             </Pressable>
         );
     };
@@ -321,91 +321,85 @@ export default function InventoryScreen() {
     });
 
     return (
-        <ThemedView style={styles.container}>
-            <ThemedView style={styles.contentContainer}>
+        <ThemedView style={cssStyle.container}>
+            <ThemedView style={cssStyle.formContent}>
                 {/* Gold Manager Section */}
-                <ThemedView style={styles.section}>
-                    <ThemedText type="subtitle" style={styles.sectionTitle}>
+                <ThemedView style={cssStyle.sectionContainer}>
+                    <ThemedText type="subtitle" style={cssStyle.sectionTitle}>
                         Currency
                     </ThemedText>
                     <GoldManager />
                 </ThemedView>
 
                 {/* Attuned Items Section */}
-                <ThemedView style={styles.section}>
-                    <ThemedText type="subtitle" style={styles.sectionTitle}>
+                <ThemedView style={cssStyle.sectionContainer}>
+                    <ThemedText type="subtitle" style={cssStyle.sectionTitle}>
                         Attuned Items
                     </ThemedText>
-                    <ThemedView style={styles.attunedItemsContainer}>
+                    <ThemedView style={cssStyle.container}>
                         {attunedItems.length > 0 ? (
                             <TableWrapper>
-                                <Table style={styles.table}>
-                                    <Row data={["Item", "Type", "Effect"]} style={styles.tableHeader} textStyle={styles.tableHeaderText} />
+                                <Table style={cssStyle.table}>
+                                    <Row data={["Item", "Type", "Effect"]} style={cssStyle.tableHeader} textStyle={cssStyle.tableHeaderText} />
                                     <Rows
                                         data={attunedItems.map((item) => [item.name, item.type, item.effect])}
-                                        style={styles.tableRow}
-                                        textStyle={styles.tableRowText}
+                                        style={cssStyle.tableRow}
+                                        textStyle={cssStyle.tableRowText}
                                     />
                                 </Table>
                             </TableWrapper>
                         ) : (
-                            <ThemedText style={styles.emptyStateText}>No attuned items yet</ThemedText>
+                            <ThemedText style={cssStyle.emptyStateText}>No attuned items yet</ThemedText>
                         )}
                     </ThemedView>
                 </ThemedView>
 
                 {/* Weapons Section */}
-                <ThemedView style={styles.section}>
-                    <Collapsible title="Weapons">
-                        <ThemedView style={styles.tableContainer}>
-                            {weaponRows.length > 0 ? (
-                                <TableWrapper>
-                                    <Table style={styles.table}>
-                                        <Row data={weaponHeaders} style={styles.tableHeader} textStyle={styles.tableHeaderText} />
-                                        <Rows data={weaponRows} style={styles.tableRow} textStyle={styles.tableRowText} />
-                                    </Table>
-                                </TableWrapper>
-                            ) : (
-                                <ThemedText style={styles.emptyStateText}>{getEmptyStateMessage("weapons")}</ThemedText>
-                            )}
-                        </ThemedView>
-                    </Collapsible>
+                <ThemedView style={cssStyle.sectionContainer}>
+                    <ThemedView style={cssStyle.tableContainer}>
+                        {weaponRows.length > 0 ? (
+                            <TableWrapper>
+                                <Table style={cssStyle.table}>
+                                    <Row data={weaponHeaders} style={cssStyle.tableHeader} textStyle={cssStyle.tableHeaderText} />
+                                    <Rows data={weaponRows} style={cssStyle.tableRow} textStyle={cssStyle.tableRowText} />
+                                </Table>
+                            </TableWrapper>
+                        ) : (
+                            <ThemedText style={cssStyle.emptyStateText}>{getEmptyStateMessage("weapons")}</ThemedText>
+                        )}
+                    </ThemedView>
                 </ThemedView>
 
                 {/* Equipment Section */}
-                <ThemedView style={styles.section}>
-                    <Collapsible title="Equipment">
-                        <ThemedView style={styles.tableContainer}>
-                            {equipmentRows.length > 0 ? (
-                                <TableWrapper>
-                                    <Table style={styles.table}>
-                                        <Row data={equipmentHeaders} style={styles.tableHeader} textStyle={styles.tableHeaderText} />
-                                        <Rows data={equipmentRows} style={styles.tableRow} textStyle={styles.tableRowText} />
-                                    </Table>
-                                </TableWrapper>
-                            ) : (
-                                <ThemedText style={styles.emptyStateText}>{getEmptyStateMessage("equipment")}</ThemedText>
-                            )}
-                        </ThemedView>
-                    </Collapsible>
+                <ThemedView style={cssStyle.sectionContainer}>
+                    <ThemedView style={cssStyle.tableContainer}>
+                        {equipmentRows.length > 0 ? (
+                            <TableWrapper>
+                                <Table style={cssStyle.table}>
+                                    <Row data={equipmentHeaders} style={cssStyle.tableHeader} textStyle={cssStyle.tableHeaderText} />
+                                    <Rows data={equipmentRows} style={cssStyle.tableRow} textStyle={cssStyle.tableRowText} />
+                                </Table>
+                            </TableWrapper>
+                        ) : (
+                            <ThemedText style={cssStyle.emptyStateText}>{getEmptyStateMessage("equipment")}</ThemedText>
+                        )}
+                    </ThemedView>
                 </ThemedView>
 
                 {/* Consumables Section */}
-                <ThemedView style={styles.section}>
-                    <Collapsible title="Consumables">
-                        <ThemedView style={styles.tableContainer}>
-                            {consumableRows.length > 0 ? (
-                                <TableWrapper>
-                                    <Table style={styles.table}>
-                                        <Row data={consumableHeaders} style={styles.tableHeader} textStyle={styles.tableHeaderText} />
-                                        <Rows data={consumableRows} style={styles.tableRow} textStyle={styles.tableRowText} />
-                                    </Table>
-                                </TableWrapper>
-                            ) : (
-                                <ThemedText style={styles.emptyStateText}>{getEmptyStateMessage("consumables")}</ThemedText>
-                            )}
-                        </ThemedView>
-                    </Collapsible>
+                <ThemedView style={cssStyle.sectionContainer}>
+                    <ThemedView style={cssStyle.tableContainer}>
+                        {consumableRows.length > 0 ? (
+                            <TableWrapper>
+                                <Table style={cssStyle.table}>
+                                    <Row data={consumableHeaders} style={cssStyle.tableHeader} textStyle={cssStyle.tableHeaderText} />
+                                    <Rows data={consumableRows} style={cssStyle.tableRow} textStyle={cssStyle.tableRowText} />
+                                </Table>
+                            </TableWrapper>
+                        ) : (
+                            <ThemedText style={cssStyle.emptyStateText}>{getEmptyStateMessage("consumables")}</ThemedText>
+                        )}
+                    </ThemedView>
                 </ThemedView>
             </ThemedView>
 
@@ -417,107 +411,3 @@ export default function InventoryScreen() {
         </ThemedView>
     );
 }
-
-const styles = StyleSheet.create({
-    container: {
-        flex: 1,
-        padding: 16,
-    },
-    contentContainer: {
-        flex: 1,
-    },
-    section: {
-        marginBottom: 16,
-    },
-    sectionTitle: {
-        marginBottom: 8,
-        fontSize: 18,
-        fontWeight: "bold",
-    },
-    attunedItemsContainer: {
-        padding: 16,
-        backgroundColor: "rgba(0, 0, 0, 0.05)",
-        borderRadius: 8,
-        alignItems: "center",
-        justifyContent: "center",
-        minHeight: 100,
-    },
-    emptyStateText: {
-        color: "#888",
-        fontStyle: "italic",
-    },
-    tableContainer: {
-        marginTop: 10,
-        borderRadius: 8,
-        overflow: "hidden",
-    },
-    table: {
-        width: "100%",
-        marginVertical: 8,
-    },
-    tableHeader: {
-        height: 40,
-        backgroundColor: "#f0f0f0",
-    },
-    tableHeaderText: {
-        textAlign: "center",
-        fontWeight: "bold",
-        color: "#333",
-    },
-    tableRow: {
-        height: 40,
-        backgroundColor: "rgba(255, 255, 255, 0.7)",
-    },
-    tableRowText: {
-        fontSize: 14,
-        textAlign: "center",
-        padding: 8,
-    },
-    toggleButton: {
-        padding: 6,
-        borderRadius: 4,
-        width: 60,
-        alignItems: "center",
-        justifyContent: "center",
-    },
-    buttonActive: {
-        backgroundColor: "#333333", // Black for inactive
-    },
-    buttonInactive: {
-        backgroundColor: "#4CAF50", // Green for active
-    },
-    toggleDisabled: {
-        opacity: 0.5,
-    },
-    toggleText: {
-        color: "white",
-        fontSize: 10,
-        fontWeight: "bold",
-    },
-    titleContainer: {
-        flexDirection: "row",
-        gap: 10,
-    },
-    circleButtonContainer: {
-        position: "absolute",
-        bottom: 20,
-        right: 20,
-        width: 60,
-        height: 60,
-        borderRadius: 30,
-        backgroundColor: "#007AFF",
-        justifyContent: "center",
-        alignItems: "center",
-        elevation: 5,
-        shadowColor: "#000",
-        shadowOffset: { width: 0, height: 2 },
-        shadowOpacity: 0.25,
-        shadowRadius: 3.84,
-    },
-    circleButton: {
-        flex: 1,
-        justifyContent: "center",
-        alignItems: "center",
-        borderRadius: 30,
-    },
-});

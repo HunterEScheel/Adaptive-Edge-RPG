@@ -3,12 +3,10 @@ import { ListManager } from "@/components/Common/ListManager";
 import { RootState } from "@/store/rootReducer";
 import { updateMultipleFields } from "@/store/slices/baseSlice";
 import { MagicSchool, addMagicSchool, removeMagicSchool, setMagicSchoolCredit } from "@/store/slices/magicSlice";
-import { FontAwesome } from "@expo/vector-icons";
 import React, { useState } from "react";
-import { Alert, FlatList, Modal, Pressable, ScrollView, View } from "react-native";
+import { Alert, FlatList, Modal, Pressable, View } from "react-native";
 import { useDispatch, useSelector } from "react-redux";
 import { ThemedText } from "../ThemedText";
-import { ThemedView } from "../ThemedView";
 
 // List of available magic schools that can be purchased
 const AVAILABLE_SCHOOLS: Omit<MagicSchool, "id">[] = [
@@ -126,7 +124,7 @@ export function MagicSchoolManager() {
                 <ThemedText style={cssStyle.title}>{item.name}</ThemedText>
                 <ThemedText style={cssStyle.subtitle}>{item.description}</ThemedText>
             </View>
-            <Pressable style={[cssStyle.compactButton, cssStyle.dangerButton]} onPress={() => handleRemoveSchool(item.id)}>
+            <Pressable style={[cssStyle.centered, cssStyle.secondaryButton]} onPress={() => handleRemoveSchool(item.id)}>
                 <ThemedText style={cssStyle.smallButtonText}>×</ThemedText>
             </Pressable>
         </View>
@@ -163,7 +161,7 @@ export function MagicSchoolManager() {
                             ListEmptyComponent={<ThemedText style={cssStyle.emptyText}>You've learned all available magic schools!</ThemedText>}
                         />
 
-                        <Pressable style={cssStyle.dangerButton} onPress={() => setModalVisible(false)}>
+                        <Pressable style={cssStyle.secondaryButton} onPress={() => setModalVisible(false)}>
                             <ThemedText style={cssStyle.buttonText}>Close</ThemedText>
                         </Pressable>
                     </View>

@@ -5,7 +5,6 @@ import React, { useState } from "react";
 import { Modal, Pressable, View } from "react-native";
 import { useDispatch, useSelector } from "react-redux";
 import { ThemedText } from "../ThemedText";
-import { ThemedView } from "../ThemedView";
 import { IconSymbol } from "../ui/IconSymbol";
 
 // Cost per point of increase
@@ -81,7 +80,7 @@ export function StatUpgrader({ statType, compact = false, visible, onClose }: St
     if (compact) {
         return (
             <>
-                <Pressable style={[cssStyle.actionButton, { backgroundColor: statColor }]} onPress={openModal} accessibilityLabel={`Upgrade max ${statName}`}>
+                <Pressable style={[cssStyle.primaryButton, { backgroundColor: statColor }]} onPress={openModal} accessibilityLabel={`Upgrade max ${statName}`}>
                     <IconSymbol name={icon} size={16} color="#FFFFFF" />
                     <ThemedText style={cssStyle.buttonText}>+</ThemedText>
                 </Pressable>
@@ -102,8 +101,7 @@ export function StatUpgrader({ statType, compact = false, visible, onClose }: St
 
                         <View style={cssStyle.container}>
                             <ThemedText style={cssStyle.skillDescription}>
-                                Adjust your maximum {statName.toLowerCase()}. Each point costs {costPerPoint} BP. You'll get a refund when decreasing
-                                the value.
+                                Adjust your maximum {statName.toLowerCase()}. Each point costs {costPerPoint} BP. You'll get a refund when decreasing the value.
                             </ThemedText>
                         </View>
 
@@ -118,14 +116,14 @@ export function StatUpgrader({ statType, compact = false, visible, onClose }: St
                                 <View style={cssStyle.headerRow}>
                                     <View style={cssStyle.buttonGroup}>
                                         <Pressable
-                                            style={[cssStyle.levelButton, cssStyle.dangerButton]}
+                                            style={[cssStyle.centered, cssStyle.secondaryButton]}
                                             onPress={() => handleAdjust(-5)}
                                             disabled={currentValue <= 10}
                                         >
                                             <ThemedText style={cssStyle.buttonText}>-5</ThemedText>
                                         </Pressable>
                                         <Pressable
-                                            style={[cssStyle.levelButton, cssStyle.dangerButton]}
+                                            style={[cssStyle.centered, cssStyle.secondaryButton]}
                                             onPress={() => handleAdjust(-1)}
                                             disabled={currentValue <= 10}
                                         >
@@ -140,14 +138,14 @@ export function StatUpgrader({ statType, compact = false, visible, onClose }: St
 
                                     <View style={cssStyle.buttonGroup}>
                                         <Pressable
-                                            style={[cssStyle.levelButton, cssStyle.successButton]}
+                                            style={[cssStyle.centered, cssStyle.primaryButton]}
                                             onPress={() => handleAdjust(1)}
                                             disabled={character.base.buildPointsRemaining < costPerPoint}
                                         >
                                             <ThemedText style={cssStyle.buttonText}>+1</ThemedText>
                                         </Pressable>
                                         <Pressable
-                                            style={[cssStyle.levelButton, cssStyle.successButton]}
+                                            style={[cssStyle.centered, cssStyle.primaryButton]}
                                             onPress={() => handleAdjust(5)}
                                             disabled={character.base.buildPointsRemaining < costPerPoint * 5}
                                         >

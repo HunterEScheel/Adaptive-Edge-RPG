@@ -105,16 +105,13 @@ export default function CombatScreen() {
                             </ThemedView>
                             <ThemedView style={cssStyle.skillControls}>
                                 <Pressable
-                                    style={[cssStyle.centered, cssStyle.levelButton, cssStyle.dangerButton]}
+                                    style={[cssStyle.centered, cssStyle.centered, cssStyle.secondaryButton]}
                                     onPress={() => handleSkillChange("dodge", -1)}
                                 >
                                     <ThemedText style={cssStyle.smallButtonText}>-</ThemedText>
                                 </Pressable>
                                 <ThemedText style={cssStyle.valueText}>{character.skills.dodge || 0}</ThemedText>
-                                <Pressable
-                                    style={[cssStyle.centered, cssStyle.levelButton, cssStyle.successButton]}
-                                    onPress={() => handleSkillChange("dodge", 1)}
-                                >
+                                <Pressable style={[cssStyle.centered, cssStyle.centered, cssStyle.primaryButton]} onPress={() => handleSkillChange("dodge", 1)}>
                                     <ThemedText style={cssStyle.smallButtonText}>+</ThemedText>
                                 </Pressable>
                             </ThemedView>
@@ -129,16 +126,13 @@ export default function CombatScreen() {
                             </ThemedView>
                             <ThemedView style={cssStyle.skillControls}>
                                 <Pressable
-                                    style={[cssStyle.centered, cssStyle.levelButton, cssStyle.dangerButton]}
+                                    style={[cssStyle.centered, cssStyle.centered, cssStyle.secondaryButton]}
                                     onPress={() => handleSkillChange("parry", -1)}
                                 >
                                     <ThemedText style={cssStyle.smallButtonText}>-</ThemedText>
                                 </Pressable>
                                 <ThemedText style={cssStyle.valueText}>{character.skills.parry || 0}</ThemedText>
-                                <Pressable
-                                    style={[cssStyle.centered, cssStyle.levelButton, cssStyle.successButton]}
-                                    onPress={() => handleSkillChange("parry", 1)}
-                                >
+                                <Pressable style={[cssStyle.centered, cssStyle.centered, cssStyle.primaryButton]} onPress={() => handleSkillChange("parry", 1)}>
                                     <ThemedText style={cssStyle.smallButtonText}>+</ThemedText>
                                 </Pressable>
                             </ThemedView>

@@ -22,33 +22,13 @@ export const cssStyle = StyleSheet.create<ResponsiveStylesheet>({
     secondaryButton: {
         backgroundColor: app_theme.secondary_component_bg,
     },
-    actionButton: {
-        backgroundColor: "#007AFF",
-        borderRadius: 8,
-        display: "flex",
-        flexDirection: "row",
-        alignItems: "center",
-        justifyContent: "center",
-    },
-    dangerButton: {
-        backgroundColor: "#F44336",
-    },
-    successButton: {
-        backgroundColor: "#4CAF50",
-    },
     disabledButton: {
         backgroundColor: "#ccc",
     },
-    compactButton: {
+    centered: {
         width: 36,
         height: 36,
         borderRadius: 18,
-    },
-    levelButton: {
-        width: 30,
-        height: 30,
-        borderRadius: 15,
-        backgroundColor: "#007AFF",
     },
     buttonText: {
         color: "#FFFFFF",
@@ -210,10 +190,6 @@ export const cssStyle = StyleSheet.create<ResponsiveStylesheet>({
         justifyContent: "space-between",
         alignItems: "center",
         marginBottom: 8,
-    },
-    centered: {
-        alignItems: "center",
-        justifyContent: "center",
     },
     buttonGroup: {
         flexDirection: "row",
