@@ -8,6 +8,7 @@ import { StatusBar } from "expo-status-bar";
 import * as React from "react";
 import { Platform, Text, View } from "react-native";
 import { Provider } from "react-redux";
+import { ResponsiveProvider } from "./contexts/ResponsiveContext";
 const createSagaMiddleware = require("redux-saga").default;
 
 // Error boundary component to catch rendering errors
@@ -79,28 +80,30 @@ export default function RootLayout() {
         <ErrorBoundaryWrapper>
             <Provider store={store}>
                 <ThemeProvider value={DefaultTheme}>
-                    <View style={{ flex: 1 }}>
-                        <ErrorBoundaryWrapper>
-                            <Stack
-                                screenOptions={{
-                                    headerShown: false,
-                                    animation: Platform.OS === "web" ? undefined : "fade",
-                                    contentStyle: { flex: 1 },
-                                }}
-                            >
-                                <SafeStackScreen name="(tabs)" options={{ headerShown: false }} />
-                                <SafeStackScreen name="welcome" />
-                                <SafeStackScreen
-                                    name="+not-found"
-                                    options={{
+                    <ResponsiveProvider>
+                        <View style={{ flex: 1 }}>
+                            <ErrorBoundaryWrapper>
+                                <Stack
+                                    screenOptions={{
                                         headerShown: false,
-                                        contentStyle: { backgroundColor: "white" },
+                                        animation: Platform.OS === "web" ? undefined : "fade",
+                                        contentStyle: { flex: 1 },
                                     }}
-                                />
-                            </Stack>
-                            <StatusBar style="auto" />
-                        </ErrorBoundaryWrapper>
-                    </View>
+                                >
+                                    <SafeStackScreen name="(tabs)" options={{ headerShown: false }} />
+                                    <SafeStackScreen name="welcome" />
+                                    <SafeStackScreen
+                                        name="+not-found"
+                                        options={{
+                                            headerShown: false,
+                                            contentStyle: { backgroundColor: "white" },
+                                        }}
+                                    />
+                                </Stack>
+                                <StatusBar style="auto" />
+                            </ErrorBoundaryWrapper>
+                        </View>
+                    </ResponsiveProvider>
                 </ThemeProvider>
             </Provider>
         </ErrorBoundaryWrapper>

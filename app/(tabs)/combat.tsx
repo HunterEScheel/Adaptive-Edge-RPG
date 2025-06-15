@@ -88,107 +88,93 @@ export default function CombatScreen() {
         <ScrollView>
             <ThemedView>
                 {/* Defensive Skills Section */}
-                <ThemedView style={cssStyle.sectionContainer}>
-                    <ThemedText style={cssStyle.sectionHeader}>Defensive Skills</ThemedText>
-                    <ThemedView style={cssStyle.headerRow}>
+                <ThemedText style={cssStyle.subtitle}>Defensive Skills</ThemedText>
+                <ThemedView style={cssStyle.container}>
+                    <ThemedView style={cssStyle.sectionContainer}>
                         {/* Dodge Skill */}
-                        <ThemedView style={[cssStyle.compactSkillRow, { flex: 1, marginRight: 8 }]}>
-                            <ThemedView style={cssStyle.skillInfo}>
-                                <ThemedText style={cssStyle.skillName}>Dodge</ThemedText>
-                                <ThemedText style={cssStyle.skillDescription}>Adds to AC</ThemedText>
-                                {character.inventory.armor?.armorClassification === "Medium" && (
-                                    <ThemedText style={cssStyle.skillPenalty}>Medium Armor: -1</ThemedText>
-                                )}
-                                {character.inventory.armor?.armorClassification === "Heavy" && (
-                                    <ThemedText style={cssStyle.skillPenalty}>Heavy Armor: 0</ThemedText>
-                                )}
-                            </ThemedView>
-                            <ThemedView style={cssStyle.skillControls}>
-                                <Pressable
-                                    style={[cssStyle.centered, cssStyle.centered, cssStyle.secondaryButton]}
-                                    onPress={() => handleSkillChange("dodge", -1)}
-                                >
-                                    <ThemedText style={cssStyle.smallButtonText}>-</ThemedText>
-                                </Pressable>
-                                <ThemedText style={cssStyle.valueText}>{character.skills.dodge || 0}</ThemedText>
-                                <Pressable style={[cssStyle.centered, cssStyle.centered, cssStyle.primaryButton]} onPress={() => handleSkillChange("dodge", 1)}>
-                                    <ThemedText style={cssStyle.smallButtonText}>+</ThemedText>
-                                </Pressable>
-                            </ThemedView>
+                        <ThemedView style={cssStyle.containerColors}>
+                            <ThemedText style={cssStyle.sectionTitle}>Dodge</ThemedText>
+                            <ThemedText style={cssStyle.hint}>Adds to AC</ThemedText>
+                            {character.inventory.armor?.armorClassification === "Medium" && (
+                                <ThemedText style={cssStyle.description}>Medium Armor: -1</ThemedText>
+                            )}
+                            {character.inventory.armor?.armorClassification === "Heavy" && <ThemedText style={cssStyle.description}>Heavy Armor: 0</ThemedText>}
                         </ThemedView>
+                        <ThemedView style={cssStyle.containerColors}>
+                            <Pressable style={[cssStyle.defaultButton, cssStyle.secondaryColors]} onPress={() => handleSkillChange("dodge", -1)}>
+                                <ThemedText style={cssStyle.secondaryText}>-</ThemedText>
+                            </Pressable>
+                            <ThemedText style={cssStyle.description}>{character.skills.dodge || 0}</ThemedText>
+                            <Pressable style={[cssStyle.defaultButton, cssStyle.primaryColors]} onPress={() => handleSkillChange("dodge", 1)}>
+                                <ThemedText style={cssStyle.primaryText}>+</ThemedText>
+                            </Pressable>
+                        </ThemedView>
+                    </ThemedView>
 
-                        {/* Parry Skill */}
-                        <ThemedView style={[cssStyle.compactSkillRow, { flex: 1, marginLeft: 8 }]}>
-                            <ThemedView style={cssStyle.skillInfo}>
-                                <ThemedText style={cssStyle.skillName}>Parry</ThemedText>
-                                <ThemedText style={cssStyle.skillDescription}>1 Action (response)</ThemedText>
-                                <ThemedText style={cssStyle.skillPenalty}>Subtract 1d4 + {character.skills.parry || 0} from attack</ThemedText>
-                            </ThemedView>
-                            <ThemedView style={cssStyle.skillControls}>
-                                <Pressable
-                                    style={[cssStyle.centered, cssStyle.centered, cssStyle.secondaryButton]}
-                                    onPress={() => handleSkillChange("parry", -1)}
-                                >
-                                    <ThemedText style={cssStyle.smallButtonText}>-</ThemedText>
-                                </Pressable>
-                                <ThemedText style={cssStyle.valueText}>{character.skills.parry || 0}</ThemedText>
-                                <Pressable style={[cssStyle.centered, cssStyle.centered, cssStyle.primaryButton]} onPress={() => handleSkillChange("parry", 1)}>
-                                    <ThemedText style={cssStyle.smallButtonText}>+</ThemedText>
-                                </Pressable>
-                            </ThemedView>
-                        </ThemedView>
+                    {/* Parry Skill */}
+                    <ThemedView style={cssStyle.sectionContainer}>
+                        <ThemedText style={cssStyle.description}>Parry</ThemedText>
+                        <ThemedText style={cssStyle.hint}>1 Action (response)</ThemedText>
+                        <ThemedText style={cssStyle.hint}>Subtract 1d4 + {character.skills.parry || 0} from attack</ThemedText>
+                    </ThemedView>
+                    <ThemedView style={cssStyle.containerColors}>
+                        <Pressable style={[cssStyle.defaultButton, cssStyle.secondaryColors]} onPress={() => handleSkillChange("parry", -1)}>
+                            <ThemedText style={cssStyle.secondaryText}>-</ThemedText>
+                        </Pressable>
+                        <ThemedText style={cssStyle.description}>{character.skills.parry || 0}</ThemedText>
+                        <Pressable style={[cssStyle.defaultButton, cssStyle.primaryColors]} onPress={() => handleSkillChange("parry", 1)}>
+                            <ThemedText style={cssStyle.primaryText}>+</ThemedText>
+                        </Pressable>
                     </ThemedView>
                 </ThemedView>
 
                 {/* Equipped Weapons Section */}
-                <ThemedView style={cssStyle.sectionContainer}>
-                    <ThemedText style={cssStyle.sectionHeader}>Equipped Weapons</ThemedText>
-                    <ThemedView style={cssStyle.tableContainer}>
-                        <Table style={cssStyle.table}>
-                            <Row
-                                data={["Weapon", "Attack" + " (Attribute + Skill + Bonus)", "Damage", "Properties"]}
-                                style={cssStyle.tableHeader}
-                                textStyle={cssStyle.tableHeaderText}
-                            />
-                            <Rows
-                                data={equippedWeapons.map((weapon) => {
-                                    // Convert enum value to actual die type (d4, d6, etc.)
-                                    let diceType = "d4";
-                                    switch (weapon.damageDice) {
-                                        case 1:
-                                            diceType = "d4";
-                                            break;
-                                        case 2:
-                                            diceType = "d6";
-                                            break;
-                                        case 3:
-                                            diceType = "d8";
-                                            break;
-                                        case 4:
-                                            diceType = "d10";
-                                            break;
-                                        case 5:
-                                            diceType = "d12";
-                                            break;
-                                        case 6:
-                                            diceType = "d20";
-                                            break;
-                                        default:
-                                            diceType = `d${weapon.damageDice}`; // Fallback
-                                    }
+                <ThemedView style={cssStyle.container}>
+                    <ThemedText style={cssStyle.subtitle}>Equipped Weapons</ThemedText>
+                    <Table>
+                        <Row
+                            data={["Weapon", "Attack" + " (Attribute + Skill + Bonus)", "Damage", "Properties"]}
+                            style={[cssStyle.row]}
+                            textStyle={[cssStyle.defaultBold, cssStyle.description]}
+                        />
+                        <Rows
+                            data={equippedWeapons.map((weapon) => {
+                                // Convert enum value to actual die type (d4, d6, etc.)
+                                let diceType = "d4";
+                                switch (weapon.damageDice) {
+                                    case 1:
+                                        diceType = "d4";
+                                        break;
+                                    case 2:
+                                        diceType = "d6";
+                                        break;
+                                    case 3:
+                                        diceType = "d8";
+                                        break;
+                                    case 4:
+                                        diceType = "d10";
+                                        break;
+                                    case 5:
+                                        diceType = "d12";
+                                        break;
+                                    case 6:
+                                        diceType = "d20";
+                                        break;
+                                    default:
+                                        diceType = `d${weapon.damageDice}`; // Fallback
+                                }
 
-                                    return [
-                                        weapon.name + ": " + weapon.weaponHeft + " - " + weapon.weaponType,
-                                        formatAttackBonus(getAttackBonus(weapon)),
-                                        `${weapon.damageDiceCount}${diceType} ${formatAttackBonus(getDamageBonus(weapon))}`,
-                                        [weapon.versatile && "Versatile", weapon.twoHanded && "Two-handed"].filter(Boolean).join(", "),
-                                    ];
-                                })}
-                                style={cssStyle.tableRow}
-                                textStyle={cssStyle.tableRowText}
-                            />
-                        </Table>
-                    </ThemedView>
+                                return [
+                                    weapon.name + ": " + weapon.weaponHeft + " - " + weapon.weaponType,
+                                    formatAttackBonus(getAttackBonus(weapon)),
+                                    `${weapon.damageDiceCount}${diceType} ${formatAttackBonus(getDamageBonus(weapon))}`,
+                                    [weapon.versatile && "Versatile", weapon.twoHanded && "Two-handed"].filter(Boolean).join(", "),
+                                ];
+                            })}
+                            style={cssStyle.row}
+                            textStyle={cssStyle.description}
+                        />
+                    </Table>
                 </ThemedView>
 
                 {/* Weapon Skills Section */}

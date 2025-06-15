@@ -1,40 +1,36 @@
 /**
  * Responsive stylesheet utility for device-specific styling.
- *
- * Automatically selects the appropriate stylesheet (phone, tablet, desktop)
- * based on device screen dimensions.
+ * 
+ * This file provides backward compatibility with the old responsive system.
+ * New components should use the ResponsiveContext instead.
  */
-import { Dimensions } from "react-native";
-import { cssStyle as desktopStyles } from "./desktop";
-import { cssStyle as phoneStyles } from "./phone";
-import { cssStyle as tabletStyles } from "./tablet";
 import { ResponsiveStylesheet } from "./theme";
+import { useResponsive } from "../contexts/ResponsiveContext";
 
-// Device breakpoints
-const PHONE_MAX_WIDTH = 480;
-const TABLET_MAX_WIDTH = 1024;
-
-/**
- * Get the appropriate stylesheet based on current device dimensions
- */
-export const getResponsiveStyles: () => ResponsiveStylesheet = () => {
-    const { width } = Dimensions.get("window");
-
-    if (width <= PHONE_MAX_WIDTH) {
-        return phoneStyles;
-    } else if (width <= TABLET_MAX_WIDTH) {
-        return tabletStyles;
-    } else {
-        return desktopStyles;
-    }
-};
+// Re-export the ResponsiveStylesheet type
+export type { ResponsiveStylesheet } from "./theme";
 
 /**
  * Hook to get responsive styles that updates when dimensions change
+ * @deprecated Use useResponsive() from '../contexts/ResponsiveContext' instead
  */
-export const useResponsiveStyles = () => {
-    return getResponsiveStyles();
+export const useResponsiveStyles = (): ResponsiveStylesheet => {
+  const { styles } = useResponsive();
+  return styles;
 };
 
-// Export the responsive styles as default
-export const cssStyle = getResponsiveStyles();
+/**
+ * Default export for components that can't use hooks
+ * @deprecated Use useResponsive() from '../contexts/ResponsiveContext' instead
+ */
+export const cssStyle: ResponsiveStylesheet = {
+  // This is a fallback and won't update with screen size changes
+  // Components should use the ResponsiveContext instead
+  ...useResponsive().styles,
+  
+  // Add any additional properties that might be needed for backward compatibility
+  container: {},
+  centered: {},
+  row: {},
+  // Add other style properties as needed
+} as ResponsiveStylesheet;
