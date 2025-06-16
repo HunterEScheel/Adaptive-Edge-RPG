@@ -1,7 +1,8 @@
-import { useResponsive } from "@/app/contexts/ResponsiveContext";
+import { useResponsiveStyles } from "@/app/styles/responsive";
 import { RootState } from "@/store/rootReducer";
 import { updateMultipleFields } from "@/store/slices/baseSlice";
 import React, { useEffect, useState } from "react";
+import { FaMinus, FaPlus } from "react-icons/fa";
 import { Pressable, StyleSheet, TextInput, View } from "react-native";
 import { useDispatch, useSelector } from "react-redux";
 import { StatAdjuster } from "../MainPage/StatAdjuster";
@@ -30,7 +31,7 @@ const localStyles = StyleSheet.create({
 });
 
 export function CharacterHeader() {
-    const { styles } = useResponsive();
+    const styles = useResponsiveStyles();
     const character = useSelector((state: RootState) => state.character);
     const base = useSelector((state: RootState) => state.character.base);
     const dispatch = useDispatch();
@@ -77,17 +78,17 @@ export function CharacterHeader() {
 
     if (!base) {
         return (
-            <View style={styles.container}>
+            <View style={styles.sectionHeaderContainer}>
                 <ThemedText>Loading...</ThemedText>
             </View>
         );
     }
 
     return (
-        <ThemedView style={styles.container}>
+        <ThemedView>
             <View style={styles.row}>
                 {/* Character Name (Editable) */}
-                <View style={[styles.container, styles.row]}>
+                <View style={[styles.sectionContainer, styles.row]}>
                     {isEditingName ? (
                         <View style={styles.inputContainer}>
                             <TextInput style={styles.input} value={nameValue} onChangeText={setNameValue} autoFocus onBlur={handleNameEdit} />
@@ -112,85 +113,100 @@ export function CharacterHeader() {
                     <BuildPointManager compact={true} />
                 </View>
             </View>
+            <ThemedView style={styles.sectionHeaderContainer}>
+                <ThemedView style={styles.attributeSectionContainer}>
+                    <ThemedView style={styles.attributeRowContainer}>
+                        <StatAdjuster statName="STR" fieldName="str" minValue={-4} maxValue={5} compact={true} isAttribute />
+                        <StatAdjuster statName="DEX" fieldName="dex" minValue={-4} maxValue={5} compact={true} isAttribute />
+                        <StatAdjuster statName="CON" fieldName="con" minValue={-4} maxValue={5} compact={true} isAttribute />
+                    </ThemedView>
+                    <ThemedView style={styles.attributeRowContainer}>
+                        <StatAdjuster statName="INT" fieldName="int" minValue={-4} maxValue={5} compact={true} isAttribute />
+                        <StatAdjuster statName="WIS" fieldName="wis" minValue={-4} maxValue={5} compact={true} isAttribute />
+                        <StatAdjuster statName="CHA" fieldName="cha" minValue={-4} maxValue={5} compact={true} isAttribute />
+                    </ThemedView>
+                </ThemedView>
 
-            {/* Left Side - Ability Scores */}
-            <View style={styles.sectionContainer}>
+                {/* Left Side - Ability Scores */}
+                {/* Right Side - Character Stats */}
                 <View style={styles.row}>
-                    <StatAdjuster statName="STR" fieldName="str" minValue={-4} maxValue={5} compact={true} />
-                    <StatAdjuster statName="DEX" fieldName="dex" minValue={-4} maxValue={5} compact={true} />
-                    <StatAdjuster statName="CON" fieldName="con" minValue={-4} maxValue={5} compact={true} />
-                </View>
-                <View style={styles.row}>
-                    <StatAdjuster statName="INT" fieldName="int" minValue={-4} maxValue={5} compact={true} />
-                    <StatAdjuster statName="WIS" fieldName="wis" minValue={-4} maxValue={5} compact={true} />
-                    <StatAdjuster statName="CHA" fieldName="cha" minValue={-4} maxValue={5} compact={true} />
-                </View>
-            </View>
-
-            {/* Right Side - Character Stats */}
-            <View style={styles.container}>
-                <View style={styles.row}>
-                    {/* HP with current/max display */}
-                    <View style={[styles.container, styles.row]}>
-                        <ThemedText style={styles.subtitle}>HP</ThemedText>
-                        <View style={[styles.container, styles.row]}>
+                    <View style={styles.sectionContainer}>
+                        <View style={[styles.row]}>
                             <Pressable
-                                style={[styles.defaultButton, styles.primaryColors]}
+                                style={[styles.condensedButton, styles.secondaryColors]}
+                                onPress={() => handleDamage("hp")}
+                                disabled={base.hitPoints <= 0}
+                            >
+                                <ThemedText style={[styles.description, styles.secondaryText]}>
+                                    <FaMinus />
+                                </ThemedText>
+                            </Pressable>
+                            <Pressable style={styles.sectionHeaderContainer} onPress={() => setHpModalVisible(true)}>
+                                <ThemedText style={[styles.description, styles.defaultBold, { marginLeft: 12, marginRight: 12 }]}>HP</ThemedText>
+
+                                <ThemedText style={styles.description}>
+                                    {base.hitPoints}/{base.maxHitPoints}
+                                </ThemedText>
+                            </Pressable>
+                            <Pressable
+                                style={[styles.condensedButton, styles.primaryColors]}
                                 onPress={() => handleHeal("hp")}
                                 disabled={base.hitPoints >= base.maxHitPoints}
                             >
-                                <ThemedText style={[styles.description, styles.primaryText]}>HEAL</ThemedText>
-                            </Pressable>
-                            <ThemedText style={styles.description}>{base.hitPoints}</ThemedText>
-                            <Pressable style={[styles.defaultButton, styles.secondaryColors]} onPress={() => handleDamage("hp")} disabled={base.hitPoints <= 0}>
-                                <ThemedText style={[styles.description, styles.secondaryText]}>DAMAGE</ThemedText>
+                                <ThemedText style={[styles.description, styles.primaryText]}>
+                                    <FaPlus />
+                                </ThemedText>
                             </Pressable>
                         </View>
-                        <ThemedText style={styles.statLabel}>/</ThemedText>
-                        <Pressable onPress={() => setHpModalVisible(true)} style={styles.primaryButton}>
-                            <ThemedText style={styles.statLabel}>{base.maxHitPoints}</ThemedText>
-                        </Pressable>
                         <StatUpgrader statType="hp" visible={hpModalVisible} onClose={() => setHpModalVisible(false)} />
                     </View>
-                </View>
-                {/* Energy with current/max display */}
-                <View style={[styles.statContainer]}>
-                    <ThemedText style={styles.statLabel}>Energy</ThemedText>
-                    <View style={styles.currentValueContainer}>
-                        <Pressable
-                            style={[styles.centered, styles.primaryButton]}
-                            onPress={() => handleHeal("energy")}
-                            disabled={base.energy >= base.maxEnergy}
-                        >
-                            <ThemedText style={styles.description}>ABSORB</ThemedText>
-                        </Pressable>
-                        <ThemedText style={styles.valueText}>{base.energy}</ThemedText>
-                        <Pressable style={[styles.centered, styles.secondaryButton]} onPress={() => handleDamage("energy")} disabled={base.energy <= 0}>
-                            <ThemedText style={styles.description}>EXPEND</ThemedText>
-                        </Pressable>
-                        <ThemedText style={styles.description}>/</ThemedText>
-                        <Pressable onPress={() => setEnergyModalVisible(true)} style={styles.primaryColors}>
-                            <ThemedText style={[styles.primaryText, styles.description]}>{base.maxEnergy}</ThemedText>
-                        </Pressable>
+                    <View style={styles.sectionContainer}>
+                        <View style={[styles.row]}>
+                            <Pressable
+                                style={[styles.condensedButton, styles.secondaryColors]}
+                                onPress={() => handleDamage("energy")}
+                                disabled={base.hitPoints <= 0}
+                            >
+                                <ThemedText style={[styles.description, styles.secondaryText]}>
+                                    <FaMinus />
+                                </ThemedText>
+                            </Pressable>
+                            <View>
+                                <Pressable style={styles.sectionHeaderContainer} onPress={() => setEnergyModalVisible(true)}>
+                                    <ThemedText style={[styles.description, styles.defaultBold, { marginLeft: 12, marginRight: 12 }]}>EP</ThemedText>
+                                </Pressable>
+                                <ThemedText style={styles.description}>
+                                    {base.energy}/{base.maxEnergy}
+                                </ThemedText>
+                            </View>
+                            <Pressable
+                                style={[styles.condensedButton, styles.primaryColors]}
+                                onPress={() => handleHeal("energy")}
+                                disabled={base.energy >= base.maxEnergy}
+                            >
+                                <ThemedText style={[styles.description, styles.primaryText]}>
+                                    <FaPlus />
+                                </ThemedText>
+                            </Pressable>
+                        </View>{" "}
                         <StatUpgrader statType="energy" visible={energyModalVisible} onClose={() => setEnergyModalVisible(false)} />
                     </View>
-                    {/* AC */}
-                    <View style={[styles.statContainer, styles.centered]}>
+                    {/* Energy with current/max display */}
+                    <View style={[styles.sectionContainer]}>
+                        {/* AC */}
                         <Pressable onPress={() => setAcBreakdownModalVisible(true)}>
                             <ThemedText>AC: {calculateTotalAC(character)}</ThemedText>
                         </Pressable>
                         <ThemedText>
                             {character.inventory.armor?.armorClassification ? character.inventory.armor.armorClassification + " Armor" : ""}
                         </ThemedText>
-                        <ACBreakdownModal visible={acBreakdownModalVisible} onClose={() => setAcBreakdownModalVisible(false)} character={character} />
                     </View>
-
-                    {/* Speed */}
-                    <View style={[styles.statContainer, styles.centered]}>
+                    <View style={styles.sectionContainer}>
+                        <ACBreakdownModal visible={acBreakdownModalVisible} onClose={() => setAcBreakdownModalVisible(false)} character={character} />
                         <StatAdjuster statName="Speed" fieldName="movement" compact={true} />
                     </View>
                 </View>
-            </View>
+            </ThemedView>
         </ThemedView>
     );
 }

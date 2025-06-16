@@ -1,127 +1,49 @@
 import { StyleSheet } from "react-native";
-import { ResponsiveStylesheet, app_theme } from "./theme";
+import { ResponsiveStyles } from "./theme";
 
-export const cssStyle = StyleSheet.create<ResponsiveStylesheet>({
-    // BUTTONS
-    defaultButton: {
-        borderRadius: 8,
-        padding: 12,
-        alignItems: "center",
-        justifyContent: "center",
-    },
-    condensedButton: {
-        borderRadius: 20,
-        padding: 8,
-        width: 40,
-        height: 40,
-        alignItems: "center",
-        justifyContent: "center",
-    },
-    disabledButton: {
-        backgroundColor: "#e0e0e0",
-    },
-
-    // Color themes
-    primaryColors: {
-        backgroundColor: app_theme.primary_component_bg,
-    },
-    secondaryColors: {
-        backgroundColor: app_theme.secondary_component_bg,
-    },
-    containerColors: {
-        backgroundColor: "#f5f5f5",
-    },
-    disabledColors: {
-        backgroundColor: "#e0e0e0",
-    },
-
-    // Text Styles
-    defaultBold: {
-        fontWeight: "bold",
-    },
-    title: {
-        fontSize: 20,
-        fontWeight: "bold",
-        color: "#333",
-    },
-    sectionTitle: {
-        fontSize: 18,
-        fontWeight: "bold",
-        color: "#333",
-    },
-    subtitle: {
-        fontSize: 16,
-        fontWeight: "600",
-        color: "#444",
-    },
-    description: {
-        fontSize: 14,
-        color: "#666",
-    },
-    hint: {
-        fontSize: 12,
-        color: "#888",
-        fontStyle: "italic",
-    },
-    primaryText: {
-        color: app_theme.primary_component_text,
-    },
-    secondaryText: {
-        color: app_theme.secondary_component_text,
-    },
-
-    //Containers
-    container: {
+export const cssStyle = StyleSheet.create<ResponsiveStyles>({
+    attributeRowContainer: {
+        width: "100%",
         display: "flex",
-        flex: 12,
-        padding: 16,
-    },
-    sectionContainer: {
-        backgroundColor: "#f5f5f5",
-        borderRadius: 8,
-        padding: 16,
-        marginBottom: 16,
-        minWidth: "100%",
+        flexDirection: "row",
+        alignItems: "center",
+        justifyContent: "space-between",
     },
     card: {
         backgroundColor: "#fff",
-        borderRadius: 8,
-        padding: 16,
-        marginBottom: 16,
+        borderRadius: 16,
+        padding: 28,
+        marginBottom: 24,
         shadowColor: "#000",
         shadowOffset: { width: 0, height: 2 },
         shadowOpacity: 0.1,
-        shadowRadius: 4,
-        elevation: 2,
+        shadowRadius: 8,
+        elevation: 4,
     },
-    row: {
-        flexDirection: "row",
+    sectionContainer: {
+        backgroundColor: "#fafafa",
+        borderRadius: 12,
+        padding: 20,
+        marginVertical: 12,
+        maxWidth: "100%",
+    },
+    sectionHeaderContainer: {
         alignItems: "center",
         marginBottom: 12,
     },
-
-    //Modals
-    modal: {
+    sectionItem: {
         flex: 1,
-        justifyContent: "center",
-        backgroundColor: "rgba(0,0,0,0.5)",
-        padding: 20,
+        width: "100%",
+        height: 40,
     },
-    modalContent: {
-        backgroundColor: "#fff",
-        borderRadius: 12,
-        padding: 24,
+    attributeSectionContainer: {
+        width: "100%",
+        display: "flex",
+        flexDirection: "row",
+        alignItems: "center",
     },
-
-    //Inputs
-    input: {
-        borderWidth: 1,
-        borderColor: "#ddd",
-        borderRadius: 8,
-        padding: 12,
-        backgroundColor: "#fff",
-    },
-    inputContainer: {
-        marginBottom: 16,
+    attribute: {
+        width: "30%",
+        height: 40,
     },
 });

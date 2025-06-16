@@ -1,36 +1,41 @@
 /**
  * Responsive stylesheet utility for device-specific styling.
- * 
- * This file provides backward compatibility with the old responsive system.
- * New components should use the ResponsiveContext instead.
+ *
+ * Automatically selects the appropriate stylesheet (phone, tablet, desktop)
+ * based on device screen dimensions.
  */
-import { ResponsiveStylesheet } from "./theme";
-import { useResponsive } from "../contexts/ResponsiveContext";
+import { Dimensions } from "react-native";
+import { cssStyle as desktopStyles } from "./desktop";
+import { cssStyle as generalStyles } from "./general";
+import { cssStyle as phoneStyles } from "./phone";
+import { cssStyle as tabletStyles } from "./tablet";
+import { ConsistentStyles, ResponsiveStyles } from "./theme";
 
-// Re-export the ResponsiveStylesheet type
-export type { ResponsiveStylesheet } from "./theme";
+// Device breakpoints
+const PHONE_MAX_WIDTH = 480;
+const TABLET_MAX_WIDTH = 1024;
 
 /**
- * Hook to get responsive styles that updates when dimensions change
- * @deprecated Use useResponsive() from '../contexts/ResponsiveContext' instead
+ * Get the appropriate stylesheet based on current device dimensions
  */
-export const useResponsiveStyles = (): ResponsiveStylesheet => {
-  const { styles } = useResponsive();
-  return styles;
+export const getResponsiveStyles: () => ResponsiveStyles & ConsistentStyles = () => {
+    const { width } = Dimensions.get("window");
+
+    if (width <= PHONE_MAX_WIDTH) {
+        return { ...phoneStyles, ...generalStyles };
+    } else if (width <= TABLET_MAX_WIDTH) {
+        return { ...tabletStyles, ...generalStyles };
+    } else {
+        return { ...desktopStyles, ...generalStyles };
+    }
 };
 
 /**
- * Default export for components that can't use hooks
- * @deprecated Use useResponsive() from '../contexts/ResponsiveContext' instead
+ * Hook to get responsive styles that updates when dimensions change
  */
-export const cssStyle: ResponsiveStylesheet = {
-  // This is a fallback and won't update with screen size changes
-  // Components should use the ResponsiveContext instead
-  ...useResponsive().styles,
-  
-  // Add any additional properties that might be needed for backward compatibility
-  container: {},
-  centered: {},
-  row: {},
-  // Add other style properties as needed
-} as ResponsiveStylesheet;
+export const useResponsiveStyles = () => {
+    return getResponsiveStyles();
+};
+
+// Export the responsive styles as default
+export const cssStyle = getResponsiveStyles();

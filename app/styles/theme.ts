@@ -7,13 +7,24 @@ export const app_theme = {
     secondary_component_text: "#AAF",
 };
 
+export interface ResponsiveStyles {
+    card: ViewStyle;
+    sectionContainer: ViewStyle;
+    sectionHeaderContainer: ViewStyle;
+    sectionItem: ViewStyle;
+    attributeSectionContainer: ViewStyle;
+    attributeRowContainer: ViewStyle;
+    attribute: ViewStyle;
+}
+
 // Comprehensive type definition for responsive stylesheets
 // This ensures all device stylesheets (phone.tsx, tablet.tsx, desktop.tsx) have consistent properties
-export interface ResponsiveStylesheet {
+export interface ConsistentStyles {
     // BUTTONS
     defaultButton: ViewStyle;
     condensedButton: ViewStyle;
     disabledButton: ViewStyle;
+    clickableStat: ViewStyle;
 
     // Color themes
     primaryColors: ViewStyle;
@@ -32,9 +43,6 @@ export interface ResponsiveStylesheet {
     secondaryText: TextStyle;
 
     //Containers
-    sectionContainer: ViewStyle;
-    container: ViewStyle;
-    card: ViewStyle;
     row: ViewStyle;
 
     //Modals

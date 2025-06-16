@@ -4,6 +4,7 @@ import { RootState } from "@/store/rootReducer";
 import { updateMultipleFields } from "@/store/slices/baseSlice";
 import { updateWeaponSkills } from "@/store/slices/skillsSlice";
 import React, { useState } from "react";
+import { FaTrash } from "react-icons/fa";
 import { Alert, Modal, Pressable, ScrollView, TouchableOpacity, View } from "react-native";
 import { useDispatch, useSelector } from "react-redux";
 import { ListManager } from "../Common/ListManager";
@@ -193,36 +194,32 @@ export function WeaponSkillManager() {
 
     const renderSkillItem = ({ item }: { item: WeaponSkill }) => {
         return (
-            <View style={cssStyle.skillItem}>
-                <View style={cssStyle.skillInfo}>
-                    <ThemedText style={cssStyle.skillName}>
-                        {item.weaponHeft} - {item.weaponType}
-                    </ThemedText>
-                    <ThemedText style={cssStyle.smallText}>Cost: {calculateTotalSkillCost(item.level)} BP</ThemedText>
-                </View>
-                <View style={cssStyle.skillControls}>
-                    <View style={cssStyle.levelContainer}>
-                        <Pressable
-                            style={[cssStyle.centered, cssStyle.secondaryButton]}
-                            onPress={() => handleLevelChange(item, false)}
-                            disabled={item.level <= 1}
-                        >
-                            <ThemedText style={cssStyle.smallButtonText}>-</ThemedText>
-                        </Pressable>
-                        <View style={cssStyle.levelDisplay}>
-                            <ThemedText style={cssStyle.valueText}>{item.level}</ThemedText>
-                        </View>
-                        <Pressable
-                            style={[cssStyle.centered, cssStyle.primaryButton]}
-                            onPress={() => handleLevelChange(item, true)}
-                            disabled={item.level >= 10}
-                        >
-                            <ThemedText style={cssStyle.smallButtonText}>+</ThemedText>
-                        </Pressable>
-                        <Pressable style={[cssStyle.centered, cssStyle.secondaryButton]} onPress={() => handleDeleteSkill(item)}>
-                            <ThemedText style={cssStyle.smallButtonText}>×</ThemedText>
-                        </Pressable>
-                    </View>
+            <View style={cssStyle.sectionContainer}>
+                <ThemedText style={cssStyle.sectionTitle}>
+                    {item.weaponHeft} - {item.weaponType}
+                </ThemedText>
+                <ThemedText style={cssStyle.description}>Cost: {calculateTotalSkillCost(item.level)} BP</ThemedText>
+                <View style={cssStyle.sectionContainer}>
+                    <Pressable
+                        style={[cssStyle.condensedButton, cssStyle.secondaryColors]}
+                        onPress={() => handleLevelChange(item, false)}
+                        disabled={item.level <= 1}
+                    >
+                        <ThemedText style={[cssStyle.description, cssStyle.secondaryText]}>-</ThemedText>
+                    </Pressable>
+                    <ThemedText style={cssStyle.description}>{item.level}</ThemedText>
+                    <Pressable
+                        style={[cssStyle.defaultButton, cssStyle.primaryColors]}
+                        onPress={() => handleLevelChange(item, true)}
+                        disabled={item.level >= 10}
+                    >
+                        <ThemedText style={cssStyle.primaryText}>+</ThemedText>
+                    </Pressable>
+                    <Pressable style={[cssStyle.defaultButton]} onPress={() => handleDeleteSkill(item)}>
+                        <ThemedText style={cssStyle.description}>
+                            <FaTrash />
+                        </ThemedText>
+                    </Pressable>
                 </View>
             </View>
         );

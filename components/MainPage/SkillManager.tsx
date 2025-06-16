@@ -1,4 +1,4 @@
-import { findMatchingSkills } from "@/components/ai/compareEmbedding";
+import { findMatchingResults } from "@/components/ai/compareEmbedding";
 import { ListManager } from "@/components/Common/ListManager";
 import { Skill, calculateSkillCost, calculateTotalSkillCost } from "@/constants/Skills";
 import embeddingDatabase from "@/services/embeddingDatabase";
@@ -138,7 +138,7 @@ export function SkillManager() {
 
         try {
             setLoadingSuggestions(true);
-            const matchingSkills = await findMatchingSkills(skillName, false);
+            const matchingSkills = await findMatchingResults(skillName, false);
 
             // Show all matches with at least 35% similarity
             setSuggestions(matchingSkills.filter((match: { skill: string; similarity: number }) => match.similarity > 0.35));

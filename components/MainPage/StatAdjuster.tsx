@@ -1,4 +1,4 @@
-import { cssStyle } from "@/app/styles/phone";
+import { useResponsiveStyles } from "@/app/styles/responsive";
 import { RootState } from "@/store/rootReducer";
 import { updateField, updateMultipleFields } from "@/store/slices/baseSlice";
 import FontAwesome from "@expo/vector-icons/FontAwesome";
@@ -15,10 +15,12 @@ interface StatAdjusterProps {
     maxValue?: number;
     showBy5?: boolean;
     compact?: boolean;
+    isAttribute?: boolean;
 }
 
-export function StatAdjuster({ statName, fieldName, icon, minValue = 0, maxValue = 999, showBy5 = false, compact = false }: StatAdjusterProps) {
+export function StatAdjuster({ statName, fieldName, icon, minValue = 0, maxValue = 999, showBy5 = false, compact = false, isAttribute = false }: StatAdjusterProps) {
     // Check if there are any equipped items affecting this stat
+    const cssStyle = useResponsiveStyles();
     const base = useSelector((state: RootState) => state.character.base);
     const inventory = useSelector((state: RootState) => state.character.inventory);
     const equipment = inventory.equipment || [];
@@ -129,21 +131,15 @@ export function StatAdjuster({ statName, fieldName, icon, minValue = 0, maxValue
     if (compact) {
         return (
             <>
-                <Pressable
-                    style={[cssStyle.statContainer, { minWidth: 70, height: 70, padding: 8 }]}
-                    onPress={() => setModalVisible(true)}
-                    accessibilityLabel={`Adjust ${statName}`}
-                >
+                <Pressable style={[isAttribute ? cssStyle.attribute : cssStyle.clickableStat, { margin: 4 }]} onPress={() => setModalVisible(true)} accessibilityLabel={`Adjust ${statName}`}>
                     {icon && <FontAwesome name={icon as any} style={{ fontSize: 16, marginBottom: 4 }} />}
-                    <View style={cssStyle.row}>
-                        <ThemedText style={[cssStyle.valueText, { fontSize: 18 }]}>{currentValue}</ThemedText>
-                        {hasEquipmentBonus && (
-                            <View style={cssStyle.bonusIndicator}>
-                                <FontAwesome name="plus" size={6} color="#4CAF50" />
-                                <ThemedText style={cssStyle.bonusText}>{equipmentBonus}</ThemedText>
-                            </View>
-                        )}
-                    </View>
+                    <ThemedText style={[cssStyle.primaryText, { fontSize: 18 }]}>{currentValue}</ThemedText>
+                    {hasEquipmentBonus && (
+                        <View style={cssStyle.bonusIndicator}>
+                            <FontAwesome name="plus" size={6} color="#4CAF50" />
+                            <ThemedText style={cssStyle.bonusText}>{equipmentBonus}</ThemedText>
+                        </View>
+                    )}
                     <ThemedText style={[cssStyle.smallText, { fontSize: 12, marginTop: 4 }]}>{statName}</ThemedText>
                 </Pressable>
                 {renderModal()}
@@ -153,7 +149,7 @@ export function StatAdjuster({ statName, fieldName, icon, minValue = 0, maxValue
 
     return (
         <>
-            <Pressable style={cssStyle.statContainer} onPress={() => setModalVisible(true)} accessibilityLabel={`Adjust ${statName}`}>
+            <Pressable style={cssStyle.attribute} onPress={() => setModalVisible(true)} accessibilityLabel={`Adjust ${statName}`}>
                 {icon && <FontAwesome name={icon as any} style={{ fontSize: 20, marginBottom: 4 }} />}
                 <View style={cssStyle.row}>
                     <ThemedText style={cssStyle.valueText}>{currentValue}</ThemedText>

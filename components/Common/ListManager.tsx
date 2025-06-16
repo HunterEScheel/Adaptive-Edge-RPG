@@ -18,11 +18,11 @@ interface ListManagerProps<T> {
 
 export function ListManager<T>({ title, description, data, renderItem, keyExtractor, onAddPress, addButtonText, emptyStateText }: ListManagerProps<T>) {
     return (
-        <View style={cssStyle.container}>
+        <View style={[cssStyle.container]}>
             {/* Header with title and description */}
-            <View style={cssStyle.headerRow}>
+            <View style={[cssStyle.sectionContainer, cssStyle.row, { justifyContent: "space-between" }]}>
                 <ThemedText style={cssStyle.sectionTitle}>{title}</ThemedText>
-                <ThemedText style={cssStyle.smallText}>{description}</ThemedText>
+                <ThemedText style={cssStyle.hint}>{description}</ThemedText>
             </View>
 
             {/* List content */}
@@ -35,9 +35,9 @@ export function ListManager<T>({ title, description, data, renderItem, keyExtrac
             )}
 
             {/* Add button */}
-            <TouchableOpacity style={cssStyle.primaryButton} onPress={onAddPress}>
+            <TouchableOpacity style={[cssStyle.defaultButton, cssStyle.primaryColors]} onPress={onAddPress}>
                 <FontAwesome name="plus" size={16} color="white" />
-                <ThemedText style={cssStyle.buttonText}>{addButtonText}</ThemedText>
+                <ThemedText style={cssStyle.primaryText}>{addButtonText}</ThemedText>
             </TouchableOpacity>
         </View>
     );
