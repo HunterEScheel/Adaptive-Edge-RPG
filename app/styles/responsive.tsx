@@ -30,12 +30,5 @@ export const getResponsiveStyles: () => ResponsiveStyles & ConsistentStyles = ()
     }
 };
 
-/**
- * Hook to get responsive styles that updates when dimensions change
- */
-export const useResponsiveStyles = () => {
-    return getResponsiveStyles();
-};
-
-// Export the responsive styles as default
+// Export the responsive styles as default (for backwards compatibility)
 export const cssStyle = getResponsiveStyles();

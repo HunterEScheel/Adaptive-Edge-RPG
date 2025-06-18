@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { Alert, FlatList, Modal, Pressable, TextInput, View } from "react-native";
 import { useDispatch, useSelector } from "react-redux";
 
-import { cssStyle } from "@/app/styles/phone";
+import { useResponsiveStyles } from "@/app/contexts/ResponsiveContext";
 import { RootState } from "@/store/rootReducer";
 import { addAttack, addPassive, Attack, Passive, removeAttack, removePassive } from "@/store/slices/abilitiesSlice";
 import { FontAwesome } from "@expo/vector-icons";
@@ -10,6 +10,7 @@ import { ThemedText } from "../ThemedText";
 import { ThemedView } from "../ThemedView";
 
 export function CombatAbilitiesManager() {
+    const cssStyle = useResponsiveStyles();
     const dispatch = useDispatch();
     const character = useSelector((state: RootState) => state.character);
     const attacks = character.abilities.attacks || [];

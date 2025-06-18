@@ -1,6 +1,6 @@
 import { Text, type TextProps } from "react-native";
 
-import { cssStyle } from "@/app/styles/responsive";
+import { useResponsiveStyles } from "@/app/contexts/ResponsiveContext";
 import { useThemeColor } from "@/hooks/useThemeColor";
 
 export type ThemedTextProps = TextProps & {
@@ -10,6 +10,7 @@ export type ThemedTextProps = TextProps & {
 };
 
 export function ThemedText({ style, lightColor, darkColor, type = "default", ...rest }: ThemedTextProps) {
+    const cssStyle = useResponsiveStyles();
     const color = useThemeColor({ light: lightColor, dark: darkColor }, "text");
 
     return (

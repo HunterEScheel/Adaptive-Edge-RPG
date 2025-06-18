@@ -1,4 +1,4 @@
-import { cssStyle } from "@/app/styles/phone";
+import { useResponsiveStyles } from "@/app/contexts/ResponsiveContext";
 import { DELETE_PRESET, FETCH_PRESETS, SAVE_PRESET } from "@/store/actions";
 import { RootState } from "@/store/rootReducer";
 import { Character, setCharacter } from "@/store/slices/characterSlice";
@@ -11,6 +11,7 @@ import { ThemedText } from "../ThemedText";
 import { ThemedView } from "../ThemedView";
 
 const CharacterPresetManager = () => {
+    const cssStyle = useResponsiveStyles();
     const dispatch = useDispatch();
     const character = useSelector((state: RootState) => state.character);
     const presets = useSelector((state: RootState) => state.presets);

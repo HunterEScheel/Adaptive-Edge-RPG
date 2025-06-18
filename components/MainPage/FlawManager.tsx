@@ -8,9 +8,10 @@ import { FlawSeverity, addFlaw, removeFlaw, Flaw } from "@/store/slices/abilitie
 import { updateMultipleFields } from "@/store/slices/baseSlice";
 import { ThemedText } from "../ThemedText";
 import { ThemedView } from "../ThemedView";
-import { cssStyle } from "../../app/styles/phone";
+import { useResponsiveStyles } from "@/app/contexts/ResponsiveContext";
 
 export const FlawManager = () => {
+  const cssStyle = useResponsiveStyles();
   const dispatch = useDispatch();
   const flaws = useSelector((state: RootState) => state.character.abilities.flaws || []);
   const base = useSelector((state: RootState) => state.character.base);

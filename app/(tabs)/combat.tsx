@@ -1,4 +1,4 @@
-import { cssStyle } from "@/app/styles/responsive";
+import { useResponsiveStyles, useResponsive } from "@/app/contexts/ResponsiveContext";
 import { CombatAttacks } from "@/components/Combat/CombatAttacks";
 import { CombatPassives } from "@/components/Combat/CombatPassives";
 import { WeaponSkillManager } from "@/components/Combat/WeaponSkillsManager";
@@ -14,6 +14,8 @@ import { Row, Rows, Table } from "react-native-table-component";
 import { useDispatch, useSelector } from "react-redux";
 
 export default function CombatScreen() {
+    const cssStyle = useResponsiveStyles();
+    const { isPhone, responsiveStyle } = useResponsive();
     const dispatch = useDispatch();
     const character = useSelector((state: RootState) => state.character);
 
@@ -89,42 +91,64 @@ export default function CombatScreen() {
             <ThemedView>
                 {/* Defensive Skills Section */}
                 <ThemedText style={cssStyle.subtitle}>Defensive Skills</ThemedText>
-                <ThemedView style={cssStyle.container}>
-                    <ThemedView style={cssStyle.sectionContainer}>
-                        {/* Dodge Skill */}
-                        <ThemedView style={cssStyle.containerColors}>
-                            <ThemedText style={cssStyle.sectionTitle}>Dodge</ThemedText>
-                            <ThemedText style={cssStyle.hint}>Adds to AC</ThemedText>
-                            {character.inventory.armor?.armorClassification === "Medium" && (
-                                <ThemedText style={cssStyle.description}>Medium Armor: -1</ThemedText>
-                            )}
-                            {character.inventory.armor?.armorClassification === "Heavy" && <ThemedText style={cssStyle.description}>Heavy Armor: 0</ThemedText>}
-                        </ThemedView>
-                        <ThemedView style={cssStyle.containerColors}>
-                            <Pressable style={[cssStyle.defaultButton, cssStyle.secondaryColors]} onPress={() => handleSkillChange("dodge", -1)}>
-                                <ThemedText style={cssStyle.secondaryText}>-</ThemedText>
-                            </Pressable>
-                            <ThemedText style={cssStyle.description}>{character.skills.dodge || 0}</ThemedText>
-                            <Pressable style={[cssStyle.defaultButton, cssStyle.primaryColors]} onPress={() => handleSkillChange("dodge", 1)}>
-                                <ThemedText style={cssStyle.primaryText}>+</ThemedText>
-                            </Pressable>
+                <ThemedView style={[
+                    cssStyle.container,
+                    responsiveStyle(
+                        { flexDirection: 'column' }, // Phone: stack vertically
+                        { flexDirection: 'row', justifyContent: 'space-between', gap: 16 }, // Tablet/Desktop: side-by-side
+                        { flexDirection: 'row', justifyContent: 'space-between', gap: 20 } // Desktop: more gap
+                    )
+                ]}>
+                    {/* Dodge Skill */}
+                    <ThemedView style={responsiveStyle(
+                        { flex: 1 }, // Phone: full width
+                        { flex: 0.48 }, // Tablet/Desktop: ~half width with gap
+                        { flex: 0.48 }
+                    )}>
+                        <ThemedView style={[cssStyle.sectionContainer, { paddingVertical: 8 }]}>
+                            <ThemedView style={[cssStyle.containerColors, { paddingVertical: 8 }]}>
+                                <ThemedText style={cssStyle.sectionTitle}>Dodge</ThemedText>
+                                <ThemedText style={[cssStyle.hint, { marginTop: 4 }]}>Adds to AC</ThemedText>
+                                {character.inventory.armor?.armorClassification === "Medium" && (
+                                    <ThemedText style={[cssStyle.description, { fontSize: 12 }]}>Medium Armor: -1</ThemedText>
+                                )}
+                                {character.inventory.armor?.armorClassification === "Heavy" && 
+                                    <ThemedText style={[cssStyle.description, { fontSize: 12 }]}>Heavy Armor: 0</ThemedText>}
+                            </ThemedView>
+                            <ThemedView style={[cssStyle.containerColors, { flexDirection: 'row', alignItems: 'center', paddingVertical: 8 }]}>
+                                <Pressable style={[cssStyle.defaultButton, cssStyle.secondaryColors]} onPress={() => handleSkillChange("dodge", -1)}>
+                                    <ThemedText style={cssStyle.secondaryText}>-</ThemedText>
+                                </Pressable>
+                                <ThemedText style={[cssStyle.description, { marginHorizontal: 16 }]}>{character.skills.dodge || 0}</ThemedText>
+                                <Pressable style={[cssStyle.defaultButton, cssStyle.primaryColors]} onPress={() => handleSkillChange("dodge", 1)}>
+                                    <ThemedText style={cssStyle.primaryText}>+</ThemedText>
+                                </Pressable>
+                            </ThemedView>
                         </ThemedView>
                     </ThemedView>
 
                     {/* Parry Skill */}
-                    <ThemedView style={cssStyle.sectionContainer}>
-                        <ThemedText style={cssStyle.description}>Parry</ThemedText>
-                        <ThemedText style={cssStyle.hint}>1 Action (response)</ThemedText>
-                        <ThemedText style={cssStyle.hint}>Subtract 1d4 + {character.skills.parry || 0} from attack</ThemedText>
-                    </ThemedView>
-                    <ThemedView style={cssStyle.containerColors}>
-                        <Pressable style={[cssStyle.defaultButton, cssStyle.secondaryColors]} onPress={() => handleSkillChange("parry", -1)}>
-                            <ThemedText style={cssStyle.secondaryText}>-</ThemedText>
-                        </Pressable>
-                        <ThemedText style={cssStyle.description}>{character.skills.parry || 0}</ThemedText>
-                        <Pressable style={[cssStyle.defaultButton, cssStyle.primaryColors]} onPress={() => handleSkillChange("parry", 1)}>
-                            <ThemedText style={cssStyle.primaryText}>+</ThemedText>
-                        </Pressable>
+                    <ThemedView style={responsiveStyle(
+                        { flex: 1 }, // Phone: full width
+                        { flex: 0.48 }, // Tablet/Desktop: ~half width with gap
+                        { flex: 0.48 }
+                    )}>
+                        <ThemedView style={[cssStyle.sectionContainer, { paddingVertical: 8 }]}>
+                            <ThemedView style={[cssStyle.containerColors, { paddingVertical: 8 }]}>
+                                <ThemedText style={cssStyle.sectionTitle}>Parry</ThemedText>
+                                <ThemedText style={[cssStyle.hint, { marginTop: 4 }]}>1 Action (response)</ThemedText>
+                                <ThemedText style={[cssStyle.hint, { fontSize: 12 }]}>Subtract 1d4 + {character.skills.parry || 0} from attack</ThemedText>
+                            </ThemedView>
+                            <ThemedView style={[cssStyle.containerColors, { flexDirection: 'row', alignItems: 'center', paddingVertical: 8 }]}>
+                                <Pressable style={[cssStyle.defaultButton, cssStyle.secondaryColors]} onPress={() => handleSkillChange("parry", -1)}>
+                                    <ThemedText style={cssStyle.secondaryText}>-</ThemedText>
+                                </Pressable>
+                                <ThemedText style={[cssStyle.description, { marginHorizontal: 16 }]}>{character.skills.parry || 0}</ThemedText>
+                                <Pressable style={[cssStyle.defaultButton, cssStyle.primaryColors]} onPress={() => handleSkillChange("parry", 1)}>
+                                    <ThemedText style={cssStyle.primaryText}>+</ThemedText>
+                                </Pressable>
+                            </ThemedView>
+                        </ThemedView>
                     </ThemedView>
                 </ThemedView>
 

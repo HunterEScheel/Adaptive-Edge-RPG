@@ -4,7 +4,7 @@ import Animated, { interpolate, useAnimatedRef, useAnimatedStyle, useScrollViewO
 
 import { ThemedView } from "@/components/ThemedView";
 import { useBottomTabOverflow } from "@/components/ui/TabBarBackground";
-import { cssStyle } from "@/app/styles/responsive";
+import { useResponsiveStyles } from "@/app/contexts/ResponsiveContext";
 
 const HEADER_HEIGHT = 250;
 
@@ -14,6 +14,7 @@ type Props = PropsWithChildren<{
 }>;
 
 export default function ParallaxScrollView({ children, headerImage, headerBackgroundColor }: Props) {
+    const cssStyle = useResponsiveStyles();
     // Simple implementation without try/catch to avoid syntax errors
     const colorScheme = "light";
     const scrollRef = useAnimatedRef<Animated.ScrollView>();

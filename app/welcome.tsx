@@ -1,4 +1,4 @@
-import { cssStyle } from "@/app/styles/responsive";
+import { useResponsiveStyles } from "@/app/contexts/ResponsiveContext";
 import { ThemedText } from "@/components/ThemedText";
 import { ThemedView } from "@/components/ThemedView";
 import { ImportFile } from "@/components/Utility/FilePick";
@@ -16,6 +16,7 @@ import { Button } from "react-native";
 import { useDispatch } from "react-redux";
 
 export default function WelcomeScreen() {
+    const cssStyle = useResponsiveStyles();
     const [showImport, setShowImport] = useState(false);
     const dispatch = useDispatch();
     const router = useRouter();

@@ -31,13 +31,14 @@ const styles = StyleSheet.create({
 
 import { Row, Rows, Table, TableWrapper } from "react-native-table-component";
 import { useDispatch, useSelector } from "react-redux";
-import { cssStyle } from "../styles/responsive";
+import { useResponsiveStyles } from "@/app/contexts/ResponsiveContext";
 
 type Props = {
     onPress: () => void;
 };
 
 function CircleButton({ onPress }: Props) {
+    const cssStyle = useResponsiveStyles();
     return (
         <Pressable style={cssStyle.condensedButton} onPress={onPress}>
             <MaterialIcons name="add" size={38} color="#25292e" />
@@ -46,6 +47,7 @@ function CircleButton({ onPress }: Props) {
 }
 
 export default function InventoryScreen() {
+    const cssStyle = useResponsiveStyles();
     const [modalOpen, setModalOpen] = useState(false);
     const character = useSelector((state: RootState) => state.character);
     const dispatch = useDispatch();

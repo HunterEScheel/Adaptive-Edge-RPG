@@ -1,4 +1,4 @@
-import { useResponsiveStyles } from "@/app/styles/responsive";
+import { useResponsive, useResponsiveStyles } from "@/app/contexts/ResponsiveContext";
 import { RootState } from "@/store/rootReducer";
 import { updateMultipleFields } from "@/store/slices/baseSlice";
 import React, { useEffect, useState } from "react";
@@ -32,6 +32,7 @@ const localStyles = StyleSheet.create({
 
 export function CharacterHeader() {
     const styles = useResponsiveStyles();
+    const { isPhone, isTablet, isDesktop, responsiveStyle } = useResponsive();
     const character = useSelector((state: RootState) => state.character);
     const base = useSelector((state: RootState) => state.character.base);
     const dispatch = useDispatch();
@@ -86,127 +87,217 @@ export function CharacterHeader() {
 
     return (
         <ThemedView>
-            <View style={styles.row}>
+            <View style={[styles.row, isPhone && { flexDirection: "column", alignItems: "stretch" }]}>
                 {/* Character Name (Editable) */}
-                <View style={[styles.sectionContainer, styles.row]}>
+                <View style={[styles.sectionContainer, styles.row, isPhone && { marginBottom: 8 }]}>
                     {isEditingName ? (
                         <View style={styles.inputContainer}>
                             <TextInput style={styles.input} value={nameValue} onChangeText={setNameValue} autoFocus onBlur={handleNameEdit} />
                         </View>
                     ) : (
-                        <Pressable onPress={handleNameClick}>
-                            <ThemedText type="subtitle" style={styles.input}>
-                                {base.name || "Unnamed Character"}
-                                <ThemedText style={styles.primaryText}> ✎</ThemedText>
-                            </ThemedText>
-                        </Pressable>
+                        <View style={{ display: "flex", flexDirection: "row", alignContent: "center", justifyContent: "space-between", width: "100%" }}>
+                            <Pressable onPress={handleNameClick}>
+                                <ThemedText type="subtitle" style={styles.input}>
+                                    {base.name || "Unnamed Character"}
+                                    <ThemedText style={styles.primaryText}> ✎</ThemedText>
+                                </ThemedText>
+                            </Pressable>
+                            <LongRestButton />
+                            <SaveButton />
+                            <PresetManagerButton />
+                            <BuildPointManager />
+                        </View>
                     )}
                 </View>
-
-                {/* Header Actions */}
-                <View style={styles.row}>
-                    <LongRestButton compact={true} />
-                    <View style={[styles.defaultButton, styles.primaryColors]}>
-                        <SaveButton compact={true} />
-                    </View>
-                    <PresetManagerButton compact={true} />
-                    <BuildPointManager compact={true} />
-                </View>
             </View>
-            <ThemedView style={styles.sectionHeaderContainer}>
-                <ThemedView style={styles.attributeSectionContainer}>
-                    <ThemedView style={styles.attributeRowContainer}>
+            <ThemedView style={[styles.sectionHeaderContainer, !isPhone && { flexDirection: "row", alignItems: "center", justifyContent: "space-between" }]}>
+                {/* Attributes Section */}
+                <ThemedView style={[styles.attributeSectionContainer, isPhone && { paddingVertical: 4 }, !isPhone && { flex: 1 }]}>
+                    <ThemedView style={[styles.attributeRowContainer, isPhone && { paddingHorizontal: 2, marginVertical: 1 }]}>
                         <StatAdjuster statName="STR" fieldName="str" minValue={-4} maxValue={5} compact={true} isAttribute />
                         <StatAdjuster statName="DEX" fieldName="dex" minValue={-4} maxValue={5} compact={true} isAttribute />
                         <StatAdjuster statName="CON" fieldName="con" minValue={-4} maxValue={5} compact={true} isAttribute />
                     </ThemedView>
-                    <ThemedView style={styles.attributeRowContainer}>
+                    <ThemedView style={[styles.attributeRowContainer, isPhone && { paddingHorizontal: 2, marginVertical: 1 }]}>
                         <StatAdjuster statName="INT" fieldName="int" minValue={-4} maxValue={5} compact={true} isAttribute />
                         <StatAdjuster statName="WIS" fieldName="wis" minValue={-4} maxValue={5} compact={true} isAttribute />
                         <StatAdjuster statName="CHA" fieldName="cha" minValue={-4} maxValue={5} compact={true} isAttribute />
                     </ThemedView>
                 </ThemedView>
 
-                {/* Left Side - Ability Scores */}
-                {/* Right Side - Character Stats */}
-                <View style={styles.row}>
-                    <View style={styles.sectionContainer}>
-                        <View style={[styles.row]}>
-                            <Pressable
-                                style={[styles.condensedButton, styles.secondaryColors]}
-                                onPress={() => handleDamage("hp")}
-                                disabled={base.hitPoints <= 0}
-                            >
-                                <ThemedText style={[styles.description, styles.secondaryText]}>
-                                    <FaMinus />
-                                </ThemedText>
-                            </Pressable>
-                            <Pressable style={styles.sectionHeaderContainer} onPress={() => setHpModalVisible(true)}>
-                                <ThemedText style={[styles.description, styles.defaultBold, { marginLeft: 12, marginRight: 12 }]}>HP</ThemedText>
-
-                                <ThemedText style={styles.description}>
-                                    {base.hitPoints}/{base.maxHitPoints}
-                                </ThemedText>
-                            </Pressable>
-                            <Pressable
-                                style={[styles.condensedButton, styles.primaryColors]}
-                                onPress={() => handleHeal("hp")}
-                                disabled={base.hitPoints >= base.maxHitPoints}
-                            >
-                                <ThemedText style={[styles.description, styles.primaryText]}>
-                                    <FaPlus />
-                                </ThemedText>
-                            </Pressable>
-                        </View>
-                        <StatUpgrader statType="hp" visible={hpModalVisible} onClose={() => setHpModalVisible(false)} />
-                    </View>
-                    <View style={styles.sectionContainer}>
-                        <View style={[styles.row]}>
-                            <Pressable
-                                style={[styles.condensedButton, styles.secondaryColors]}
-                                onPress={() => handleDamage("energy")}
-                                disabled={base.hitPoints <= 0}
-                            >
-                                <ThemedText style={[styles.description, styles.secondaryText]}>
-                                    <FaMinus />
-                                </ThemedText>
-                            </Pressable>
-                            <View>
-                                <Pressable style={styles.sectionHeaderContainer} onPress={() => setEnergyModalVisible(true)}>
-                                    <ThemedText style={[styles.description, styles.defaultBold, { marginLeft: 12, marginRight: 12 }]}>EP</ThemedText>
+                {/* Stats Section - Only wrap in separate container for tablet/desktop */}
+                {!isPhone && (
+                    <ThemedView style={{ flex: 1 }}>
+                        <View style={styles.statRow}>
+                            <View style={[styles.sectionContainer, { flex: 1, width: isTablet ? 100 : 120, margin: 4 }]}>
+                                <View style={[styles.row, { justifyContent: "center" }]}>
+                                    <Pressable
+                                        style={[styles.condensedButton, styles.secondaryColors, { width: 30, height: 30, padding: 4, marginHorizontal: 8 }]}
+                                        onPress={() => handleDamage("hp")}
+                                        disabled={base.hitPoints <= 0}
+                                    >
+                                        <ThemedText style={[styles.description, styles.secondaryText, { fontSize: 12 }]}>
+                                            <FaMinus />
+                                        </ThemedText>
+                                    </Pressable>
+                                    <Pressable
+                                        style={[styles.condensedButton, styles.primaryColors, { width: 30, height: 30, padding: 4, marginHorizontal: 8 }]}
+                                        onPress={() => handleHeal("hp")}
+                                        disabled={base.hitPoints >= base.maxHitPoints}
+                                    >
+                                        <ThemedText style={[styles.description, styles.primaryText, { fontSize: 12 }]}>
+                                            <FaPlus />
+                                        </ThemedText>
+                                    </Pressable>
+                                </View>
+                                <Pressable style={[styles.sectionHeaderContainer, { paddingHorizontal: 4 }]} onPress={() => setHpModalVisible(true)}>
+                                    <ThemedText style={[styles.description, styles.defaultBold, { fontSize: 16 }]}>HP</ThemedText>
+                                    <ThemedText style={[styles.description, { fontSize: 16 }]}>
+                                        {base.hitPoints}/{base.maxHitPoints}
+                                    </ThemedText>
                                 </Pressable>
-                                <ThemedText style={styles.description}>
-                                    {base.energy}/{base.maxEnergy}
+                                <StatUpgrader statType="hp" visible={hpModalVisible} onClose={() => setHpModalVisible(false)} />
+                            </View>
+                            <View style={[styles.sectionContainer, { flex: 1, width: isTablet ? 100 : 120, margin: 4 }]}>
+                                <View style={[styles.row, { justifyContent: "center" }]}>
+                                    <Pressable
+                                        style={[styles.condensedButton, styles.secondaryColors, { width: 30, height: 30, padding: 4, marginHorizontal: 8 }]}
+                                        onPress={() => handleDamage("energy")}
+                                        disabled={base.hitPoints <= 0}
+                                    >
+                                        <ThemedText style={[styles.description, styles.secondaryText, { fontSize: 12 }]}>
+                                            <FaMinus />
+                                        </ThemedText>
+                                    </Pressable>
+                                    <Pressable
+                                        style={[styles.condensedButton, styles.primaryColors, { width: 30, height: 30, padding: 4, marginHorizontal: 8 }]}
+                                        onPress={() => handleHeal("energy")}
+                                        disabled={base.energy >= base.maxEnergy}
+                                    >
+                                        <ThemedText style={[styles.description, styles.primaryText, { fontSize: 12 }]}>
+                                            <FaPlus />
+                                        </ThemedText>
+                                    </Pressable>
+                                </View>
+                                <View>
+                                    <Pressable style={[styles.sectionHeaderContainer, { paddingHorizontal: 4 }]} onPress={() => setEnergyModalVisible(true)}>
+                                        <ThemedText style={[styles.description, styles.defaultBold, { fontSize: 16 }]}>EP</ThemedText>
+                                        <ThemedText style={[styles.description, { fontSize: 16 }]}>
+                                            {base.energy}/{base.maxEnergy}
+                                        </ThemedText>
+                                    </Pressable>
+                                </View>
+                                <StatUpgrader statType="energy" visible={energyModalVisible} onClose={() => setEnergyModalVisible(false)} />
+                            </View>
+                            <View style={[styles.sectionContainer, { flex: 1, width: isTablet ? 90 : 100, margin: 4 }]}>
+                                <Pressable onPress={() => setAcBreakdownModalVisible(true)} style={{ alignItems: "center" }}>
+                                    <ThemedText style={{ fontSize: 16, fontWeight: "bold" }}>AC: {calculateTotalAC(character)}</ThemedText>
+                                </Pressable>
+                                <ThemedText style={{ fontSize: 14, textAlign: "center" }}>
+                                    {character.inventory.armor?.armorClassification ? character.inventory.armor.armorClassification : "No Armor"}
                                 </ThemedText>
                             </View>
-                            <Pressable
-                                style={[styles.condensedButton, styles.primaryColors]}
-                                onPress={() => handleHeal("energy")}
-                                disabled={base.energy >= base.maxEnergy}
-                            >
-                                <ThemedText style={[styles.description, styles.primaryText]}>
-                                    <FaPlus />
-                                </ThemedText>
-                            </Pressable>
-                        </View>{" "}
-                        <StatUpgrader statType="energy" visible={energyModalVisible} onClose={() => setEnergyModalVisible(false)} />
-                    </View>
-                    {/* Energy with current/max display */}
-                    <View style={[styles.sectionContainer]}>
-                        {/* AC */}
-                        <Pressable onPress={() => setAcBreakdownModalVisible(true)}>
-                            <ThemedText>AC: {calculateTotalAC(character)}</ThemedText>
-                        </Pressable>
-                        <ThemedText>
-                            {character.inventory.armor?.armorClassification ? character.inventory.armor.armorClassification + " Armor" : ""}
-                        </ThemedText>
-                    </View>
-                    <View style={styles.sectionContainer}>
-                        <ACBreakdownModal visible={acBreakdownModalVisible} onClose={() => setAcBreakdownModalVisible(false)} character={character} />
-                        <StatAdjuster statName="Speed" fieldName="movement" compact={true} />
-                    </View>
-                </View>
+                            <View style={[styles.sectionContainer, { flex: 1, width: isTablet ? 90 : 100, margin: 4 }]}>
+                                <ACBreakdownModal visible={acBreakdownModalVisible} onClose={() => setAcBreakdownModalVisible(false)} character={character} />
+                                <StatAdjuster statName="Speed" fieldName="movement" compact={true} />
+                            </View>
+                        </View>
+                    </ThemedView>
+                )}
             </ThemedView>
+
+            {/* Mobile Stats Section - Keep existing mobile layout */}
+            {isPhone && (
+                <ThemedView style={styles.sectionHeaderContainer}>
+                    <ThemedView style={styles.sectionHeaderContainer}>
+                        {/* Compact Stats Row - HP, EP, AC, Speed */}
+                        <View style={styles.statRow}>
+                            <View style={[styles.sectionContainer, { flex: 1, width: 90, margin: 4 }]}>
+                                <View style={[styles.row, { justifyContent: "center" }]}>
+                                    <Pressable
+                                        style={[
+                                            styles.condensedButton,
+                                            styles.secondaryColors,
+                                            isPhone && { width: 25, height: 25, padding: 2, marginHorizontal: 8 },
+                                        ]}
+                                        onPress={() => handleDamage("hp")}
+                                        disabled={base.hitPoints <= 0}
+                                    >
+                                        <ThemedText style={[styles.description, styles.secondaryText, isPhone && { fontSize: 10 }]}>
+                                            <FaMinus />
+                                        </ThemedText>
+                                    </Pressable>
+                                    <Pressable
+                                        style={[styles.condensedButton, styles.primaryColors, { width: 25, height: 25, padding: 2, marginHorizontal: 8 }]}
+                                        onPress={() => handleHeal("hp")}
+                                        disabled={base.hitPoints >= base.maxHitPoints}
+                                    >
+                                        <ThemedText style={[styles.description, styles.primaryText, isPhone && { fontSize: 10 }]}>
+                                            <FaPlus />
+                                        </ThemedText>
+                                    </Pressable>
+                                </View>
+                                <Pressable style={[styles.sectionHeaderContainer, { paddingHorizontal: 4 }]} onPress={() => setHpModalVisible(true)}>
+                                    <ThemedText style={[styles.description, styles.defaultBold, { fontSize: 14 }]}>HP</ThemedText>
+                                    <ThemedText style={[styles.description, { fontSize: 14 }]}>
+                                        {base.hitPoints}/{base.maxHitPoints}
+                                    </ThemedText>
+                                </Pressable>
+                                <StatUpgrader statType="hp" visible={hpModalVisible} onClose={() => setHpModalVisible(false)} />
+                            </View>
+                            <View style={[styles.sectionContainer, { flex: 1, width: 90, margin: 4 }]}>
+                                <View style={[styles.row, { justifyContent: "center" }]}>
+                                    <Pressable
+                                        style={[styles.condensedButton, styles.secondaryColors, { width: 25, height: 25, padding: 2, marginHorizontal: 8 }]}
+                                        onPress={() => handleDamage("energy")}
+                                        disabled={base.hitPoints <= 0}
+                                    >
+                                        <ThemedText style={[styles.description, styles.secondaryText, isPhone && { fontSize: 10 }]}>
+                                            <FaMinus />
+                                        </ThemedText>
+                                    </Pressable>
+                                    <Pressable
+                                        style={[
+                                            styles.condensedButton,
+                                            styles.primaryColors,
+                                            isPhone && { width: 25, height: 25, padding: 2, marginHorizontal: 8 },
+                                        ]}
+                                        onPress={() => handleHeal("energy")}
+                                        disabled={base.energy >= base.maxEnergy}
+                                    >
+                                        <ThemedText style={[styles.description, styles.primaryText, isPhone && { fontSize: 10 }]}>
+                                            <FaPlus />
+                                        </ThemedText>
+                                    </Pressable>
+                                </View>{" "}
+                                <View>
+                                    <Pressable style={[styles.sectionHeaderContainer, { paddingHorizontal: 4 }]} onPress={() => setEnergyModalVisible(true)}>
+                                        <ThemedText style={[styles.description, styles.defaultBold, { fontSize: 14 }]}>EP</ThemedText>
+                                        <ThemedText style={[styles.description, { fontSize: 14 }]}>
+                                            {base.energy}/{base.maxEnergy}
+                                        </ThemedText>
+                                    </Pressable>
+                                </View>
+                                <StatUpgrader statType="energy" visible={energyModalVisible} onClose={() => setEnergyModalVisible(false)} />
+                            </View>
+                            {/* Energy with current/max display */}
+                            <View style={[styles.sectionContainer, { flex: 1, width: 80, margin: 2 }]}>
+                                {/* AC */}
+                                <Pressable onPress={() => setAcBreakdownModalVisible(true)} style={{ alignItems: "center" }}>
+                                    <ThemedText style={{ fontSize: 14, fontWeight: "bold" }}>AC: {calculateTotalAC(character)}</ThemedText>
+                                </Pressable>
+                                <ThemedText style={{ fontSize: 12, textAlign: "center" }}>
+                                    {character.inventory.armor?.armorClassification ? character.inventory.armor.armorClassification : "No Armor"}
+                                </ThemedText>
+                            </View>
+                            <View style={[styles.sectionContainer, { flex: 1, width: 80, margin: 2 }]}>
+                                <ACBreakdownModal visible={acBreakdownModalVisible} onClose={() => setAcBreakdownModalVisible(false)} character={character} />
+                                <StatAdjuster statName="Speed" fieldName="movement" compact={true} />
+                            </View>
+                        </View>
+                    </ThemedView>
+                </ThemedView>
+            )}
         </ThemedView>
     );
 }

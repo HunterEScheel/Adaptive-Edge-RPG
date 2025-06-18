@@ -7,6 +7,7 @@ import { Dimensions, ScrollView, View } from "react-native";
 import BouncyCheckbox from "react-native-bouncy-checkbox";
 import { Dropdown } from "react-native-element-dropdown";
 import { default as VersatileInput } from "../../Input";
+import { useResponsiveStyles } from "@/app/contexts/ResponsiveContext";
 
 // Get screen dimensions for responsive layout
 const { width, height } = Dimensions.get("window");
@@ -52,6 +53,7 @@ const weaponTypeOptions = [
 ];
 
 export function AddWeapon({ onChange }: { onChange: (weapon: Partial<iItem>) => void }) {
+    const styles = useResponsiveStyles();
     const [weapon, setWeapon] = useState<ExtendedWeapon>({
         id: "",
         name: "",

@@ -1,4 +1,4 @@
-import { cssStyle } from "@/app/styles/phone";
+import { useResponsiveStyles } from "@/app/contexts/ResponsiveContext";
 import { RootState } from "@/store/rootReducer";
 import { updateGold } from "@/store/slices/inventorySlice";
 import React, { useState } from "react";
@@ -10,6 +10,7 @@ import { Gp } from "../ui/Gp";
 import { IconSymbol } from "../ui/IconSymbol";
 
 export function GoldManager() {
+    const cssStyle = useResponsiveStyles();
     const character = useSelector((state: RootState) => state.character);
     const dispatch = useDispatch();
     const [showAdjustment, setShowAdjustment] = useState(false);

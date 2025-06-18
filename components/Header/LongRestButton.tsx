@@ -1,18 +1,15 @@
-import { cssStyle } from "@/app/styles/phone";
+import { useResponsiveStyles } from "@/app/contexts/ResponsiveContext";
 import { RootState } from "@/store/rootReducer";
 import { updateMultipleFields } from "@/store/slices/baseSlice";
 import React, { useState } from "react";
+import { FaBed } from "react-icons/fa";
 import { Alert, Modal, Pressable, TextInput, View } from "react-native";
 import { useDispatch, useSelector } from "react-redux";
 import { ThemedText } from "../ThemedText";
 import { ThemedView } from "../ThemedView";
-import { IconSymbol } from "../ui/IconSymbol";
 
-type LongRestButtonProps = {
-    compact?: boolean;
-};
-
-export function LongRestButton({ compact = false }: LongRestButtonProps) {
+export function LongRestButton() {
+    const cssStyle = useResponsiveStyles();
     const dispatch = useDispatch();
     const base = useSelector((state: RootState) => state.character.base);
     const [modalVisible, setModalVisible] = useState(false);
@@ -58,55 +55,10 @@ export function LongRestButton({ compact = false }: LongRestButtonProps) {
         Alert.alert("Rest Complete", `You've rested for ${hours} hours and recovered ${actualHPRecovered} HP and ${actualEnergyRecovered} Energy.`);
     };
 
-    if (compact) {
-        return (
-            <>
-                <Pressable style={[cssStyle.centered, { backgroundColor: "#6C3483" }]} onPress={handleLongRest} accessibilityLabel="Take a long rest">
-                    <IconSymbol name="moon.stars.fill" size={18} color="#6C3483" />
-                </Pressable>
-
-                {/* Rest Duration Modal */}
-                <Modal animationType="slide" transparent={true} visible={modalVisible} onRequestClose={() => setModalVisible(false)}>
-                    <View style={cssStyle.centered}>
-                        <ThemedView style={cssStyle.modalView}>
-                            <ThemedText style={cssStyle.title}>Rest Duration</ThemedText>
-                            <ThemedText style={[cssStyle.bodyText, { textAlign: "center", marginBottom: 15 }]}>
-                                Enter how many hours you want to rest.{"\n"}
-                                (Recover {HP_PER_HOUR} HP and {ENERGY_PER_HOUR} Energy per hour)
-                            </ThemedText>
-
-                            <TextInput
-                                style={cssStyle.input}
-                                keyboardType="numeric"
-                                value={restHours}
-                                onChangeText={setRestHours}
-                                placeholder="Hours"
-                                placeholderTextColor="#999"
-                            />
-
-                            <View style={cssStyle.modalButtons}>
-                                <Pressable style={cssStyle.secondaryButton} onPress={() => setModalVisible(false)}>
-                                    <ThemedText style={cssStyle.buttonText}>Cancel</ThemedText>
-                                </Pressable>
-
-                                <Pressable style={[cssStyle.primaryButton, { backgroundColor: "#6C3483" }]} onPress={processRest}>
-                                    <ThemedText style={cssStyle.buttonText}>Rest</ThemedText>
-                                </Pressable>
-                            </View>
-                        </ThemedView>
-                    </View>
-                </Modal>
-            </>
-        );
-    }
-
     return (
         <>
-            <Pressable style={[cssStyle.primaryButton, { backgroundColor: "#6C3483" }]} onPress={handleLongRest} accessibilityLabel="Take a long rest">
-                <View style={cssStyle.row}>
-                    <IconSymbol name="moon.stars.fill" size={24} color="#FFFFFF" />
-                    <ThemedText style={cssStyle.buttonText}>Long Rest</ThemedText>
-                </View>
+            <Pressable style={[cssStyle.condensedButton, { backgroundColor: "#6C3483" }]} onPress={handleLongRest} accessibilityLabel="Take a long rest">
+                <FaBed color="white" />
             </Pressable>
 
             {/* Rest Duration Modal */}

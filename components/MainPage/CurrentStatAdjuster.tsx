@@ -1,4 +1,4 @@
-import { cssStyle } from "@/app/styles/phone";
+import { useResponsiveStyles } from "@/app/contexts/ResponsiveContext";
 import { RootState } from "@/store/rootReducer";
 import { updateField } from "@/store/slices/baseSlice";
 import React, { useState } from "react";
@@ -14,6 +14,7 @@ type CurrentStatAdjusterProps = {
 };
 
 export function CurrentStatAdjuster({ statType, compact = false }: CurrentStatAdjusterProps) {
+    const cssStyle = useResponsiveStyles();
     const dispatch = useDispatch();
     const base = useSelector((state: RootState) => state.character.base);
     const [modalVisible, setModalVisible] = useState(false);

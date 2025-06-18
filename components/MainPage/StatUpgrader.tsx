@@ -1,4 +1,4 @@
-import { cssStyle } from "@/app/styles/phone";
+import { useResponsiveStyles } from "@/app/contexts/ResponsiveContext";
 import { RootState } from "@/store/rootReducer";
 import { updateMultipleFields } from "@/store/slices/baseSlice";
 import React, { useState } from "react";
@@ -19,6 +19,7 @@ type StatUpgraderProps = {
 };
 
 export function StatUpgrader({ statType, compact = false, visible, onClose }: StatUpgraderProps) {
+    const cssStyle = useResponsiveStyles();
     const dispatch = useDispatch();
     const character = useSelector((state: RootState) => state.character);
 

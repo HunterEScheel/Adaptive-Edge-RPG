@@ -1,31 +1,22 @@
+import { useResponsiveStyles } from "@/app/contexts/ResponsiveContext";
 import { Ionicons } from "@expo/vector-icons";
 import React, { useState } from "react";
+import { FaCloud } from "react-icons/fa";
 import { Modal, TouchableOpacity, View } from "react-native";
 import { ThemedText } from "../ThemedText";
 import CharacterPresetManager from "./CharacterPresetManager";
-import { cssStyle } from "@/app/styles/phone";
-
-interface PresetManagerButtonProps {
-    compact?: boolean;
-}
 
 /**
  * A button component that opens the Character Preset Manager in a modal
  */
-export function PresetManagerButton({ compact = false }: PresetManagerButtonProps) {
+export function PresetManagerButton() {
+    const cssStyle = useResponsiveStyles();
     const [modalVisible, setModalVisible] = useState(false);
 
     return (
         <>
-            <TouchableOpacity style={[cssStyle.primaryButton, compact ? cssStyle.centered : null]} onPress={() => setModalVisible(true)}>
-                {compact ? (
-                    <Ionicons name="save-outline" size={20} color="#fff" />
-                ) : (
-                    <>
-                        <Ionicons name="save-outline" size={20} color="#fff" style={cssStyle.buttonText} />
-                        <ThemedText style={cssStyle.buttonText}>Character Presets</ThemedText>
-                    </>
-                )}
+            <TouchableOpacity style={[cssStyle.condensedButton, cssStyle.primaryColors]} onPress={() => setModalVisible(true)}>
+                <FaCloud color={"white"} />
             </TouchableOpacity>
 
             {/* Full-screen modal for the preset manager */}

@@ -1,4 +1,4 @@
-import { cssStyle } from "@/app/styles/phone";
+import { useResponsiveStyles } from "@/app/contexts/ResponsiveContext";
 import { RootState } from "@/store/rootReducer";
 import { addNPC, NPC, RelationshipLevel, removeNPC, updateNPC, updateNPCRelationship } from "@/store/slices/notesSlice";
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
@@ -9,6 +9,7 @@ import { ThemedText } from "../ThemedText";
 import { ThemedView } from "../ThemedView";
 
 export const NPCTracker: React.FC = () => {
+    const cssStyle = useResponsiveStyles();
     const dispatch = useDispatch();
     const npcs = useSelector((state: RootState) => state.character.notes.npcs || []);
 

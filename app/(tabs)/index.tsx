@@ -6,9 +6,10 @@ import { SkillManager } from "@/components/MainPage/SkillManager";
 import { ThemedText } from "@/components/ThemedText";
 import { ThemedView } from "@/components/ThemedView";
 import { RootState } from "@/store/rootReducer";
-import { cssStyle as styles } from "../styles/responsive";
+import { useResponsiveStyles } from "../contexts/ResponsiveContext";
 
 export default function HomeScreen() {
+    const styles = useResponsiveStyles();
     const character = useSelector((state: RootState) => state.character);
 
     // Handle the case where character might be undefined or null

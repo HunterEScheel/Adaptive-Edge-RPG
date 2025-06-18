@@ -54,4 +54,15 @@ export const cssStyle = StyleSheet.create<ResponsiveStyles>({
         justifyContent: "center",
         alignItems: "center",
     },
+    clickableStat: {
+        backgroundColor: "#888",
+        borderRadius: 14,
+        padding: 18,
+    },
+    headerContainer: {
+        flexDirection: "row",
+        alignItems: "flex-start",
+        justifyContent: "space-between",
+        gap: 16,
+    },
 });

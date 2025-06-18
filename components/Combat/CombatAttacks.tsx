@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { Alert, Modal, Pressable, TextInput, View } from "react-native";
 import { useDispatch, useSelector } from "react-redux";
 
-import { cssStyle } from "@/app/styles/phone";
+import { useResponsiveStyles } from "@/app/contexts/ResponsiveContext";
 import { RootState } from "@/store/rootReducer";
 import { Attack, addAttack, removeAttack } from "@/store/slices/abilitiesSlice";
 import { spendEnergy } from "@/store/slices/baseSlice";
@@ -11,6 +11,7 @@ import { ThemedText } from "../ThemedText";
 import { ThemedView } from "../ThemedView";
 
 export function CombatAttacks() {
+    const cssStyle = useResponsiveStyles();
     const dispatch = useDispatch();
     const character = useSelector((state: RootState) => state.character);
     const attacks = useSelector((state: RootState) => state.character.abilities.attacks || []);

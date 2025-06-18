@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { Alert, Modal, Pressable, TextInput, View } from "react-native";
 import { useDispatch, useSelector } from "react-redux";
 
-import { cssStyle } from "@/app/styles/phone";
+import { useResponsiveStyles } from "@/app/contexts/ResponsiveContext";
 import { RootState } from "@/store/rootReducer";
 import { Passive, addPassive, removePassive } from "@/store/slices/abilitiesSlice";
 import { ListManager } from "../Common/ListManager";
@@ -10,6 +10,7 @@ import { ThemedText } from "../ThemedText";
 import { ThemedView } from "../ThemedView";
 
 export function CombatPassives() {
+    const cssStyle = useResponsiveStyles();
     const dispatch = useDispatch();
     const passives = useSelector((state: RootState) => state.character.abilities.passives || []);
 

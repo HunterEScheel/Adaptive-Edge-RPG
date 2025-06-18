@@ -1,4 +1,4 @@
-import { cssStyle } from "@/app/styles/phone";
+import { useResponsiveStyles } from "@/app/contexts/ResponsiveContext";
 import { RootState } from "@/store/rootReducer";
 import { addNote, Note, removeNote, updateNote } from "@/store/slices/notesSlice";
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
@@ -9,6 +9,7 @@ import { ThemedText } from "../ThemedText";
 import { ThemedView } from "../ThemedView";
 
 export const GeneralNotes: React.FC = () => {
+    const cssStyle = useResponsiveStyles();
     const dispatch = useDispatch();
     const notes = useSelector((state: RootState) => state.character.notes.notes || []);
 
@@ -94,10 +95,10 @@ export const GeneralNotes: React.FC = () => {
                         multiline
                     />
                     <View style={[cssStyle.row]}>
-                        <Pressable style={[cssStyle.button, cssStyle.primaryButton]} onPress={handleUpdateNote}>
+                        <Pressable style={[cssStyle.primaryButton]} onPress={handleUpdateNote}>
                             <ThemedText style={cssStyle.buttonText}>Save</ThemedText>
                         </Pressable>
-                        <Pressable style={[cssStyle.button, cssStyle.secondaryButton]} onPress={() => setEditingNote(null)}>
+                        <Pressable style={[cssStyle.defaultButton, cssStyle.secondaryButton]} onPress={() => setEditingNote(null)}>
                             <ThemedText style={cssStyle.buttonText}>Cancel</ThemedText>
                         </Pressable>
                     </View>
@@ -157,10 +158,10 @@ export const GeneralNotes: React.FC = () => {
                             multiline
                         />
                         <View style={cssStyle.buttonGroup}>
-                            <Pressable style={[cssStyle.button, cssStyle.primaryButton]} onPress={handleAddNote}>
+                            <Pressable style={[cssStyle.primaryButton]} onPress={handleAddNote}>
                                 <ThemedText style={cssStyle.buttonText}>Add</ThemedText>
                             </Pressable>
-                            <Pressable style={[cssStyle.button, cssStyle.secondaryButton]} onPress={() => setIsAddingNote(false)}>
+                            <Pressable style={[cssStyle.secondaryButton]} onPress={() => setIsAddingNote(false)}>
                                 <ThemedText style={cssStyle.buttonText}>Cancel</ThemedText>
                             </Pressable>
                         </View>

@@ -1,4 +1,4 @@
-import { cssStyle } from "@/app/styles/phone";
+import { useResponsiveStyles } from "@/app/contexts/ResponsiveContext";
 import { calculateSkillCost, calculateTotalSkillCost } from "@/constants/Skills";
 import { RootState } from "@/store/rootReducer";
 import { updateMultipleFields } from "@/store/slices/baseSlice";
@@ -88,6 +88,7 @@ const weaponOptions: WeaponSkill[] = [
 ];
 
 export function WeaponSkillManager() {
+    const cssStyle = useResponsiveStyles();
     const dispatch = useDispatch();
     const { base } = useSelector((state: RootState) => state.character);
     const { weaponSkills } = useSelector((state: RootState) => state.character.skills);

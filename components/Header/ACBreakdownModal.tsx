@@ -1,12 +1,11 @@
+import { useResponsiveStyles } from "@/app/contexts/ResponsiveContext";
 import { ThemedText } from "@/components/ThemedText";
-import { ThemedView } from "@/components/ThemedView";
 import { Consumable, Equipment } from "@/constants/Item";
 import { ePlayerStat } from "@/constants/Stats";
 import { Character } from "@/store/slices/characterSlice";
 import { FontAwesome } from "@expo/vector-icons";
 import React from "react";
 import { Modal, Pressable, ScrollView, View } from "react-native";
-import { cssStyle } from "@/app/styles/phone";
 
 interface ACBreakdownModalProps {
     visible: boolean;
@@ -15,6 +14,7 @@ interface ACBreakdownModalProps {
 }
 
 export function ACBreakdownModal({ visible, onClose, character }: ACBreakdownModalProps) {
+    const cssStyle = useResponsiveStyles();
     // Calculate each component of AC
     const baseAC = 10 + character.base.dex;
 
@@ -51,9 +51,9 @@ export function ACBreakdownModal({ visible, onClose, character }: ACBreakdownMod
     const consumableItems = character.inventory?.consumables?.filter((x: Consumable) => x.statEffected === ePlayerStat.ac) || [];
 
     return (
-        <Modal animationType="slide" transparent={true} visible={visible} onRequestClose={onClose}>
+        <Modal animationType="fade" transparent={true} visible={visible} onRequestClose={onClose}>
             <View style={cssStyle.modalOverlay}>
-                <ThemedView style={cssStyle.card}>
+                <View style={cssStyle.modalView}>
                     <View style={cssStyle.modalHeader}>
                         <ThemedText style={cssStyle.modalTitle}>Armor Class Breakdown</ThemedText>
                         <Pressable style={cssStyle.centered} onPress={onClose}>
@@ -61,84 +61,92 @@ export function ACBreakdownModal({ visible, onClose, character }: ACBreakdownMod
                         </Pressable>
                     </View>
 
-                    <ScrollView style={cssStyle.container}>
-                        <View style={cssStyle.whiteContainer}>
-                            <ThemedText style={cssStyle.largeValue}>Total AC: {totalAC}</ThemedText>
-                        </View>
-
-                        <View style={cssStyle.container}>
-                            <ThemedText style={cssStyle.sectionHeader}>Breakdown:</ThemedText>
-
-                            <View style={cssStyle.row}>
-                                <ThemedText style={cssStyle.label}>Base AC (10 + DEX)</ThemedText>
-                                <ThemedText style={cssStyle.valueText}>
-                                    10 + {character.base.dex} = {baseAC}
-                                </ThemedText>
-                            </View>
-
-                            {character.inventory.armor && (
-                                <>
-                                    <View style={cssStyle.row}>
-                                        <ThemedText style={cssStyle.label}>Armor ({character.inventory.armor.name})</ThemedText>
-                                        <ThemedText style={cssStyle.valueText}>+{armorAC}</ThemedText>
-                                    </View>
-
-                                    {enchantmentAC > 0 && (
-                                        <View style={cssStyle.row}>
-                                            <ThemedText style={cssStyle.label}>Enchantment Bonus</ThemedText>
-                                            <ThemedText style={cssStyle.valueText}>+{enchantmentAC}</ThemedText>
-                                        </View>
-                                    )}
-                                </>
-                            )}
-
-                            <View style={cssStyle.row}>
-                                <ThemedText style={cssStyle.label}>
-                                    Dodge Skill{" "}
-                                    {character.inventory.armor.armorClassification !== "Light"
-                                        ? `(${originalDodge} ${character.inventory.armor.armorClassification === "Medium" ? "-1" : "blocked"})`
-                                        : ""}
-                                </ThemedText>
-                                <ThemedText style={cssStyle.valueText}>+{dodgeAC}</ThemedText>
-                            </View>
-
-                            {equipmentItems.length > 0 && (
-                                <>
-                                    <ThemedText style={cssStyle.subtitle}>Equipment Bonuses:</ThemedText>
-                                    {equipmentItems.map((item: Equipment, index: number) => (
-                                        <View key={index} style={cssStyle.row}>
-                                            <ThemedText style={cssStyle.label}>{item.name}</ThemedText>
-                                            <ThemedText style={cssStyle.valueText}>+{item.statModifier}</ThemedText>
-                                        </View>
-                                    ))}
-                                </>
-                            )}
-
-                            {consumableItems.length > 0 && (
-                                <>
-                                    <ThemedText style={cssStyle.subtitle}>Consumable Effects:</ThemedText>
-                                    {consumableItems.map((item: Consumable, index: number) => (
-                                        <View key={index} style={cssStyle.row}>
-                                            <ThemedText style={cssStyle.label}>{item.name}</ThemedText>
-                                            <ThemedText style={cssStyle.valueText}>+{item.statModifier}</ThemedText>
-                                        </View>
-                                    ))}
-                                </>
-                            )}
-                        </View>
-
-                        {character.inventory.armor.armorClassification !== "Light" && (
+                    <View style={cssStyle.modalContent}>
+                        <ScrollView style={cssStyle.container}>
                             <View style={cssStyle.lightContainer}>
-                                <ThemedText style={cssStyle.subtitle}>Armor Penalties:</ThemedText>
-                                <ThemedText style={cssStyle.emptyText}>
-                                    {character.inventory.armor.armorClassification === "Medium"
-                                        ? "Medium armor reduces Dodge skill by 1 (minimum 0)"
-                                        : "Heavy armor completely blocks Dodge skill bonus"}
-                                </ThemedText>
+                                <ThemedText style={cssStyle.largeValue}>Total AC: {totalAC}</ThemedText>
                             </View>
-                        )}
-                    </ScrollView>
-                </ThemedView>
+
+                            <View style={cssStyle.container}>
+                                <ThemedText style={cssStyle.sectionHeader}>Breakdown:</ThemedText>
+
+                                <View style={cssStyle.row}>
+                                    <ThemedText style={cssStyle.label}>Base AC (10 + DEX)</ThemedText>
+                                    <ThemedText style={cssStyle.valueText}>
+                                        10 + {character.base.dex} = {baseAC}
+                                    </ThemedText>
+                                </View>
+
+                                {character.inventory.armor && (
+                                    <>
+                                        <View style={cssStyle.row}>
+                                            <ThemedText style={cssStyle.label}>Armor ({character.inventory.armor.name})</ThemedText>
+                                            <ThemedText style={cssStyle.valueText}>+{armorAC}</ThemedText>
+                                        </View>
+
+                                        {enchantmentAC > 0 && (
+                                            <View style={cssStyle.row}>
+                                                <ThemedText style={cssStyle.label}>Enchantment Bonus</ThemedText>
+                                                <ThemedText style={cssStyle.valueText}>+{enchantmentAC}</ThemedText>
+                                            </View>
+                                        )}
+                                    </>
+                                )}
+
+                                <View style={cssStyle.row}>
+                                    <ThemedText style={cssStyle.label}>
+                                        Dodge Skill{" "}
+                                        {character.inventory.armor.armorClassification !== "Light"
+                                            ? `(${originalDodge} ${character.inventory.armor.armorClassification === "Medium" ? "-1" : "blocked"})`
+                                            : ""}
+                                    </ThemedText>
+                                    <ThemedText style={cssStyle.valueText}>+{dodgeAC}</ThemedText>
+                                </View>
+
+                                {equipmentItems.length > 0 && (
+                                    <>
+                                        <ThemedText style={cssStyle.subtitle}>Equipment Bonuses:</ThemedText>
+                                        {equipmentItems.map((item: Equipment, index: number) => (
+                                            <View key={index} style={cssStyle.row}>
+                                                <ThemedText style={cssStyle.label}>{item.name}</ThemedText>
+                                                <ThemedText style={cssStyle.valueText}>+{item.statModifier}</ThemedText>
+                                            </View>
+                                        ))}
+                                    </>
+                                )}
+
+                                {consumableItems.length > 0 && (
+                                    <>
+                                        <ThemedText style={cssStyle.subtitle}>Consumable Effects:</ThemedText>
+                                        {consumableItems.map((item: Consumable, index: number) => (
+                                            <View key={index} style={cssStyle.row}>
+                                                <ThemedText style={cssStyle.label}>{item.name}</ThemedText>
+                                                <ThemedText style={cssStyle.valueText}>+{item.statModifier}</ThemedText>
+                                            </View>
+                                        ))}
+                                    </>
+                                )}
+
+                                {character.inventory.armor.armorClassification !== "Light" && (
+                                    <View style={cssStyle.lightContainer}>
+                                        <ThemedText style={cssStyle.subtitle}>Armor Penalties:</ThemedText>
+                                        <ThemedText style={cssStyle.emptyText}>
+                                            {character.inventory.armor.armorClassification === "Medium"
+                                                ? "Medium armor reduces Dodge skill by 1 (minimum 0)"
+                                                : "Heavy armor completely blocks Dodge skill bonus"}
+                                        </ThemedText>
+                                    </View>
+                                )}
+                            </View>
+                        </ScrollView>
+                    </View>
+
+                    <View style={cssStyle.modalButtons}>
+                        <Pressable style={cssStyle.primaryButton} onPress={onClose}>
+                            <ThemedText style={cssStyle.buttonText}>Close</ThemedText>
+                        </Pressable>
+                    </View>
+                </View>
             </View>
         </Modal>
     );

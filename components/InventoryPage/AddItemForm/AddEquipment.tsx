@@ -1,4 +1,4 @@
-import { cssStyle } from "@/app/styles/responsive";
+import { useResponsiveStyles } from "@/app/contexts/ResponsiveContext";
 import { ThemedText } from "@/components/ThemedText";
 import { eItemClassifications, Equipment, iItem } from "@/constants/Item";
 import { ePlayerStat, pStatOptions } from "@/constants/Stats";
@@ -19,7 +19,7 @@ const { width } = Dimensions.get("window");
 
 export function AddEquipment({ onChange }: AddEquipmentProps) {
     const theme = useTheme();
-    const styles = cssStyle;
+    const styles = useResponsiveStyles();
 
     const [equipment, setEquipment] = useState<Equipment>({
         id: "0",

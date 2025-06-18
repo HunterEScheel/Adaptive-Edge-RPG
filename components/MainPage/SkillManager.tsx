@@ -9,13 +9,14 @@ import { FontAwesome } from "@expo/vector-icons";
 import React, { useCallback, useEffect, useState } from "react";
 import { ActivityIndicator, Alert, Modal, ScrollView, TextInput, TouchableOpacity, View } from "react-native";
 import { useDispatch, useSelector } from "react-redux";
-import { cssStyle } from "../../app/styles/phone";
+import { useResponsiveStyles } from "@/app/contexts/ResponsiveContext";
 import { ThemedText } from "../ThemedText";
 
 // Simple ID generator function
 const generateId = () => Math.random().toString(36).substring(2, 15);
 
 export function SkillManager() {
+    const cssStyle = useResponsiveStyles();
     const dispatch = useDispatch();
     // Get character state from Redux with fallbacks for initialization
     const skills = useSelector((state: RootState) => state.character?.skills?.skills || []);

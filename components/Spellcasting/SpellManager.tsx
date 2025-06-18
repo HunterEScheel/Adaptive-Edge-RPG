@@ -1,4 +1,4 @@
-import { cssStyle } from "@/app/styles/responsive";
+import { useResponsiveStyles } from "@/app/contexts/ResponsiveContext";
 import { ListManager } from "@/components/Common/ListManager";
 import { RootState } from "@/store/rootReducer";
 import { updateField, updateMultipleFields } from "@/store/slices/baseSlice";
@@ -26,6 +26,7 @@ const AVAILABLE_SPELLS: Omit<Spell, "id">[] = [
 ];
 
 export function SpellManager() {
+    const cssStyle = useResponsiveStyles();
     const magic = useSelector((state: RootState) => state.character?.magic || { magicSchools: [], spells: [], magicSchoolCredit: false });
     const base = useSelector((state: RootState) => state.character?.base || { buildPointsRemaining: 0, buildPointsSpent: 0, energy: 0 });
     const dispatch = useDispatch();

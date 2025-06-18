@@ -1,4 +1,4 @@
-import { cssStyle } from "@/app/styles/responsive";
+import { useResponsiveStyles } from "@/app/contexts/ResponsiveContext";
 import { ListManager } from "@/components/Common/ListManager";
 import { RootState } from "@/store/rootReducer";
 import { updateMultipleFields } from "@/store/slices/baseSlice";
@@ -51,9 +51,8 @@ const AVAILABLE_SCHOOLS: Omit<MagicSchool, "id">[] = [
 // Cost in build points to learn a new magic school
 const MAGIC_SCHOOL_COST = 25;
 
-const styles = cssStyle;
-
 export function MagicSchoolManager() {
+    const cssStyle = useResponsiveStyles();
     const magic = useSelector((state: RootState) => state.character?.magic || { magicSchools: [], spells: [], magicSchoolCredit: false });
     const base = useSelector((state: RootState) => state.character?.base || { buildPointsRemaining: 0, buildPointsSpent: 0, energy: 0 });
     const dispatch = useDispatch();
@@ -158,7 +157,7 @@ export function MagicSchoolManager() {
                                     <ThemedText style={cssStyle.subtitle}>{item.description}</ThemedText>
                                 </Pressable>
                             )}
-                            ListEmptyComponent={<ThemedText style={cssStyle.emptyText}>You've learned all available magic schools!</ThemedText>}
+                            ListEmptyComponent={<ThemedText style={cssStyle.hint}>You've learned all available magic schools!</ThemedText>}
                         />
 
                         <Pressable style={cssStyle.secondaryButton} onPress={() => setModalVisible(false)}>

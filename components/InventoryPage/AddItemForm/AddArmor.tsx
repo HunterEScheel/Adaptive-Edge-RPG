@@ -6,7 +6,7 @@ import React, { useEffect, useRef, useState } from "react";
 import { Pressable, TextInput, View } from "react-native";
 import { Dropdown } from "react-native-element-dropdown";
 import { useDispatch } from "react-redux";
-import { cssStyle } from "@/app/styles/phone";
+import { useResponsiveStyles } from "@/app/contexts/ResponsiveContext";
 
 interface AddArmorProps {
     onChange?: (armor: Armor) => void;
@@ -52,6 +52,7 @@ const armorOptions: Armor[] = [
 ];
 
 export function AddArmor({ onChange }: AddArmorProps) {
+    const cssStyle = useResponsiveStyles();
     const dispatch = useDispatch();
     const [armor, setArmor] = useState<Armor>({
         name: "Padded Armor",

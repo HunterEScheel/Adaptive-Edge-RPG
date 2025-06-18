@@ -1,4 +1,4 @@
-import { useResponsiveStyles } from "@/app/styles/responsive";
+import { useResponsiveStyles } from "@/app/contexts/ResponsiveContext";
 import { RootState } from "@/store/rootReducer";
 import { updateField, updateMultipleFields } from "@/store/slices/baseSlice";
 import FontAwesome from "@expo/vector-icons/FontAwesome";
@@ -131,16 +131,16 @@ export function StatAdjuster({ statName, fieldName, icon, minValue = 0, maxValue
     if (compact) {
         return (
             <>
-                <Pressable style={[isAttribute ? cssStyle.attribute : cssStyle.clickableStat, { margin: 4 }]} onPress={() => setModalVisible(true)} accessibilityLabel={`Adjust ${statName}`}>
-                    {icon && <FontAwesome name={icon as any} style={{ fontSize: 16, marginBottom: 4 }} />}
-                    <ThemedText style={[cssStyle.primaryText, { fontSize: 18 }]}>{currentValue}</ThemedText>
+                <Pressable style={[isAttribute ? cssStyle.attribute : cssStyle.clickableStat, { margin: 2 }]} onPress={() => setModalVisible(true)} accessibilityLabel={`Adjust ${statName}`}>
+                    {icon && <FontAwesome name={icon as any} style={{ fontSize: 14, marginBottom: 2 }} />}
+                    <ThemedText style={[cssStyle.primaryText, { fontSize: 16, fontWeight: 'bold' }]}>{currentValue}</ThemedText>
                     {hasEquipmentBonus && (
-                        <View style={cssStyle.bonusIndicator}>
-                            <FontAwesome name="plus" size={6} color="#4CAF50" />
-                            <ThemedText style={cssStyle.bonusText}>{equipmentBonus}</ThemedText>
+                        <View style={[cssStyle.bonusIndicator, { marginLeft: 4, paddingHorizontal: 4, paddingVertical: 1 }]}>
+                            <FontAwesome name="plus" size={4} color="#4CAF50" />
+                            <ThemedText style={[cssStyle.bonusText, { fontSize: 10 }]}>{equipmentBonus}</ThemedText>
                         </View>
                     )}
-                    <ThemedText style={[cssStyle.smallText, { fontSize: 12, marginTop: 4 }]}>{statName}</ThemedText>
+                    <ThemedText style={[cssStyle.smallText, { fontSize: 10, marginTop: 2 }]}>{statName}</ThemedText>
                 </Pressable>
                 {renderModal()}
             </>
@@ -168,50 +168,54 @@ export function StatAdjuster({ statName, fieldName, icon, minValue = 0, maxValue
 
     function renderModal() {
         return (
-            <Modal animationType="slide" transparent={true} visible={modalVisible} onRequestClose={() => setModalVisible(false)}>
+            <Modal animationType="fade" transparent={true} visible={modalVisible} onRequestClose={() => setModalVisible(false)}>
                 <View style={cssStyle.modalOverlay}>
                     <View style={cssStyle.modalView}>
-                        <ThemedText style={cssStyle.title}>Adjust {statName}</ThemedText>
-
-                        <View style={cssStyle.adjustmentRow}>
-                            {showBy5 && (
-                                <>
-                                    <Pressable style={[cssStyle.centered, cssStyle.secondaryButton]} onPress={() => handleIncrement(-5)}>
-                                        <ThemedText style={cssStyle.smallButtonText}>-5</ThemedText>
-                                    </Pressable>
-                                </>
-                            )}
-                            <Pressable style={[cssStyle.centered, cssStyle.secondaryButton]} onPress={() => handleIncrement(-1)}>
-                                <ThemedText style={cssStyle.smallButtonText}>-1</ThemedText>
-                            </Pressable>
-                            <Pressable style={[cssStyle.centered, cssStyle.primaryButton]} onPress={() => handleIncrement(1)}>
-                                <ThemedText style={cssStyle.smallButtonText}>+1</ThemedText>
-                            </Pressable>
-                            {showBy5 && (
-                                <>
-                                    <Pressable style={[cssStyle.centered, cssStyle.primaryButton]} onPress={() => handleIncrement(5)}>
-                                        <ThemedText style={cssStyle.smallButtonText}>+5</ThemedText>
-                                    </Pressable>
-                                </>
-                            )}
+                        <View style={cssStyle.modalHeader}>
+                            <ThemedText style={cssStyle.modalTitle}>Adjust {statName}</ThemedText>
                         </View>
+                        <View style={cssStyle.modalContent}>
 
-                        <View style={cssStyle.formRow}>
-                            <ThemedText style={cssStyle.valueText}>Current: {currentValue}</ThemedText>
-                            <TextInput
-                                style={cssStyle.input}
-                                onChangeText={setNewValue}
-                                value={newValue}
-                                placeholder="New value"
-                                keyboardType="numeric"
-                                placeholderTextColor="#999"
-                                accessibilityLabel="Enter new value"
-                            />
+                            <View style={cssStyle.adjustmentRow}>
+                                {showBy5 && (
+                                    <>
+                                        <Pressable style={[cssStyle.centered, cssStyle.secondaryButton]} onPress={() => handleIncrement(-5)}>
+                                            <ThemedText style={cssStyle.smallButtonText}>-5</ThemedText>
+                                        </Pressable>
+                                    </>
+                                )}
+                                <Pressable style={[cssStyle.centered, cssStyle.secondaryButton]} onPress={() => handleIncrement(-1)}>
+                                    <ThemedText style={cssStyle.smallButtonText}>-1</ThemedText>
+                                </Pressable>
+                                <Pressable style={[cssStyle.centered, cssStyle.primaryButton]} onPress={() => handleIncrement(1)}>
+                                    <ThemedText style={cssStyle.smallButtonText}>+1</ThemedText>
+                                </Pressable>
+                                {showBy5 && (
+                                    <>
+                                        <Pressable style={[cssStyle.centered, cssStyle.primaryButton]} onPress={() => handleIncrement(5)}>
+                                            <ThemedText style={cssStyle.smallButtonText}>+5</ThemedText>
+                                        </Pressable>
+                                    </>
+                                )}
+                            </View>
+
+                            <View style={cssStyle.formRow}>
+                                <ThemedText style={cssStyle.valueText}>Current: {currentValue}</ThemedText>
+                                <TextInput
+                                    style={cssStyle.input}
+                                    onChangeText={setNewValue}
+                                    value={newValue}
+                                    placeholder="New value"
+                                    keyboardType="numeric"
+                                    placeholderTextColor="#999"
+                                    accessibilityLabel="Enter new value"
+                                />
+                            </View>
                         </View>
 
                         <View style={cssStyle.modalButtons}>
                             <Pressable style={cssStyle.secondaryButton} onPress={() => setModalVisible(false)}>
-                                <ThemedText style={cssStyle.buttonText}>Cancel</ThemedText>
+                                <ThemedText style={cssStyle.secondaryButtonText}>Cancel</ThemedText>
                             </Pressable>
                             <Pressable style={cssStyle.primaryButton} onPress={handleSave}>
                                 <ThemedText style={cssStyle.buttonText}>Save</ThemedText>

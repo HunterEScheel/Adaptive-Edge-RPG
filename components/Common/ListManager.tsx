@@ -1,4 +1,4 @@
-import { cssStyle } from "@/app/styles/responsive";
+import { useResponsiveStyles } from "@/app/contexts/ResponsiveContext";
 import { FontAwesome } from "@expo/vector-icons";
 import React from "react";
 import { FlatList, TouchableOpacity, View } from "react-native";
@@ -17,6 +17,7 @@ interface ListManagerProps<T> {
 }
 
 export function ListManager<T>({ title, description, data, renderItem, keyExtractor, onAddPress, addButtonText, emptyStateText }: ListManagerProps<T>) {
+    const cssStyle = useResponsiveStyles();
     return (
         <View style={[cssStyle.container]}>
             {/* Header with title and description */}

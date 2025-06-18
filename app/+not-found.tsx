@@ -1,10 +1,11 @@
 import { Link, Stack } from "expo-router";
 
-import { cssStyle } from "@/app/styles/responsive";
+import { useResponsiveStyles } from "@/app/contexts/ResponsiveContext";
 import { ThemedText } from "@/components/ThemedText";
 import { ThemedView } from "@/components/ThemedView";
 
 export default function NotFoundScreen() {
+    const cssStyle = useResponsiveStyles();
     return (
         <>
             <Stack.Screen options={{ title: "Oops!" }} />

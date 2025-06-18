@@ -6,7 +6,7 @@ import React, { useEffect, useRef, useState } from "react";
 import { Dimensions, ScrollView, View } from "react-native";
 import { Dropdown } from "react-native-element-dropdown";
 import { default as VersatileInput } from "../../Input";
-import { cssStyle } from "@/app/styles/phone";
+import { useResponsiveStyles } from "@/app/contexts/ResponsiveContext";
 
 type AddConsumableProps = {
     onChange: (item: Partial<iItem>) => void;
@@ -16,6 +16,7 @@ type AddConsumableProps = {
 const { width } = Dimensions.get("window");
 
 export function AddConsumable({ onChange }: AddConsumableProps) {
+    const cssStyle = useResponsiveStyles();
     const [consumable, setConsumable] = useState<Partial<Consumable>>({
         class: eItemClassifications.consumable,
         name: "",

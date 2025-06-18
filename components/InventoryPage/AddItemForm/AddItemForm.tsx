@@ -1,4 +1,4 @@
-import { cssStyle } from "@/app/styles/phone";
+import { useResponsiveStyles } from "@/app/contexts/ResponsiveContext";
 import { ThemedText } from "@/components/ThemedText";
 import { ThemedView } from "@/components/ThemedView";
 import { eItemClassifications, Equipment, iItem, itemClassifications, Weapon } from "@/constants/Item";
@@ -47,6 +47,7 @@ type AddItemFormProps = {
 };
 
 export function AddItemForm({ open, setOpen, onClose }: AddItemFormProps) {
+    const cssStyle = useResponsiveStyles();
     // Handle both interface styles
     const isOpen = open !== undefined ? open : true;
     const handleClose = () => {
@@ -96,45 +97,47 @@ export function AddItemForm({ open, setOpen, onClose }: AddItemFormProps) {
     }, []);
 
     return (
-        <Modal animationType="slide" transparent={true} visible={isOpen} onRequestClose={handleClose}>
-            <View style={cssStyle.centered}>
-                <ThemedView style={cssStyle.modalView}>
+        <Modal animationType="fade" transparent={true} visible={isOpen} onRequestClose={handleClose}>
+            <View style={cssStyle.modalOverlay}>
+                <View style={cssStyle.modalView}>
                     <View style={cssStyle.modalHeader}>
-                        <ThemedText style={cssStyle.title}>Add New Item</ThemedText>
+                        <ThemedText style={cssStyle.modalTitle}>Add New Item</ThemedText>
                         <Pressable style={cssStyle.centered} onPress={handleClose}>
                             <FontAwesome name="times" size={20} color="#FFF" />
                         </Pressable>
                     </View>
 
-                    <View style={cssStyle.formGroup}>
-                        <ThemedText style={cssStyle.subtitle}>Item Type</ThemedText>
-                        <Dropdown
-                            data={itemClassifications}
-                            style={cssStyle.dropdown}
-                            placeholderStyle={cssStyle.placeholderStyle}
-                            selectedTextStyle={cssStyle.selectedTextStyle}
-                            iconStyle={cssStyle.iconStyle}
-                            labelField="label"
-                            valueField="value"
-                            placeholder="Select item type"
-                            value={itemClass}
-                            onChange={(item) => {
-                                setItemClass(item.value);
-                            }}
-                        />
-                    </View>
+                    <View style={cssStyle.modalContent}>
+                        <View style={cssStyle.formGroup}>
+                            <ThemedText style={cssStyle.subtitle}>Item Type</ThemedText>
+                            <Dropdown
+                                data={itemClassifications}
+                                style={cssStyle.dropdown}
+                                placeholderStyle={cssStyle.placeholderStyle}
+                                selectedTextStyle={cssStyle.selectedTextStyle}
+                                iconStyle={cssStyle.iconStyle}
+                                labelField="label"
+                                valueField="value"
+                                placeholder="Select item type"
+                                value={itemClass}
+                                onChange={(item) => {
+                                    setItemClass(item.value);
+                                }}
+                            />
+                        </View>
 
-                    <ScrollView style={cssStyle.formContent} contentContainerStyle={cssStyle.formContentContainer}>
-                        {itemClass === eItemClassifications.weapon && <WeaponForm onChange={handleItemChange} />}
-                        {itemClass === eItemClassifications.equipment && <EquipmentForm onChange={handleItemChange} />}
-                        {itemClass === eItemClassifications.armor && <ArmorForm onChange={handleItemChange} />}
-                        {itemClass === eItemClassifications.consumable && <ConsumableForm onChange={handleItemChange} />}
-                        {itemClass === eItemClassifications.other && <OtherForm />}
-                    </ScrollView>
+                        <ScrollView style={cssStyle.formContent} contentContainerStyle={cssStyle.formContentContainer}>
+                            {itemClass === eItemClassifications.weapon && <WeaponForm onChange={handleItemChange} />}
+                            {itemClass === eItemClassifications.equipment && <EquipmentForm onChange={handleItemChange} />}
+                            {itemClass === eItemClassifications.armor && <ArmorForm onChange={handleItemChange} />}
+                            {itemClass === eItemClassifications.consumable && <ConsumableForm onChange={handleItemChange} />}
+                            {itemClass === eItemClassifications.other && <OtherForm />}
+                        </ScrollView>
+                    </View>
 
                     <View style={cssStyle.modalButtons}>
                         <Pressable style={cssStyle.secondaryButton} onPress={handleClose}>
-                            <ThemedText style={cssStyle.buttonText}>Cancel</ThemedText>
+                            <ThemedText style={cssStyle.secondaryButtonText}>Cancel</ThemedText>
                         </Pressable>
                         <Pressable
                             style={cssStyle.primaryButton}
@@ -170,7 +173,7 @@ export function AddItemForm({ open, setOpen, onClose }: AddItemFormProps) {
                             <ThemedText style={cssStyle.buttonText}>Add Item</ThemedText>
                         </Pressable>
                     </View>
-                </ThemedView>
+                </View>
             </View>
         </Modal>
     );

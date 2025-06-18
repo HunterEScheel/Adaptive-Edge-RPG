@@ -1,4 +1,4 @@
-import { cssStyle } from "@/app/styles/phone";
+import { useResponsiveStyles } from "@/app/contexts/ResponsiveContext";
 import React, { useEffect, useState } from "react";
 import { Alert, Button, Switch, Text, View } from "react-native";
 import embeddingDatabase from "../../services/embeddingDatabase";
@@ -8,6 +8,7 @@ import embeddingDatabase from "../../services/embeddingDatabase";
  * Controls online/offline mode and provides sync functionality
  */
 const EmbeddingDatabaseSettings = () => {
+    const cssStyle = useResponsiveStyles();
     const [isOffline, setIsOffline] = useState(false);
     const [lastSync, setLastSync] = useState<Date | null>(null);
     const [isSyncing, setIsSyncing] = useState(false);
