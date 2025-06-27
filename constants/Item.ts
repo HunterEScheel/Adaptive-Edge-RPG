@@ -1,11 +1,16 @@
 import { eDamageDice, ePlayerStat } from "./Stats";
 
+type ArmorStatUpdates = {
+    damageReduction: number;
+    evasionReduction: number;
+};
+
 export interface Armor {
     name: string;
     id: number;
-    armorClassification: "Light" | "Medium" | "Heavy";
-    bonus: 1 | 2 | 3 | 4 | 5 | 6;
+    armorClassification: "Light" | "Reinforced" | "Medium" | "Heavy" | "Fortified";
     enchantmentBonus?: 1 | 2 | 3;
+    statUpdates?: ArmorStatUpdates;
 }
 
 export interface iItem {
@@ -28,7 +33,7 @@ export interface Weapon extends iItem {
     equipped?: boolean;
     attackBonus?: number;
     attribute?: "str" | "dex"; // Attribute that determines attack bonus: strength or dexterity
-    weaponHeft?: "Unarmed" | "2-handed" | "1-handed" | "Versatile"; // Weapon classification for skill matching
+    weaponHeft?: "Unarmed" | "2H" | "1H" | "V"; // Weapon classification for skill matching
     weaponType?: "Stab" | "Swing" | "Fire" | "Draw"; // Weapon type for skill matching
 }
 

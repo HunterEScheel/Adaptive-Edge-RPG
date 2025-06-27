@@ -35,7 +35,7 @@ export const cssStyle = StyleSheet.create<ConsistentStyles>({
         minWidth: 100,
     },
     secondaryButton: {
-        backgroundColor: "#e0e0e0",
+        backgroundColor: app_theme.secondary_component_bg,
         borderRadius: 8,
         paddingVertical: 12,
         paddingHorizontal: 20,
@@ -43,7 +43,7 @@ export const cssStyle = StyleSheet.create<ConsistentStyles>({
         justifyContent: "center",
         minWidth: 100,
     },
-    
+
     // Text for buttons
     buttonText: {
         color: "#FFFFFF",
@@ -167,38 +167,6 @@ export const cssStyle = StyleSheet.create<ConsistentStyles>({
     modal: {
         flex: 1,
     },
-    modalContent: {
-        flex: 1,
-        paddingBottom: 16,
-    },
-    modalView: {
-        backgroundColor: "white",
-        borderRadius: 16,
-        padding: 20,
-        shadowColor: "#000",
-        shadowOffset: {
-            width: 0,
-            height: 2,
-        },
-        shadowOpacity: 0.25,
-        shadowRadius: 4,
-        elevation: 5,
-        width: "90%",
-        maxWidth: 500,
-        maxHeight: "80%",
-    },
-    modalOverlay: {
-        flex: 1,
-        justifyContent: "center",
-        alignItems: "center",
-        backgroundColor: "rgba(0, 0, 0, 0.5)",
-    },
-    modalButtons: {
-        flexDirection: "row",
-        justifyContent: "flex-end",
-        gap: 12,
-        marginTop: 16,
-    },
     modalFooter: {
         flexDirection: "row",
         justifyContent: "space-between",
@@ -225,7 +193,7 @@ export const cssStyle = StyleSheet.create<ConsistentStyles>({
     inputContainer: {
         marginBottom: 12,
     },
-    
+
     // Misc UI elements
     bonusIndicator: {
         backgroundColor: "rgba(76, 175, 80, 0.2)",
@@ -239,7 +207,7 @@ export const cssStyle = StyleSheet.create<ConsistentStyles>({
         fontSize: 12,
         fontWeight: "600",
     },
-    
+
     // Component-specific buttons
     saveButton: {
         position: "absolute",
@@ -273,7 +241,7 @@ export const cssStyle = StyleSheet.create<ConsistentStyles>({
         borderBottomWidth: 2,
         borderBottomColor: "transparent",
     },
-    
+
     // Lists and content containers
     scrollContainer: {
         flex: 1,
@@ -299,7 +267,7 @@ export const cssStyle = StyleSheet.create<ConsistentStyles>({
         alignItems: "center",
         marginBottom: 8,
     },
-    
+
     // Form elements
     formContent: {
         padding: 20,
@@ -321,6 +289,7 @@ export const cssStyle = StyleSheet.create<ConsistentStyles>({
         borderRadius: 12,
         backgroundColor: "#fff",
         minHeight: 50,
+        minWidth: 200,
     },
     inputIndicator: {
         position: "absolute",
@@ -347,7 +316,7 @@ export const cssStyle = StyleSheet.create<ConsistentStyles>({
         alignItems: "center",
         justifyContent: "center",
     },
-    
+
     // Layout elements
     divider: {
         height: 1,
@@ -373,7 +342,7 @@ export const cssStyle = StyleSheet.create<ConsistentStyles>({
     halfWidth: {
         width: "48%",
     },
-    
+
     // UI state and feedback
     activeTab: {
         borderBottomColor: app_theme.primary_component_bg,
@@ -420,7 +389,7 @@ export const cssStyle = StyleSheet.create<ConsistentStyles>({
         paddingVertical: 4,
         marginLeft: 8,
     },
-    
+
     // Specific component containers
     levelContainer: {
         flexDirection: "row",
@@ -487,7 +456,7 @@ export const cssStyle = StyleSheet.create<ConsistentStyles>({
         position: "absolute",
         top: -6,
     },
-    
+
     // Additional text styles
     headerText: {
         fontSize: 28,
@@ -568,7 +537,7 @@ export const cssStyle = StyleSheet.create<ConsistentStyles>({
         color: app_theme.primary_component_bg,
         textDecorationLine: "underline",
     },
-    
+
     // Ability/skill related
     abilityItem: {
         backgroundColor: "rgba(0, 0, 0, 0.05)",
@@ -620,7 +589,7 @@ export const cssStyle = StyleSheet.create<ConsistentStyles>({
         paddingVertical: 4,
         marginLeft: 8,
     },
-    
+
     // Additional form and UI elements
     bodyText: {
         fontSize: 16,
@@ -661,7 +630,7 @@ export const cssStyle = StyleSheet.create<ConsistentStyles>({
         width: 24,
         height: 24,
     },
-    
+
     // Header stat display
     statRow: {
         flexDirection: "row",

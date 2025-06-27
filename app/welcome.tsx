@@ -1,5 +1,4 @@
 import { useResponsiveStyles } from "@/app/contexts/ResponsiveContext";
-import { ThemedText } from "@/components/ThemedText";
 import { ThemedView } from "@/components/ThemedView";
 import { ImportFile } from "@/components/Utility/FilePick";
 import { setCharacterLoaded } from "@/store/characterAuthSlice";
@@ -12,8 +11,9 @@ import { NotesState } from "@/store/slices/notesSlice";
 import { SkillsState } from "@/store/slices/skillsSlice";
 import { useRouter } from "expo-router";
 import React, { useState } from "react";
-import { Button } from "react-native";
+import { Button, Image } from "react-native";
 import { useDispatch } from "react-redux";
+import AdaptiveEdgeImage from "./AdaptiveEdge.png";
 
 export default function WelcomeScreen() {
     const cssStyle = useResponsiveStyles();
@@ -63,25 +63,22 @@ export default function WelcomeScreen() {
     };
 
     return (
-        <ThemedView style={cssStyle.container}>
-            <ThemedText type="title" style={cssStyle.title}>
-                GURPS & Dragons
-            </ThemedText>
+        <>
+            <Image source={AdaptiveEdgeImage} style={{ width: "100%", maxHeight: "50%", resizeMode: "center", top: -18 }} />
+            <ThemedView style={cssStyle.container}>
+                {!showImport ? (
+                    <>
+                        <Button title="Create New Character" onPress={handleCreateNewCharacter} />
 
-            <ThemedText style={cssStyle.subtitle}>Welcome to your character sheet app</ThemedText>
-
-            {!showImport ? (
-                <>
-                    <Button title="Create New Character" onPress={handleCreateNewCharacter} />
-
-                    <Button title="Import Existing Character" onPress={() => setShowImport(true)} />
-                </>
-            ) : (
-                <>
-                    <ImportFile onImportSuccess={handleImportSuccess} />
-                    <Button title="Back" onPress={() => setShowImport(false)} />
-                </>
-            )}
-        </ThemedView>
+                        <Button title="Import Existing Character" onPress={() => setShowImport(true)} />
+                    </>
+                ) : (
+                    <>
+                        <ImportFile onImportSuccess={handleImportSuccess} />
+                        <Button title="Back" onPress={() => setShowImport(false)} />
+                    </>
+                )}
+            </ThemedView>
+        </>
     );
 }

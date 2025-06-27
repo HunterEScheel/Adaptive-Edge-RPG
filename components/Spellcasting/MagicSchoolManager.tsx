@@ -1,5 +1,6 @@
-import { useResponsiveStyles } from "@/app/contexts/ResponsiveContext";
+import { useResponsive, useResponsiveStyles } from "@/app/contexts/ResponsiveContext";
 import { ListManager } from "@/components/Common/ListManager";
+import { CompactListManager } from "@/components/Common/CompactListManager";
 import { RootState } from "@/store/rootReducer";
 import { updateMultipleFields } from "@/store/slices/baseSlice";
 import { MagicSchool, addMagicSchool, removeMagicSchool, setMagicSchoolCredit } from "@/store/slices/magicSlice";
@@ -53,6 +54,7 @@ const MAGIC_SCHOOL_COST = 25;
 
 export function MagicSchoolManager() {
     const cssStyle = useResponsiveStyles();
+    const { isPhone } = useResponsive();
     const magic = useSelector((state: RootState) => state.character?.magic || { magicSchools: [], spells: [], magicSchoolCredit: false });
     const base = useSelector((state: RootState) => state.character?.base || { buildPointsRemaining: 0, buildPointsSpent: 0, energy: 0 });
     const dispatch = useDispatch();
@@ -131,18 +133,30 @@ export function MagicSchoolManager() {
 
     return (
         <>
-            <ListManager<MagicSchool>
-                title="Magic Schools"
-                description={`${magic.magicSchools?.length || 0} school${
-                    (magic.magicSchools?.length || 0) !== 1 ? "s" : ""
-                } learned • ${MAGIC_SCHOOL_COST} BP each`}
-                data={magic.magicSchools || []}
-                renderItem={renderMagicSchoolItem}
-                keyExtractor={(item) => item.id}
-                onAddPress={() => setModalVisible(true)}
-                addButtonText="Learn School"
-                emptyStateText="No magic schools learned yet."
-            />
+            {isPhone ? (
+                <CompactListManager<MagicSchool>
+                    title={`Magic Schools (${magic.magicSchools?.length || 0})`}
+                    data={magic.magicSchools || []}
+                    renderItem={renderMagicSchoolItem}
+                    keyExtractor={(item) => item.id}
+                    onAddPress={() => setModalVisible(true)}
+                    addButtonText="Learn"
+                    emptyStateText="No schools learned"
+                />
+            ) : (
+                <ListManager<MagicSchool>
+                    title="Magic Schools"
+                    description={`${magic.magicSchools?.length || 0} school${
+                        (magic.magicSchools?.length || 0) !== 1 ? "s" : ""
+                    } learned • ${MAGIC_SCHOOL_COST} BP each`}
+                    data={magic.magicSchools || []}
+                    renderItem={renderMagicSchoolItem}
+                    keyExtractor={(item) => item.id}
+                    onAddPress={() => setModalVisible(true)}
+                    addButtonText="Learn School"
+                    emptyStateText="No magic schools learned yet."
+                />
+            )}
 
             <Modal animationType="slide" transparent={true} visible={modalVisible} onRequestClose={() => setModalVisible(false)}>
                 <View style={cssStyle.modalOverlay}>

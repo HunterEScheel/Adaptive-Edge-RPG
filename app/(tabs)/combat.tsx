@@ -1,4 +1,4 @@
-import { useResponsiveStyles, useResponsive } from "@/app/contexts/ResponsiveContext";
+import { useResponsive, useResponsiveStyles } from "@/app/contexts/ResponsiveContext";
 import { CombatAttacks } from "@/components/Combat/CombatAttacks";
 import { CombatPassives } from "@/components/Combat/CombatPassives";
 import { WeaponSkillManager } from "@/components/Combat/WeaponSkillsManager";
@@ -9,6 +9,7 @@ import { calculateSkillCost } from "@/constants/Skills";
 import { RootState } from "@/store/rootReducer";
 import { updateMultipleFields } from "@/store/slices/baseSlice";
 import { updateDodge, updateParry } from "@/store/slices/skillsSlice";
+import React from "react";
 import { Pressable, ScrollView } from "react-native";
 import { Row, Rows, Table } from "react-native-table-component";
 import { useDispatch, useSelector } from "react-redux";
@@ -71,8 +72,9 @@ export default function CombatScreen() {
     const handleSkillChange = (skillName: "dodge" | "parry", delta: number) => {
         const currentLevel = character.skills[skillName] || 0;
         const newLevel = Math.max(0, currentLevel + delta);
-        const cost = calculateSkillCost(newLevel);
-        if (character.base.buildPointsRemaining < cost) {
+        const currentCost = calculateSkillCost(currentLevel);
+        let cost = currentLevel > newLevel ? -currentCost : calculateSkillCost(newLevel);
+        if (character.base.buildPointsRemaining < cost && cost > currentCost) {
             alert(`Not enough build points to upgrade ${skillName}. Need ${cost} more.`);
             return;
         } else {
@@ -88,34 +90,26 @@ export default function CombatScreen() {
 
     return (
         <ScrollView>
-            <ThemedView>
+            <ThemedView style={!isPhone && { marginTop: 100 }}>
                 {/* Defensive Skills Section */}
-                <ThemedText style={cssStyle.subtitle}>Defensive Skills</ThemedText>
-                <ThemedView style={[
-                    cssStyle.container,
-                    responsiveStyle(
-                        { flexDirection: 'column' }, // Phone: stack vertically
-                        { flexDirection: 'row', justifyContent: 'space-between', gap: 16 }, // Tablet/Desktop: side-by-side
-                        { flexDirection: 'row', justifyContent: 'space-between', gap: 20 } // Desktop: more gap
-                    )
-                ]}>
+                <ThemedText style={[cssStyle.subtitle, { textAlign: "center" }]}>Defensive Skills</ThemedText>
+                <ThemedView
+                    style={[
+                        cssStyle.container,
+                        responsiveStyle(
+                            { flexDirection: "column" }, // Phone: stack vertically
+                            { flexDirection: "row", justifyContent: "space-between", gap: 16 }, // Tablet/Desktop: side-by-side
+                            { flexDirection: "row", justifyContent: "space-between", gap: 20 } // Desktop: more gap
+                        ),
+                    ]}
+                >
                     {/* Dodge Skill */}
-                    <ThemedView style={responsiveStyle(
-                        { flex: 1 }, // Phone: full width
-                        { flex: 0.48 }, // Tablet/Desktop: ~half width with gap
-                        { flex: 0.48 }
-                    )}>
-                        <ThemedView style={[cssStyle.sectionContainer, { paddingVertical: 8 }]}>
-                            <ThemedView style={[cssStyle.containerColors, { paddingVertical: 8 }]}>
-                                <ThemedText style={cssStyle.sectionTitle}>Dodge</ThemedText>
-                                <ThemedText style={[cssStyle.hint, { marginTop: 4 }]}>Adds to AC</ThemedText>
-                                {character.inventory.armor?.armorClassification === "Medium" && (
-                                    <ThemedText style={[cssStyle.description, { fontSize: 12 }]}>Medium Armor: -1</ThemedText>
-                                )}
-                                {character.inventory.armor?.armorClassification === "Heavy" && 
-                                    <ThemedText style={[cssStyle.description, { fontSize: 12 }]}>Heavy Armor: 0</ThemedText>}
+                    <ThemedView style={[cssStyle.row, { justifyContent: "space-around" }]}>
+                        <ThemedView style={[cssStyle.sectionContainer]}>
+                            <ThemedView style={[cssStyle.containerColors, { padding: 8 }]}>
+                                <ThemedText style={[cssStyle.skillName, { textAlign: "center" }]}>Dodge</ThemedText>
                             </ThemedView>
-                            <ThemedView style={[cssStyle.containerColors, { flexDirection: 'row', alignItems: 'center', paddingVertical: 8 }]}>
+                            <ThemedView style={[cssStyle.containerColors, { flexDirection: "row", alignItems: "center" }]}>
                                 <Pressable style={[cssStyle.defaultButton, cssStyle.secondaryColors]} onPress={() => handleSkillChange("dodge", -1)}>
                                     <ThemedText style={cssStyle.secondaryText}>-</ThemedText>
                                 </Pressable>
@@ -125,21 +119,13 @@ export default function CombatScreen() {
                                 </Pressable>
                             </ThemedView>
                         </ThemedView>
-                    </ThemedView>
 
-                    {/* Parry Skill */}
-                    <ThemedView style={responsiveStyle(
-                        { flex: 1 }, // Phone: full width
-                        { flex: 0.48 }, // Tablet/Desktop: ~half width with gap
-                        { flex: 0.48 }
-                    )}>
+                        {/* Parry Skill */}
                         <ThemedView style={[cssStyle.sectionContainer, { paddingVertical: 8 }]}>
-                            <ThemedView style={[cssStyle.containerColors, { paddingVertical: 8 }]}>
-                                <ThemedText style={cssStyle.sectionTitle}>Parry</ThemedText>
-                                <ThemedText style={[cssStyle.hint, { marginTop: 4 }]}>1 Action (response)</ThemedText>
-                                <ThemedText style={[cssStyle.hint, { fontSize: 12 }]}>Subtract 1d4 + {character.skills.parry || 0} from attack</ThemedText>
+                            <ThemedView style={[cssStyle.containerColors, { padding: 8 }]}>
+                                <ThemedText style={[cssStyle.skillName, { textAlign: "center" }]}>Parry</ThemedText>
                             </ThemedView>
-                            <ThemedView style={[cssStyle.containerColors, { flexDirection: 'row', alignItems: 'center', paddingVertical: 8 }]}>
+                            <ThemedView style={[cssStyle.containerColors, { flexDirection: "row", alignItems: "center" }]}>
                                 <Pressable style={[cssStyle.defaultButton, cssStyle.secondaryColors]} onPress={() => handleSkillChange("parry", -1)}>
                                     <ThemedText style={cssStyle.secondaryText}>-</ThemedText>
                                 </Pressable>
@@ -153,11 +139,10 @@ export default function CombatScreen() {
                 </ThemedView>
 
                 {/* Equipped Weapons Section */}
-                <ThemedView style={cssStyle.container}>
-                    <ThemedText style={cssStyle.subtitle}>Equipped Weapons</ThemedText>
+                <ThemedView style={[cssStyle.container, { margin: 20 }]}>
                     <Table>
                         <Row
-                            data={["Weapon", "Attack" + " (Attribute + Skill + Bonus)", "Damage", "Properties"]}
+                            data={["Weapon", "Attack" + isPhone ? "" : " (Attribute + Skill + Bonus)", "Damage", "Properties"]}
                             style={[cssStyle.row]}
                             textStyle={[cssStyle.defaultBold, cssStyle.description]}
                         />
@@ -192,7 +177,7 @@ export default function CombatScreen() {
                                     weapon.name + ": " + weapon.weaponHeft + " - " + weapon.weaponType,
                                     formatAttackBonus(getAttackBonus(weapon)),
                                     `${weapon.damageDiceCount}${diceType} ${formatAttackBonus(getDamageBonus(weapon))}`,
-                                    [weapon.versatile && "Versatile", weapon.twoHanded && "Two-handed"].filter(Boolean).join(", "),
+                                    [weapon.versatile && "V", weapon.twoHanded && "Two-handed"].filter(Boolean).join(", "),
                                 ];
                             })}
                             style={cssStyle.row}

@@ -1,4 +1,4 @@
-import { useResponsiveStyles } from "@/app/contexts/ResponsiveContext";
+import { useResponsive, useResponsiveStyles } from "@/app/contexts/ResponsiveContext";
 import { RootState } from "@/store/rootReducer";
 import { updateGold } from "@/store/slices/inventorySlice";
 import React, { useState } from "react";
@@ -8,9 +8,11 @@ import { ThemedText } from "../ThemedText";
 import { ThemedView } from "../ThemedView";
 import { Gp } from "../ui/Gp";
 import { IconSymbol } from "../ui/IconSymbol";
+import { CompactGoldManager } from "./CompactGoldManager";
 
 export function GoldManager() {
     const cssStyle = useResponsiveStyles();
+    const { isPhone } = useResponsive();
     const character = useSelector((state: RootState) => state.character);
     const dispatch = useDispatch();
     const [showAdjustment, setShowAdjustment] = useState(false);
@@ -23,12 +25,18 @@ export function GoldManager() {
         const amount = parseInt(adjustmentAmount);
         if (isNaN(amount) || amount <= 0) return;
 
-        const newGold = isAdd ? character.inventory?.gold + amount : Math.max(0, character.inventory?.gold - amount);
+        const currentGold = character.inventory?.gold || 0;
+        const newGold = isAdd ? currentGold + amount : Math.max(0, currentGold - amount);
 
         dispatch(updateGold(newGold));
         setAdjustmentAmount("");
         setShowAdjustment(false);
     };
+
+    // Use compact version for phone
+    if (isPhone) {
+        return <CompactGoldManager />;
+    }
 
     return (
         <ThemedView style={cssStyle.container}>

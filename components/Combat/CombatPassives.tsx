@@ -2,15 +2,17 @@ import React, { useState } from "react";
 import { Alert, Modal, Pressable, TextInput, View } from "react-native";
 import { useDispatch, useSelector } from "react-redux";
 
-import { useResponsiveStyles } from "@/app/contexts/ResponsiveContext";
+import { useResponsive, useResponsiveStyles } from "@/app/contexts/ResponsiveContext";
 import { RootState } from "@/store/rootReducer";
 import { Passive, addPassive, removePassive } from "@/store/slices/abilitiesSlice";
 import { ListManager } from "../Common/ListManager";
+import { CompactListManager } from "../Common/CompactListManager";
 import { ThemedText } from "../ThemedText";
 import { ThemedView } from "../ThemedView";
 
 export function CombatPassives() {
     const cssStyle = useResponsiveStyles();
+    const { isPhone } = useResponsive();
     const dispatch = useDispatch();
     const passives = useSelector((state: RootState) => state.character.abilities.passives || []);
 
@@ -75,16 +77,28 @@ export function CombatPassives() {
 
     return (
         <>
-            <ListManager
-                title="Combat Passives"
-                description={`${passives.length} passive${passives.length !== 1 ? "s" : ""}`}
-                data={passives}
-                renderItem={renderPassiveItem}
-                keyExtractor={(item) => item.id}
-                onAddPress={() => setShowAddPassiveModal(true)}
-                addButtonText="Add Passive"
-                emptyStateText="You haven't added any passive abilities yet. Add a passive ability to get started."
-            />
+            {isPhone ? (
+                <CompactListManager
+                    title={`Passives (${passives.length})`}
+                    data={passives}
+                    renderItem={renderPassiveItem}
+                    keyExtractor={(item) => item.id}
+                    onAddPress={() => setShowAddPassiveModal(true)}
+                    addButtonText="Add"
+                    emptyStateText="No passives added yet"
+                />
+            ) : (
+                <ListManager
+                    title="Combat Passives"
+                    description={`${passives.length} passive${passives.length !== 1 ? "s" : ""}`}
+                    data={passives}
+                    renderItem={renderPassiveItem}
+                    keyExtractor={(item) => item.id}
+                    onAddPress={() => setShowAddPassiveModal(true)}
+                    addButtonText="Add Passive"
+                    emptyStateText="You haven't added any passive abilities yet. Add a passive ability to get started."
+                />
+            )}
 
             {/* Add Passive Modal */}
             <Modal visible={showAddPassiveModal} transparent animationType="slide">

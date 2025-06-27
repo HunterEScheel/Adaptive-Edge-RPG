@@ -118,7 +118,12 @@ const inventorySlice = createSlice({
             return state;
         },
         addArmor: (state, action: PayloadAction<Armor>) => {
+            console.log(action.payload);
             state.armor = action.payload;
+            return state;
+        },
+        removeArmor: (state) => {
+            state.armor = {} as Armor;
             return state;
         },
     },
@@ -140,6 +145,7 @@ export const {
     addGold,
     spendGold,
     addArmor,
+    removeArmor,
 } = inventorySlice.actions;
 
 export default inventorySlice.reducer;

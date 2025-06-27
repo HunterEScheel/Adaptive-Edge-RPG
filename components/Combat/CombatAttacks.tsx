@@ -2,16 +2,18 @@ import React, { useState } from "react";
 import { Alert, Modal, Pressable, TextInput, View } from "react-native";
 import { useDispatch, useSelector } from "react-redux";
 
-import { useResponsiveStyles } from "@/app/contexts/ResponsiveContext";
+import { useResponsive, useResponsiveStyles } from "@/app/contexts/ResponsiveContext";
 import { RootState } from "@/store/rootReducer";
 import { Attack, addAttack, removeAttack } from "@/store/slices/abilitiesSlice";
 import { spendEnergy } from "@/store/slices/baseSlice";
 import { ListManager } from "../Common/ListManager";
+import { CompactListManager } from "../Common/CompactListManager";
 import { ThemedText } from "../ThemedText";
 import { ThemedView } from "../ThemedView";
 
 export function CombatAttacks() {
     const cssStyle = useResponsiveStyles();
+    const { isPhone } = useResponsive();
     const dispatch = useDispatch();
     const character = useSelector((state: RootState) => state.character);
     const attacks = useSelector((state: RootState) => state.character.abilities.attacks || []);
@@ -107,16 +109,28 @@ export function CombatAttacks() {
 
     return (
         <>
-            <ListManager
-                title="Combat Attacks"
-                description={`${attacks.length} attack${attacks.length !== 1 ? "s" : ""}`}
-                data={attacks}
-                renderItem={renderAttackItem}
-                keyExtractor={(item) => item.id}
-                onAddPress={() => setShowAddAttackModal(true)}
-                addButtonText="Add Attack"
-                emptyStateText="You haven't added any attacks yet. Add an attack to get started."
-            />
+            {isPhone ? (
+                <CompactListManager
+                    title={`Attacks (${attacks.length})`}
+                    data={attacks}
+                    renderItem={renderAttackItem}
+                    keyExtractor={(item) => item.id}
+                    onAddPress={() => setShowAddAttackModal(true)}
+                    addButtonText="Add"
+                    emptyStateText="No attacks added yet"
+                />
+            ) : (
+                <ListManager
+                    title="Combat Attacks"
+                    description={`${attacks.length} attack${attacks.length !== 1 ? "s" : ""}`}
+                    data={attacks}
+                    renderItem={renderAttackItem}
+                    keyExtractor={(item) => item.id}
+                    onAddPress={() => setShowAddAttackModal(true)}
+                    addButtonText="Add Attack"
+                    emptyStateText="You haven't added any attacks yet. Add an attack to get started."
+                />
+            )}
 
             {/* Add Attack Modal */}
             <Modal animationType="slide" transparent={true} visible={showAddAttackModal} onRequestClose={() => setShowAddAttackModal(false)}>

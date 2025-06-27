@@ -31,10 +31,9 @@ export const cssStyle = StyleSheet.create<ResponsiveStyles>({
     },
     sectionHeaderContainer: {
         alignItems: "center",
-        marginBottom: 4,
         flexDirection: "row",
         justifyContent: "center",
-        gap: 8,
+        gap: 2,
     },
     sectionItem: {
         flex: 1,
@@ -67,5 +66,71 @@ export const cssStyle = StyleSheet.create<ResponsiveStyles>({
     },
     headerContainer: {
         flexDirection: "column",
+    },
+
+    // Modal responsive styles for phone
+    modal: {},
+    modalCloseButton: {},
+    modalFooter: {},
+    modalView: {
+        width: "95%",
+        maxWidth: "95%",
+        maxHeight: "90%",
+        backgroundColor: "white",
+        borderRadius: 16,
+        padding: 16,
+        shadowColor: "#000",
+        shadowOffset: { width: 0, height: 2 },
+        shadowOpacity: 0.25,
+        shadowRadius: 3.84,
+        elevation: 5,
+    },
+    modalOverlay: {
+        flex: 1,
+        justifyContent: "center",
+        alignItems: "center",
+        backgroundColor: "rgba(0, 0, 0, 0.5)",
+    },
+    modalHeader: {
+        flexDirection: "row",
+        justifyContent: "space-between",
+        alignItems: "center",
+        marginBottom: 16,
+        paddingBottom: 12,
+        borderBottomWidth: 1,
+        borderBottomColor: "#e0e0e0",
+    },
+    modalTitle: {
+        fontSize: 18,
+        fontWeight: "600",
+        color: "#333",
+        flex: 1,
+    },
+    modalContent: {
+        flex: 1,
+        paddingBottom: 8,
+    },
+    modalButtons: {
+        flexDirection: "row",
+        justifyContent: "flex-end",
+        gap: 12,
+        marginTop: 16,
+        paddingTop: 16,
+        borderTopWidth: 1,
+        borderTopColor: "#e0e0e0",
+    },
+    modalTable: {
+        padding: 8,
+        backgroundColor: "white",
+        borderRadius: 8,
+        shadowColor: "#000",
+        shadowOffset: { width: 0, height: 1 },
+        shadowOpacity: 0.05,
+        shadowRadius: 2,
+        elevation: 1,
+    },
+    modalTableText: {
+        fontSize: 11,
+        color: "#333",
     },
 });

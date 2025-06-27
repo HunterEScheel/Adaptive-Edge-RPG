@@ -1,5 +1,6 @@
-import { useResponsiveStyles } from "@/app/contexts/ResponsiveContext";
+import { useResponsive, useResponsiveStyles } from "@/app/contexts/ResponsiveContext";
 import { ListManager } from "@/components/Common/ListManager";
+import { CompactListManager } from "@/components/Common/CompactListManager";
 import { RootState } from "@/store/rootReducer";
 import { updateField, updateMultipleFields } from "@/store/slices/baseSlice";
 import { Spell, addSpell, removeSpell } from "@/store/slices/magicSlice";
@@ -27,6 +28,7 @@ const AVAILABLE_SPELLS: Omit<Spell, "id">[] = [
 
 export function SpellManager() {
     const cssStyle = useResponsiveStyles();
+    const { isPhone } = useResponsive();
     const magic = useSelector((state: RootState) => state.character?.magic || { magicSchools: [], spells: [], magicSchoolCredit: false });
     const base = useSelector((state: RootState) => state.character?.base || { buildPointsRemaining: 0, buildPointsSpent: 0, energy: 0 });
     const dispatch = useDispatch();
@@ -160,16 +162,28 @@ export function SpellManager() {
 
     return (
         <>
-            <ListManager<Spell>
-                title="Spells"
-                description={`${magic.spells?.length || 0} spell${(magic.spells?.length || 0) !== 1 ? "s" : ""} learned`}
-                data={magic.spells || []}
-                renderItem={renderSpellItem}
-                keyExtractor={(item) => item.id}
-                onAddPress={() => setModalVisible(true)}
-                addButtonText="Learn Spell"
-                emptyStateText="You haven't learned any spells yet. Learn a magic school first, then add spells from that school."
-            />
+            {isPhone ? (
+                <CompactListManager<Spell>
+                    title={`Spells (${magic.spells?.length || 0})`}
+                    data={magic.spells || []}
+                    renderItem={renderSpellItem}
+                    keyExtractor={(item) => item.id}
+                    onAddPress={() => setModalVisible(true)}
+                    addButtonText="Learn"
+                    emptyStateText="No spells learned yet"
+                />
+            ) : (
+                <ListManager<Spell>
+                    title="Spells"
+                    description={`${magic.spells?.length || 0} spell${(magic.spells?.length || 0) !== 1 ? "s" : ""} learned`}
+                    data={magic.spells || []}
+                    renderItem={renderSpellItem}
+                    keyExtractor={(item) => item.id}
+                    onAddPress={() => setModalVisible(true)}
+                    addButtonText="Learn Spell"
+                    emptyStateText="You haven't learned any spells yet. Learn a magic school first, then add spells from that school."
+                />
+            )}
 
             <Modal animationType="slide" transparent={true} visible={modalVisible} onRequestClose={() => setModalVisible(false)}>
                 <Pressable style={cssStyle.modalOverlay} onPress={() => setModalVisible(false)}>

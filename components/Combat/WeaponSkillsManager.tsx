@@ -1,4 +1,4 @@
-import { useResponsiveStyles } from "@/app/contexts/ResponsiveContext";
+import { useResponsive, useResponsiveStyles } from "@/app/contexts/ResponsiveContext";
 import { calculateSkillCost, calculateTotalSkillCost } from "@/constants/Skills";
 import { RootState } from "@/store/rootReducer";
 import { updateMultipleFields } from "@/store/slices/baseSlice";
@@ -8,19 +8,20 @@ import { FaTrash } from "react-icons/fa";
 import { Alert, Modal, Pressable, ScrollView, TouchableOpacity, View } from "react-native";
 import { useDispatch, useSelector } from "react-redux";
 import { ListManager } from "../Common/ListManager";
+import { CompactListManager } from "../Common/CompactListManager";
 import { ThemedText } from "../ThemedText";
 import { ThemedView } from "../ThemedView";
 
 export type WeaponSkill = {
     id: number;
     level: number;
-    weaponHeft: "Unarmed" | "2-handed" | "1-handed" | "Versatile";
+    weaponHeft: "Unarmed" | "2H" | "1H" | "V";
     weaponType: "Stab" | "Swing" | "Fire" | "Draw";
 };
 
 const weaponOptions: WeaponSkill[] = [
     {
-        weaponHeft: "2-handed",
+        weaponHeft: "2H",
         id: 1,
         level: 1,
         weaponType: "Stab",
@@ -28,43 +29,43 @@ const weaponOptions: WeaponSkill[] = [
     {
         id: 2,
         level: 1,
-        weaponHeft: "2-handed",
+        weaponHeft: "2H",
         weaponType: "Swing",
     },
     {
         id: 3,
         level: 1,
-        weaponHeft: "2-handed",
+        weaponHeft: "2H",
         weaponType: "Draw",
     },
     {
         id: 4,
         level: 1,
-        weaponHeft: "2-handed",
+        weaponHeft: "2H",
         weaponType: "Fire",
     },
     {
         id: 5,
         level: 1,
-        weaponHeft: "1-handed",
+        weaponHeft: "1H",
         weaponType: "Fire",
     },
     {
         id: 6,
         level: 1,
-        weaponHeft: "1-handed",
+        weaponHeft: "1H",
         weaponType: "Swing",
     },
     {
         id: 7,
         level: 1,
-        weaponHeft: "1-handed",
+        weaponHeft: "1H",
         weaponType: "Stab",
     },
     {
         id: 8,
         level: 1,
-        weaponHeft: "1-handed",
+        weaponHeft: "1H",
         weaponType: "Draw",
     },
     {
@@ -76,19 +77,20 @@ const weaponOptions: WeaponSkill[] = [
     {
         id: 13,
         level: 1,
-        weaponHeft: "Versatile",
+        weaponHeft: "V",
         weaponType: "Stab",
     },
     {
         id: 14,
         level: 1,
-        weaponHeft: "Versatile",
+        weaponHeft: "V",
         weaponType: "Swing",
     },
 ];
 
 export function WeaponSkillManager() {
     const cssStyle = useResponsiveStyles();
+    const { isPhone } = useResponsive();
     const dispatch = useDispatch();
     const { base } = useSelector((state: RootState) => state.character);
     const { weaponSkills } = useSelector((state: RootState) => state.character.skills);
@@ -195,12 +197,12 @@ export function WeaponSkillManager() {
 
     const renderSkillItem = ({ item }: { item: WeaponSkill }) => {
         return (
-            <View style={cssStyle.sectionContainer}>
+            <View style={[cssStyle.sectionContainer, cssStyle.row]}>
                 <ThemedText style={cssStyle.sectionTitle}>
                     {item.weaponHeft} - {item.weaponType}
                 </ThemedText>
-                <ThemedText style={cssStyle.description}>Cost: {calculateTotalSkillCost(item.level)} BP</ThemedText>
-                <View style={cssStyle.sectionContainer}>
+                <ThemedText style={[cssStyle.description, { margin: 30 }]}>Cost: {calculateTotalSkillCost(item.level)} BP</ThemedText>
+                <View style={[cssStyle.sectionContainer, cssStyle.row]}>
                     <Pressable
                         style={[cssStyle.condensedButton, cssStyle.secondaryColors]}
                         onPress={() => handleLevelChange(item, false)}
@@ -208,9 +210,9 @@ export function WeaponSkillManager() {
                     >
                         <ThemedText style={[cssStyle.description, cssStyle.secondaryText]}>-</ThemedText>
                     </Pressable>
-                    <ThemedText style={cssStyle.description}>{item.level}</ThemedText>
+                    <ThemedText style={[cssStyle.description, { margin: 15 }]}>{item.level}</ThemedText>
                     <Pressable
-                        style={[cssStyle.defaultButton, cssStyle.primaryColors]}
+                        style={[cssStyle.condensedButton, cssStyle.primaryColors]}
                         onPress={() => handleLevelChange(item, true)}
                         disabled={item.level >= 10}
                     >
@@ -228,16 +230,28 @@ export function WeaponSkillManager() {
 
     return (
         <>
-            <ListManager<WeaponSkill>
-                title="Weapon Skills"
-                description={`${totalSkillPoints} BP spent`}
-                data={skills}
-                renderItem={renderSkillItem}
-                keyExtractor={(item) => item.id.toString()}
-                onAddPress={() => setModalVisible(true)}
-                addButtonText="Add Skill"
-                emptyStateText="No skills added yet. Add your first skill!"
-            />
+            {isPhone ? (
+                <CompactListManager<WeaponSkill>
+                    title={`Weapon Skills (${totalSkillPoints} BP)`}
+                    data={skills}
+                    renderItem={renderSkillItem}
+                    keyExtractor={(item) => item.id.toString()}
+                    onAddPress={() => setModalVisible(true)}
+                    addButtonText="Add"
+                    emptyStateText="No skills added yet"
+                />
+            ) : (
+                <ListManager<WeaponSkill>
+                    title="Weapon Skills"
+                    description={`${totalSkillPoints} BP spent`}
+                    data={skills}
+                    renderItem={renderSkillItem}
+                    keyExtractor={(item) => item.id.toString()}
+                    onAddPress={() => setModalVisible(true)}
+                    addButtonText="Add Skill"
+                    emptyStateText="No skills added yet. Add your first skill!"
+                />
+            )}
 
             {/* Add Skill Modal */}
             <Modal animationType="slide" transparent={true} visible={modalVisible} onRequestClose={() => setModalVisible(false)}>

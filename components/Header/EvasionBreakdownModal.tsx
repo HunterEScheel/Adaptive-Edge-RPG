@@ -1,5 +1,6 @@
 import { useResponsiveStyles } from "@/app/contexts/ResponsiveContext";
 import { ThemedText } from "@/components/ThemedText";
+import { calculateTotalDamageReduction } from "@/components/Utility/CalculateTotals";
 import { Consumable, Equipment } from "@/constants/Item";
 import { ePlayerStat } from "@/constants/Stats";
 import { Character } from "@/store/slices/characterSlice";
@@ -7,55 +8,53 @@ import { FontAwesome } from "@expo/vector-icons";
 import React from "react";
 import { Modal, Pressable, ScrollView, View } from "react-native";
 
-interface ACBreakdownModalProps {
+interface EvasionBreakdownModalProps {
     visible: boolean;
     onClose: () => void;
     character: Character;
 }
 
-export function ACBreakdownModal({ visible, onClose, character }: ACBreakdownModalProps) {
+export function EvasionBreakdownModal({ visible, onClose, character }: EvasionBreakdownModalProps) {
     const cssStyle = useResponsiveStyles();
-    // Calculate each component of AC
-    const baseAC = 10 + character.base.dex;
+    // Calculate each component of Evasion
+    const baseEvasion = 10 + character.base.dex;
 
-    const equipmentAC =
+    const equipmentEvasion =
         character.inventory?.equipment
-            ?.filter((x: Equipment) => x.statEffected === ePlayerStat.ac && (!x.requiresAttunement || x.attunement) && x.equipped)
+            ?.filter((x: Equipment) => x.statEffected === ePlayerStat.evasion && (!x.requiresAttunement || x.attunement) && x.equipped)
             .reduce((total: number, item: Equipment) => total + (item.statModifier || 0), 0) || 0;
 
-    const consumableAC =
+    const consumableEvasion =
         character.inventory?.consumables
-            ?.filter((x: Consumable) => x.statEffected === ePlayerStat.ac)
+            ?.filter((x: Consumable) => x.statEffected === ePlayerStat.evasion)
             .reduce((total: number, item: Consumable) => total + (item.statModifier || 0), 0) || 0;
 
-    let dodgeAC = character.skills?.dodge || 0;
-    const originalDodge = character.skills?.dodge || 0;
+    let dodgeEvasion = character.skills?.dodge || 0;
 
-    // Apply armor classification penalties to dodge
-    if (character.inventory.armor.armorClassification === "Medium") {
-        dodgeAC = Math.max(dodgeAC - 1, 0);
+    // Apply dodge reduction from armor
+    const dodgeReduction = character.inventory?.armor?.statUpdates?.evasionReduction || 0;
+
+    // Heavy armor still completely blocks dodge
+    if (character.inventory?.armor?.armorClassification === "Heavy") {
+        dodgeEvasion = 0;
     }
-    if (character.inventory.armor.armorClassification === "Heavy") {
-        dodgeAC = 0;
-    }
 
-    const armorAC = character.inventory.armor.bonus || 0;
-    const enchantmentAC = character.inventory.armor.enchantmentBonus || 0;
-
-    const totalAC = baseAC + equipmentAC + consumableAC + dodgeAC + armorAC + enchantmentAC;
+    const totalEvasion = baseEvasion + equipmentEvasion + consumableEvasion + dodgeEvasion - dodgeReduction;
+    const totalDR = calculateTotalDamageReduction(character);
 
     const equipmentItems =
-        character.inventory?.equipment?.filter((x: Equipment) => x.statEffected === ePlayerStat.ac && (!x.requiresAttunement || x.attunement) && x.equipped) ||
-        [];
+        character.inventory?.equipment?.filter(
+            (x: Equipment) => x.statEffected === ePlayerStat.evasion && (!x.requiresAttunement || x.attunement) && x.equipped
+        ) || [];
 
-    const consumableItems = character.inventory?.consumables?.filter((x: Consumable) => x.statEffected === ePlayerStat.ac) || [];
+    const consumableItems = character.inventory?.consumables?.filter((x: Consumable) => x.statEffected === ePlayerStat.evasion) || [];
 
     return (
         <Modal animationType="fade" transparent={true} visible={visible} onRequestClose={onClose}>
             <View style={cssStyle.modalOverlay}>
                 <View style={cssStyle.modalView}>
                     <View style={cssStyle.modalHeader}>
-                        <ThemedText style={cssStyle.modalTitle}>Armor Class Breakdown</ThemedText>
+                        <ThemedText style={cssStyle.modalTitle}>Evasion Breakdown</ThemedText>
                         <Pressable style={cssStyle.centered} onPress={onClose}>
                             <FontAwesome name="times" size={20} color="#FFF" />
                         </Pressable>
@@ -64,44 +63,34 @@ export function ACBreakdownModal({ visible, onClose, character }: ACBreakdownMod
                     <View style={cssStyle.modalContent}>
                         <ScrollView style={cssStyle.container}>
                             <View style={cssStyle.lightContainer}>
-                                <ThemedText style={cssStyle.largeValue}>Total AC: {totalAC}</ThemedText>
+                                <ThemedText style={cssStyle.largeValue}>Total Evasion: {totalEvasion}</ThemedText>
+                                <ThemedText style={cssStyle.largeValue}>Damage Reduction: {totalDR}</ThemedText>
                             </View>
 
                             <View style={cssStyle.container}>
-                                <ThemedText style={cssStyle.sectionHeader}>Breakdown:</ThemedText>
-
-                                <View style={cssStyle.row}>
-                                    <ThemedText style={cssStyle.label}>Base AC (10 + DEX)</ThemedText>
-                                    <ThemedText style={cssStyle.valueText}>
-                                        10 + {character.base.dex} = {baseAC}
-                                    </ThemedText>
-                                </View>
-
-                                {character.inventory.armor && (
-                                    <>
-                                        <View style={cssStyle.row}>
-                                            <ThemedText style={cssStyle.label}>Armor ({character.inventory.armor.name})</ThemedText>
-                                            <ThemedText style={cssStyle.valueText}>+{armorAC}</ThemedText>
-                                        </View>
-
-                                        {enchantmentAC > 0 && (
-                                            <View style={cssStyle.row}>
-                                                <ThemedText style={cssStyle.label}>Enchantment Bonus</ThemedText>
-                                                <ThemedText style={cssStyle.valueText}>+{enchantmentAC}</ThemedText>
-                                            </View>
-                                        )}
-                                    </>
-                                )}
+                                <ThemedText style={cssStyle.sectionHeader}>Evasion Breakdown:</ThemedText>
 
                                 <View style={cssStyle.row}>
                                     <ThemedText style={cssStyle.label}>
-                                        Dodge Skill{" "}
-                                        {character.inventory.armor.armorClassification !== "Light"
-                                            ? `(${originalDodge} ${character.inventory.armor.armorClassification === "Medium" ? "-1" : "blocked"})`
-                                            : ""}
+                                        10 + {character.base.dex}(DEX): {10 + character.base.dex}
                                     </ThemedText>
-                                    <ThemedText style={cssStyle.valueText}>+{dodgeAC}</ThemedText>
                                 </View>
+                                <View style={cssStyle.row}>
+                                    <ThemedText style={cssStyle.label}>Dodge: +{dodgeEvasion} </ThemedText>
+                                </View>
+
+                                <View style={cssStyle.row}>
+                                    <ThemedText style={cssStyle.label}>
+                                        Reduction({character.inventory.armor?.name}): -{dodgeReduction}{" "}
+                                    </ThemedText>
+                                </View>
+                                {character.inventory.armor && (
+                                    <>
+                                        <ThemedText style={cssStyle.sectionHeader}>
+                                            Damage Reduction: {character.inventory.armor.statUpdates?.damageReduction} ({character.inventory.armor.name})
+                                        </ThemedText>
+                                    </>
+                                )}
 
                                 {equipmentItems.length > 0 && (
                                     <>
@@ -127,14 +116,10 @@ export function ACBreakdownModal({ visible, onClose, character }: ACBreakdownMod
                                     </>
                                 )}
 
-                                {character.inventory.armor.armorClassification !== "Light" && (
+                                {(dodgeReduction > 0 || character.inventory.armor.armorClassification === "Heavy") && (
                                     <View style={cssStyle.lightContainer}>
                                         <ThemedText style={cssStyle.subtitle}>Armor Penalties:</ThemedText>
-                                        <ThemedText style={cssStyle.emptyText}>
-                                            {character.inventory.armor.armorClassification === "Medium"
-                                                ? "Medium armor reduces Dodge skill by 1 (minimum 0)"
-                                                : "Heavy armor completely blocks Dodge skill bonus"}
-                                        </ThemedText>
+                                        <ThemedText style={cssStyle.emptyText}>This armor reduces Dodge skill by {dodgeReduction}</ThemedText>
                                     </View>
                                 )}
                             </View>

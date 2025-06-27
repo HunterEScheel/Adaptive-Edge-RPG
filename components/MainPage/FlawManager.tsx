@@ -3,15 +3,17 @@ import { Modal, Pressable, ScrollView, TextInput, View } from "react-native";
 import { useDispatch, useSelector } from "react-redux";
 
 import { ListManager } from "@/components/Common/ListManager";
+import { CompactListManager } from "@/components/Common/CompactListManager";
 import { RootState } from "@/store/rootReducer";
 import { FlawSeverity, addFlaw, removeFlaw, Flaw } from "@/store/slices/abilitiesSlice";
 import { updateMultipleFields } from "@/store/slices/baseSlice";
 import { ThemedText } from "../ThemedText";
 import { ThemedView } from "../ThemedView";
-import { useResponsiveStyles } from "@/app/contexts/ResponsiveContext";
+import { useResponsive, useResponsiveStyles } from "@/app/contexts/ResponsiveContext";
 
 export const FlawManager = () => {
   const cssStyle = useResponsiveStyles();
+  const { isPhone } = useResponsive();
   const dispatch = useDispatch();
   const flaws = useSelector((state: RootState) => state.character.abilities.flaws || []);
   const base = useSelector((state: RootState) => state.character.base);
@@ -104,16 +106,28 @@ export const FlawManager = () => {
 
   return (
     <>
-      <ListManager<Flaw>
-        title="Character Flaws"
-        description={`${flaws.length} flaw${flaws.length !== 1 ? 's' : ''} • ${flaws.reduce((total, flaw) => total + getBuildPointsForSeverity(flaw.severity), 0)} BP gained`}
-        data={flaws}
-        renderItem={renderFlawItem}
-        keyExtractor={(item) => item.id}
-        onAddPress={() => setShowAddFlawModal(true)}
-        addButtonText="Add Flaw"
-        emptyStateText="No flaws added yet"
-      />
+      {isPhone ? (
+        <CompactListManager<Flaw>
+          title={`Flaws (+${flaws.reduce((total, flaw) => total + getBuildPointsForSeverity(flaw.severity), 0)} BP)`}
+          data={flaws}
+          renderItem={renderFlawItem}
+          keyExtractor={(item) => item.id}
+          onAddPress={() => setShowAddFlawModal(true)}
+          addButtonText="Add"
+          emptyStateText="No flaws added"
+        />
+      ) : (
+        <ListManager<Flaw>
+          title="Character Flaws"
+          description={`${flaws.length} flaw${flaws.length !== 1 ? 's' : ''} • ${flaws.reduce((total, flaw) => total + getBuildPointsForSeverity(flaw.severity), 0)} BP gained`}
+          data={flaws}
+          renderItem={renderFlawItem}
+          keyExtractor={(item) => item.id}
+          onAddPress={() => setShowAddFlawModal(true)}
+          addButtonText="Add Flaw"
+          emptyStateText="No flaws added yet"
+        />
+      )}
 
       {/* Add Flaw Modal */}
       <Modal animationType="slide" transparent={true} visible={showAddFlawModal} onRequestClose={() => setShowAddFlawModal(false)}>

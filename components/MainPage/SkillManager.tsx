@@ -1,5 +1,6 @@
 import { findMatchingResults } from "@/components/ai/compareEmbedding";
 import { ListManager } from "@/components/Common/ListManager";
+import { CompactListManager } from "@/components/Common/CompactListManager";
 import { Skill, calculateSkillCost, calculateTotalSkillCost } from "@/constants/Skills";
 import embeddingDatabase from "@/services/embeddingDatabase";
 import { RootState } from "@/store/rootReducer";
@@ -9,7 +10,7 @@ import { FontAwesome } from "@expo/vector-icons";
 import React, { useCallback, useEffect, useState } from "react";
 import { ActivityIndicator, Alert, Modal, ScrollView, TextInput, TouchableOpacity, View } from "react-native";
 import { useDispatch, useSelector } from "react-redux";
-import { useResponsiveStyles } from "@/app/contexts/ResponsiveContext";
+import { useResponsive, useResponsiveStyles } from "@/app/contexts/ResponsiveContext";
 import { ThemedText } from "../ThemedText";
 
 // Simple ID generator function
@@ -17,6 +18,7 @@ const generateId = () => Math.random().toString(36).substring(2, 15);
 
 export function SkillManager() {
     const cssStyle = useResponsiveStyles();
+    const { isPhone } = useResponsive();
     const dispatch = useDispatch();
     // Get character state from Redux with fallbacks for initialization
     const skills = useSelector((state: RootState) => state.character?.skills?.skills || []);
@@ -361,16 +363,28 @@ export function SkillManager() {
 
     return (
         <>
-            <ListManager<Skill>
-                title="Skills"
-                description={`${skills.length} skill${skills.length !== 1 ? "s" : ""} • ${totalSkillPoints} BP spent`}
-                data={skills}
-                renderItem={renderSkillItem}
-                keyExtractor={(item) => item.id}
-                onAddPress={() => setAddModalVisible(true)}
-                addButtonText="Add Skill"
-                emptyStateText="No skills added yet. Add your first skill!"
-            />
+            {isPhone ? (
+                <CompactListManager<Skill>
+                    title={`Skills (${totalSkillPoints} BP)`}
+                    data={skills}
+                    renderItem={renderSkillItem}
+                    keyExtractor={(item) => item.id}
+                    onAddPress={() => setAddModalVisible(true)}
+                    addButtonText="Add"
+                    emptyStateText="No skills added yet"
+                />
+            ) : (
+                <ListManager<Skill>
+                    title="Skills"
+                    description={`${skills.length} skill${skills.length !== 1 ? "s" : ""} • ${totalSkillPoints} BP spent`}
+                    data={skills}
+                    renderItem={renderSkillItem}
+                    keyExtractor={(item) => item.id}
+                    onAddPress={() => setAddModalVisible(true)}
+                    addButtonText="Add Skill"
+                    emptyStateText="No skills added yet. Add your first skill!"
+                />
+            )}
 
             {/* Add Skill Modal */}
             <Modal animationType="slide" transparent={true} visible={addModalVisible} onRequestClose={() => setAddModalVisible(false)}>

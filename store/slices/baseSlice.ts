@@ -17,7 +17,7 @@ export interface BaseState {
   dex: Stat;
   con: Stat;
   int: Stat;
-  wis: Stat;
+  foc: Stat;
   cha: Stat;
 }
 
@@ -36,7 +36,7 @@ const initialState: BaseState = {
   dex: 0,
   con: 0,
   int: 0,
-  wis: 0,
+  foc: 0,
   cha: 0
 };
 

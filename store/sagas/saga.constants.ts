@@ -1,8 +1,9 @@
 import { characterPresetsService } from "@/services/characterPresets";
 import { PayloadAction } from "@reduxjs/toolkit";
-import { call, put, takeEvery } from "redux-saga/effects";
+import { call, put, select, takeEvery } from "redux-saga/effects";
 import { DELETE_PRESET, FETCH_PRESETS, LOAD_PRESET, SAVE_PRESET } from "../actions";
 import { setPresets } from "../reducers/presetReducer";
+import { RootState } from "../rootReducer";
 import { Character, setCharacter } from "../slices/characterSlice";
 
 // Fetch all presets from Supabase
@@ -54,7 +55,8 @@ interface SavePresetPayload {
 function* savePreset(action: PayloadAction<SavePresetPayload>): Generator<any, void, any> {
     try {
         // Get the current character from the store if not provided in action
-        const character = action.payload.character;
+
+        const character = yield select((state: RootState) => state.character);
 
         if (!character) {
             console.error("No character provided to savePreset saga");

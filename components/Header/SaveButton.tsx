@@ -1,6 +1,6 @@
 import { saveCharacter } from "@/components/Utility/FilePick";
 import { RootState } from "@/store/rootReducer";
-import { useState } from "react";
+import React, { useState } from "react";
 import { FaSave } from "react-icons/fa";
 import { Modal, Pressable, TextInput, View } from "react-native";
 import { useSelector } from "react-redux";

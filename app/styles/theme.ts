@@ -17,6 +17,21 @@ export interface ResponsiveStyles {
     attribute: ViewStyle;
     clickableStat: ViewStyle;
     headerContainer: ViewStyle;
+
+    // Modal responsive styles
+    modalView: ViewStyle;
+    modalTable: ViewStyle;
+    modalTableText: TextStyle;
+    //Modals
+    modal: ViewStyle;
+    modalContent: ViewStyle;
+    modalOverlay: ViewStyle;
+    modalButtons: ViewStyle;
+    modalHeader: ViewStyle;
+    modalFooter: ViewStyle;
+    modalCloseButton: ViewStyle;
+
+    modalTitle: TextStyle;
 }
 
 // Comprehensive type definition for responsive stylesheets
@@ -53,7 +68,6 @@ export interface ConsistentStyles {
     valueText: TextStyle;
     label: TextStyle;
     largeValue: TextStyle;
-    modalTitle: TextStyle;
 
     //Containers
     row: ViewStyle;
@@ -62,16 +76,6 @@ export interface ConsistentStyles {
     headerRow: ViewStyle;
     adjustmentRow: ViewStyle;
     formRow: ViewStyle;
-
-    //Modals
-    modal: ViewStyle;
-    modalContent: ViewStyle;
-    modalView: ViewStyle;
-    modalOverlay: ViewStyle;
-    modalButtons: ViewStyle;
-    modalHeader: ViewStyle;
-    modalFooter: ViewStyle;
-    modalCloseButton: ViewStyle;
 
     //Inputs
     input: TextStyle;
@@ -136,7 +140,6 @@ export interface ConsistentStyles {
 
     // Additional text styles
     headerText: TextStyle;
-    modalHeader: TextStyle;
     sectionHeader: TextStyle;
     sectionSubtitle: TextStyle;
     activeTabText: TextStyle;
@@ -171,7 +174,7 @@ export interface ConsistentStyles {
     suggestionItem: ViewStyle;
     detailItem: ViewStyle;
     iconStyle: ViewStyle;
-    
+
     // Header stat display
     statRow: ViewStyle;
     statItem: ViewStyle;

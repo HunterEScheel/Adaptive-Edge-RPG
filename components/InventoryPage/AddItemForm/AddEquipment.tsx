@@ -29,7 +29,7 @@ export function AddEquipment({ onChange }: AddEquipmentProps) {
         value: 0,
         requiresAttunement: false,
         attunement: false,
-        statEffected: ePlayerStat.ac,
+        statEffected: ePlayerStat.evasion,
         statModifier: 0,
         charges: 0,
         maxCharges: 0,

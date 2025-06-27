@@ -1,3 +1,4 @@
+import { useResponsiveStyles } from "@/app/contexts/ResponsiveContext";
 import { ThemedText } from "@/components/ThemedText";
 import { Armor } from "@/constants/Item";
 import { addArmor } from "@/store/slices/inventorySlice";
@@ -6,7 +7,6 @@ import React, { useEffect, useRef, useState } from "react";
 import { Pressable, TextInput, View } from "react-native";
 import { Dropdown } from "react-native-element-dropdown";
 import { useDispatch } from "react-redux";
-import { useResponsiveStyles } from "@/app/contexts/ResponsiveContext";
 
 interface AddArmorProps {
     onChange?: (armor: Armor) => void;
@@ -14,40 +14,49 @@ interface AddArmorProps {
 
 const armorOptions: Armor[] = [
     {
-        name: "Padded Armor",
+        name: "",
         armorClassification: "Light",
-        bonus: 1,
         id: 1,
+        statUpdates: {
+            evasionReduction: 2,
+            damageReduction: 1,
+        },
     },
     {
-        name: "Leather Armor",
-        armorClassification: "Light",
-        bonus: 2,
+        name: "",
+        armorClassification: "Reinforced",
         id: 2,
+        statUpdates: {
+            evasionReduction: 3,
+            damageReduction: 2,
+        },
     },
     {
-        name: "Hide Armor",
+        name: "",
         armorClassification: "Medium",
-        bonus: 3,
         id: 3,
+        statUpdates: {
+            evasionReduction: 4,
+            damageReduction: 3,
+        },
     },
     {
-        name: "Scale Mail",
-        armorClassification: "Medium",
-        bonus: 4,
+        name: "",
+        armorClassification: "Heavy",
         id: 4,
+        statUpdates: {
+            evasionReduction: 5,
+            damageReduction: 4,
+        },
     },
     {
-        name: "Chain Mail",
-        armorClassification: "Heavy",
-        bonus: 5,
+        name: "",
+        armorClassification: "Fortified",
         id: 5,
-    },
-    {
-        name: "Plate Mail",
-        armorClassification: "Heavy",
-        bonus: 6,
-        id: 6,
+        statUpdates: {
+            evasionReduction: 6,
+            damageReduction: 5,
+        },
     },
 ];
 
@@ -57,8 +66,11 @@ export function AddArmor({ onChange }: AddArmorProps) {
     const [armor, setArmor] = useState<Armor>({
         name: "Padded Armor",
         armorClassification: "Light",
-        bonus: 1,
         id: 1,
+        statUpdates: {
+            evasionReduction: 2,
+            damageReduction: 1,
+        },
     });
 
     // Update parent component when armor state changes
@@ -77,10 +89,13 @@ export function AddArmor({ onChange }: AddArmorProps) {
 
         // Reset form
         setArmor({
-            name: "Padded Armor",
+            name: "",
             armorClassification: "Light",
-            bonus: 1,
             id: 1,
+            statUpdates: {
+                evasionReduction: 0,
+                damageReduction: 1,
+            },
         });
     };
 
@@ -92,7 +107,7 @@ export function AddArmor({ onChange }: AddArmorProps) {
                 <ThemedText style={cssStyle.label}>Armor Type</ThemedText>
                 <Dropdown
                     data={armorOptions.map((option) => ({
-                        label: option.name,
+                        label: option.armorClassification,
                         value: option.id,
                     }))}
                     labelField="label"
@@ -103,25 +118,20 @@ export function AddArmor({ onChange }: AddArmorProps) {
                     placeholder="Select armor type"
                 />
             </View>
+            <TextInput style={[cssStyle.input]} value={armor.name} onChangeText={(text) => setArmor({ ...armor, name: text })} placeholder="Custom name" />
 
             <View style={cssStyle.formRow}>
-                <ThemedText style={cssStyle.label}>Custom Name (Optional)</ThemedText>
-                <TextInput
-                    style={cssStyle.input}
-                    value={armor.name}
-                    onChangeText={(text) => setArmor({ ...armor, name: text })}
-                    placeholder="Enter custom name or leave blank for default"
-                />
                 <ThemedText style={cssStyle.smallText}>
-                    Classification: <ThemedText style={cssStyle.valueText}>{armor.armorClassification}</ThemedText>
+                    Damage Reduction: <ThemedText style={cssStyle.valueText}>{armor.statUpdates?.damageReduction || 0}</ThemedText>
                 </ThemedText>
-                <ThemedText style={cssStyle.smallText}>
-                    AC Bonus: <ThemedText style={cssStyle.valueText}>+{armor.bonus}</ThemedText>
-                </ThemedText>
-                <ThemedText style={cssStyle.smallText}>Enchantment Bonus?</ThemedText>
+                {armor.statUpdates?.evasionReduction ? (
+                    <ThemedText style={cssStyle.smallText}>
+                        Dodge Penalty: <ThemedText style={cssStyle.valueText}>-{armor.statUpdates.evasionReduction}</ThemedText>
+                    </ThemedText>
+                ) : null}
                 <Dropdown
                     data={[
-                        { label: "None", value: undefined },
+                        { label: "No", value: undefined },
                         { label: "+1", value: 1 },
                         { label: "+2", value: 2 },
                         { label: "+3", value: 3 },
