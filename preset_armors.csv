@@ -1,0 +1,6 @@
+preset_id,name,armor_classification,enchantment_bonus,damage_reduction,evasion_reduction
+,Light Armor,Light,0,1,2
+,Reinforced Armor,Reinforced,0,2,3
+,Medium Armor,Medium,0,3,4
+,Heavy Armor,Heavy,0,4,5
+,Fortified Armor,Fortified,0,5,6

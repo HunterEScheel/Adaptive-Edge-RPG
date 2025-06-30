@@ -9,7 +9,7 @@ import { StatAdjuster } from "../MainPage/StatAdjuster";
 import { StatUpgrader } from "../MainPage/StatUpgrader";
 import { ThemedText } from "../ThemedText";
 import { ThemedView } from "../ThemedView";
-import { calculateTotalDamageReduction, calculateTotalEvasion } from "../Utility/CalculateTotals";
+import { calculateTotalDamageReduction, calculateTotalEvasion, calculateTotalMaxHP } from "../Utility/CalculateTotals";
 import { BuildPointManager } from "./BuildPointManager";
 import { EvasionBreakdownModal } from "./EvasionBreakdownModal";
 import { LongRestButton } from "./LongRestButton";
@@ -49,9 +49,11 @@ export function CharacterHeader() {
         }
     }, [base?.name]);
 
+    const totalMaxHP = calculateTotalMaxHP(character);
+
     const handleHeal = (statType: "hp" | "energy") => {
         const currentValue = statType === "hp" ? base.hitPoints : base.energy;
-        const maxValue = statType === "hp" ? base.maxHitPoints : base.maxEnergy;
+        const maxValue = statType === "hp" ? totalMaxHP : base.maxEnergy;
         const fieldName = statType === "hp" ? "hitPoints" : "energy";
 
         if (currentValue < maxValue) {
@@ -143,7 +145,7 @@ export function CharacterHeader() {
                                     <Pressable
                                         style={[styles.condensedButton, styles.primaryColors, { width: 30, height: 30, padding: 4, marginHorizontal: 8 }]}
                                         onPress={() => handleHeal("hp")}
-                                        disabled={base.hitPoints >= base.maxHitPoints}
+                                        disabled={base.hitPoints >= totalMaxHP}
                                     >
                                         <ThemedText style={[styles.description, styles.primaryText, { fontSize: 12 }]}>
                                             <FaPlus />
@@ -153,7 +155,7 @@ export function CharacterHeader() {
                                 <Pressable style={[styles.sectionHeaderContainer, { paddingHorizontal: 4 }]} onPress={() => setHpModalVisible(true)}>
                                     <ThemedText style={[styles.description, styles.defaultBold, { fontSize: 16 }]}>HP</ThemedText>
                                     <ThemedText style={[styles.description, { fontSize: 16 }]}>
-                                        {base.hitPoints}/{base.maxHitPoints}
+                                        {base.hitPoints}/{totalMaxHP}
                                     </ThemedText>
                                 </Pressable>
                                 <StatUpgrader statType="hp" visible={hpModalVisible} onClose={() => setHpModalVisible(false)} />
@@ -235,7 +237,7 @@ export function CharacterHeader() {
                                     <Pressable
                                         style={[styles.condensedButton, styles.primaryColors, { width: 20, height: 20, padding: 2, marginHorizontal: 2 }]}
                                         onPress={() => handleHeal("hp")}
-                                        disabled={base.hitPoints >= base.maxHitPoints}
+                                        disabled={base.hitPoints >= totalMaxHP}
                                     >
                                         <ThemedText style={[styles.description, styles.primaryText, isPhone && { fontSize: 10 }]}>
                                             <FaPlus />
@@ -245,7 +247,7 @@ export function CharacterHeader() {
                                 <Pressable style={[styles.sectionHeaderContainer, { paddingHorizontal: 4 }]} onPress={() => setHpModalVisible(true)}>
                                     <ThemedText style={[styles.description, styles.defaultBold, { fontSize: 10 }]}>HP</ThemedText>
                                     <ThemedText style={[styles.description, { fontSize: 10 }]}>
-                                        {base.hitPoints}/{base.maxHitPoints}
+                                        {base.hitPoints}/{totalMaxHP}
                                     </ThemedText>
                                 </Pressable>
                                 <StatUpgrader statType="hp" visible={hpModalVisible} onClose={() => setHpModalVisible(false)} />

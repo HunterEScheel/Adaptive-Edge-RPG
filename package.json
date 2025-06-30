@@ -8,7 +8,8 @@
     "android": "expo start --android",
     "ios": "expo start --ios",
     "web": "expo start --web",
-    "lint": "expo lint"
+    "lint": "expo lint",
+    "import-spells": "node ./scripts/import-spells.js"
   },
   "dependencies": {
     "@expo/ui": "^0.1.1-alpha.8",

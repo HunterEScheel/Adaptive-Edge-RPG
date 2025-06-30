@@ -7,6 +7,7 @@ import inventoryReducer from "./slices/inventorySlice";
 import magicReducer from "./slices/magicSlice";
 import notesReducer from "./slices/notesSlice";
 import skillsReducer from "./slices/skillsSlice";
+import tethersReducer from "./slices/tethersSlice";
 
 export type RootState = ReturnType<typeof rootReducer>;
 
@@ -20,6 +21,7 @@ const rootReducer = combineReducers({
     abilities: abilitiesReducer,
     magic: magicReducer,
     notes: notesReducer,
+    tethers: tethersReducer,
   }),
 
   // Auth and presets

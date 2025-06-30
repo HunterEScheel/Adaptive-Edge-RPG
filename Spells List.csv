@@ -1,0 +1,477 @@
+Spell Level, Spell Name, School
+0,Acid Splash,Conjuration
+0,Blade Ward,Abjuration
+0,Booming Blade ,Evocation
+0,Chill Touch,Necromancy
+0,Control Flames,Transmutation
+0,Create Bonfire,Conjuration
+0,Dancing Lights,Evocation
+0,Druidcraft,Transmutation
+0,Eldritch Blast,Evocation
+0,Fire Bolt,Evocation
+0,Friends,Enchantment
+0,Frostbite,Evocation
+0,Green-Flame Blade,Evocation
+0,Guidance,Divination
+0,Gust,Transmutation
+0,Infestation,Conjuration
+0,Light,Evocation
+0,Lightning Lure,Evocation
+0,Mage Hand,Conjuration
+0,Magic Stone,Transmutation
+0,Mending,Transmutation
+0,Message,Transmutation
+0,Mind Sliver,Enchantment
+0,Minor Illusion,Illusion
+0,Mold Earth,Transmutation
+0,Poison Spray,Conjuration
+0,Prestidigitation,Transmutation
+0,Produce Flame,Conjuration
+0,Ray of Frost,Evocation
+0,Resistance,Abjuration
+0,Sacred Flame,Evocation
+0,Shape Water,Transmutation
+0,Shillelagh,Transmutation
+0,Shocking Grasp,Evocation
+0,Spare the Dying,Necromancy
+0,Sword Burst,Conjuration
+0,Thaumaturgy,Transmutation
+0,Thorn Whip,Transmutation
+0,Thunderclap,Evocation
+0,Toll the Dead,Necromancy
+0,True Strike,Divination
+0,Vicious Mockery,Enchantment
+0,Word of Radiance,Evocation
+1,Absorb Elements,Abjuration
+1,Alarm,Abjuration
+1,Animal Friendship,Enchantment
+1,Armor of Agathys,Abjuration
+1,Arms of Hadar,Conjuration
+1,Bane,Enchantment
+1,Banishing Smite,Abjuration
+1,Beast Bond,Divination
+1,Bless,Enchantment
+1,Burning Hands,Evocation
+1,Catapult,Transmutation
+1,Cause Fear,Necromancy
+1,Ceremony,Abjuration
+1,Chaos Bolt,Evocation
+1,Charm Person,Enchantment
+1,Chromatic Orb,Evocation
+1,Color Spray,Illusion
+1,Command,Enchantment
+1,Compelled Duel,Enchantment
+1,Comprehend Languages,Divination
+1,Create or Destroy Water,Transmutation
+1,Cure Wounds,Evocation
+1,Detect Evil and Good,Divination
+1,Detect Magic,Divination
+1,Detect Poison and Disease,Divination
+1,Disguise Self,Illusion
+1,Dissonant Whispers,Enchantment
+1,Divine Favor,Evocation
+1,Earth Tremor,Evocation
+1,Ensnaring Strike,Conjuration
+1,Entangle,Conjuration
+1,Expeditious Retreat,Transmutation
+1,Faerie Fire,Evocation
+1,False Life,Necromancy
+1,Feather Fall,Transmutation
+1,Find Familiar,Conjuration
+1,Fog Cloud,Conjuration
+1,Goodberry,Conjuration
+1,Grease,Conjuration
+1,Guiding Bolt,Evocation
+1,Hail of Thorns,Conjuration
+1,Healing Word,Evocation
+1,Hellish Rebuke,Evocation
+1,Heroism,Enchantment
+1,Hex,Enchantment
+1,Hunter's Mark,Divination
+1,Ice Knife,Conjuration
+1,Identify,Divination
+1,Illusory Script,Illusion
+1,Inflict Wounds,Necromancy
+1,Jump,Transmutation
+1,Longstrider,Transmutation
+1,Mage Armor,Abjuration
+1,Magic Missile,Evocation
+1,Protection from Evil and Good,Abjuration
+1,Purify Food and Drink,Abjuration
+1,Ray of Sickness,Necromancy
+1,Sanctuary,Abjuration
+1,Searing Smite,Evocation
+1,Shield,Abjuration
+1,Shield of Faith,Abjuration
+1,Silent Image,Illusion
+1,Sleep,Enchantment
+1,Snare,Abjuration
+1,Speak with Animals,Divination
+1,Tasha's Caustic Brew,Evocation
+1,Tasha's Hideous Laughter,Enchantment
+1,Tenser's Floating Disk,Conjuration
+1,Thunderous Smite,Evocation
+1,Thunderwave,Evocation
+1,Unseen Servant,Conjuration
+1,Witch Bolt,Evocation
+1,Wrathful Smite,Evocation
+1,Zephyr Strike,Transmutation
+2,Aganazzar's Scorcher,Evocation
+2,Aid,Abjuration
+2,Alter Self,Transmutation
+2,Animal Messenger,Enchantment
+2,Arcane Lock,Abjuration
+2,Augury,Divination
+2,Barkskin,Transmutation
+2,Beast Sense,Divination
+2,Blindness/Deafness,Necromancy
+2,Blur,Illusion
+2,Branding Smite,Evocation
+2,Calm Emotions,Enchantment
+2,Cloud of Daggers,Conjuration
+2,Continual Flame,Evocation
+2,Cordon of Arrows,Transmutation
+2,Crown of Madness,Enchantment
+2,Darkness,Evocation
+2,Darkvision,Transmutation
+2,Detect Thoughts,Divination
+2,Dragon's Breath,Transmutation
+2,Dust Devil,Conjuration
+2,Earthbind,Transmutation
+2,Enhance Ability,Transmutation
+2,Enlarge/Reduce,Transmutation
+2,Enthrall,Enchantment
+2,Find Steed,Conjuration
+2,Find Traps,Divination
+2,Flame Blade,Evocation
+2,Flaming Sphere,Conjuration
+2,Gentle Repose,Necromancy
+2,Gust of Wind,Evocation
+2,Healing Spirit,Conjuration
+2,Heat Metal,Transmutation
+2,Hold Person,Enchantment
+2,Invisibility,Illusion
+2,Knock,Transmutation
+2,Lesser Restoration,Abjuration
+2,Levitate,Transmutation
+2,Locate Animals or Plants,Divination
+2,Locate Object,Divination
+2,Magic Mouth,Illusion
+2,Magic Weapon,Transmutation
+2,Maximilian's Earthen Grasp,Transmutation
+2,Melf's Acid Arrow,Evocation
+2,Mind Spike,Divination
+2,Mirror Image,Illusion
+2,Misty Step,Conjuration
+2,Moonbeam,Evocation
+2,Nystul's Magic Aura,Illusion
+2,Pass Without Trace,Abjuration
+2,Phantasmal Force,Illusion
+2,Prayer of Healing,Evocation
+2,Protection from Poison,Abjuration
+2,Pyrotechnics,Transmutation
+2,Ray of Enfeeblement,Necromancy
+2,Rope Trick,Transmutation
+2,Scorching Ray,Evocation
+2,See Invisibility,Divination
+2,Shadow Blade,Illusion
+2,Shatter,Evocation
+2,Silence,Illusion
+2,Skywrite,Transmutation
+2,Snilloc's Snowball Swarm,Evocation
+2,Spider Climb,Transmutation
+2,Spike Growth,Transmutation
+2,Spiritual Weapon,Evocation
+2,Suggestion,Enchantment
+2,Summon Beast,Conjuration
+2,Tasha's Mind Whip,Enchantment
+2,Warding Bond,Abjuration
+2,Warding Wind,Evocation
+2,Web,Conjuration
+2,Zone of Truth,Enchantment
+3,Animate Dead,Necromancy
+3,Auta of Vitality,Abjuration
+3,Beacon of Hope,Abjuration
+3,Bestow Curse,Necromancy
+3,Blinding Smite,Evocation
+3,Blink,Transmutation
+3,Call Lightning,Conjuration
+3,Catnap,Enchantment
+3,Clairvoyance,Divination
+3,Conjure Animals,Conjuration
+3,Conjure Barrage,Conjuration
+3,Counterspell,Abjuration
+3,Create Food and Water,Conjuration
+3,Crusader's Mantle,Evocation
+3,Daylight,Evocation
+3,Dispel Magic,Abjuration
+3,Elemental Weapon,Transmutation
+3,Enemies Abound,Enchantment
+3,Erupting Earth,Transmutation
+3,Fear,Illusion
+3,Feign Death,Necromancy
+3,Fireball,Evocation
+3,Flame Arrows,Transmutation
+3,Fly,Transmutation
+3,Gaseous Form,Transmutation
+3,Glyph of Warding,Abjuration
+3,Haste,Transmutation
+3,Hunger of Hadar,Conjuration
+3,Hypnotic Pattern,Illusion
+3,Intellect Fortress,Abjuration
+3,Leomund's Tiny Hut,Evocation
+3,Life Transference,Necromancy
+3,Lightning Arrow,Transmutation
+3,Lightning Bolt,Evocation
+3,Magic Circle,Abjuration
+3,Major Image,Illusion
+3,Mass Healing Word,Evocation
+3,Meld into Stone,Transmutation
+3,Melf's Minute Meteors,Evocation
+3,Nondetection,Abjuration
+3,Phantom Steed,Illusion
+3,Plant Growth,Transmutation
+3,Protection from Energy,Abjuration
+3,Remove Curse,Abjuration
+3,Revivify,Necromancy
+3,Sending,Evocation
+3,Sleet Storm,Conjuration
+3,Slow,Transmutation
+3,Speak with Dead,Necromancy
+3,Speak with Plants,Transmutation
+3,Spirit Guardians,Conjuration
+3,Spirit Shroud,Necromancy
+3,Stinking Cloud,Conjuration
+3,Summon Fey,Conjuration
+3,Summon Lesser Demons,Conjuration
+3,Summon Shadowspawn,Conjuration
+3,Summon Undead,Necromancy
+3,Thunder Step,Conjuration
+3,Tidal Wave,Conjuration
+3,Tiny Servant,Conjuration
+3,Tongues,Divination
+3,Vampiric Touch,Necromancy
+3,Wall of Sand,Evocation
+3,Wall of Water,Evocation
+3,Water Breathing,Transmutation
+3,Water Walk,Transmutation
+3,Wind Wall,Evocation
+4,Arcane Eye,Divination
+4,Aura of Life,Abjuration
+4,Aura of Purity,Abjuration
+4,Banishment,Abjuration
+4,Blight,Necromancy
+4,Charm Monster,Enchantment
+4,Compulsion,Enchantment
+4,Confusion,Enchantment
+4,Conjure MInor Elementals,Conjuration
+4,Conjure Woodland Beings,Conjuration
+4,Control Water,Transmutation
+4,Death Ward,Abjuration
+4,Dimension Door,Conjuration
+4,Divination,Divination
+4,Dominate Beast,Enchantment
+4,Elemental Bane,Transmutation
+4,Evard's Black Tentacles,Conjuration
+4,Fabricate,Transmutation
+4,Find Greater Steed,Conjuration
+4,Fire Shield,Evocation
+4,Freedom of Movement,Abjuration
+4,Giant Insect,Transmutation
+4,Grasping Vine,Conjuration
+4,Greater Invisibility,Illusion
+4,Guardian of Faith,Conjuration
+4,Guardian of Nature,Transmutation
+4,Hallucinatory Terrain,Illusion
+4,Ice Storm,Evocation
+4,Leomund's Secret Chest,Conjuration
+4,Locate Creature,Divination
+4,Mordenkainen's Faithful Hound,Conjuration
+4,Mordenkainen's Private Sanctum,Conjuration
+4,Otiluke's Resilient Sphere,Evocation
+4,Phantasmal Killer,Illusion
+4,Polymorph,Transmutation
+4,Shadow of Moil,Necromancy
+4,Sickening Radiance,Evocation
+4,Staggering Smite,Evocation
+4,Stone Shape,Transmutation
+4,Stoneskin,Abjuration
+4,Storm Sphere,Evocation
+4,Summon Aberration,Conjuration
+4,Summon Construct,Conjuration
+4,Summon Elemental,Conjuration
+4,Summon Greater Demon,Conjuration
+4,Vitriolic Sphere,Evocation
+4,Wall of Fire,Evocation
+4,Watery Sphere,Conjuration
+5,Animate Objects,Transmutation
+5,Antilife Shell,Abjuration
+5,Awaken,Transmutation
+5,Bigby's Hand,Evocation
+5,Circle of Power,Abjuration
+5,Cloudkill,Conjuration
+5,Commune,Divination
+5,Commune with Nature,Divination
+5,Cone of Cold,Evocation
+5,Conjure Elemental,Conjuration
+5,Conjure Volley,Conjuration
+5,Contact Other Plane,Divination
+5,Contagion,Necromancy
+5,Control Winds,Transmutation
+5,Creation,Illusion
+5,Danse Macabre,Necromancy
+5,Dawn,Evocation
+5,Destructive Wave,Evocation
+5,Dispell Evil and Good,Abjuration
+5,Dominate Person,Enchantment
+5,Dream,Illusion
+5,Enervation,Necromancy
+5,Far Step,Conjuration
+5,Flame Strike,Evocation
+5,Geas,Enchantment
+5,Greater Restoration,Abjuration
+5,Hallow,Evocation
+5,Hold Monster,Enchantment
+5,Holy Weapon,Evocation
+5,Immolation,Evocation
+5,Infernal Calling,Conjuration
+5,Insect Plague,Conjuration
+5,Legend Lore,Divination
+5,Maelstrom,Evocation
+5,Mass Cure Wounds,Evocation
+5,Mislead,Illusion
+5,Modify Memory,Enchantment
+5,Negative Energy Field,Necromancy
+5,Passwall,Transmutation
+5,Planar Binding,Abjuration
+5,Raise Dead,Necromancy
+5,Rary's Telepathic Bond,Divination
+5,Reincarnate,Transmutation
+5,Scrying,Divination
+5,Seeming,Illusion
+5,Skill Empowerment,Transmutation
+5,Steel Wind Strike,Conjuration
+5,Summon Celestial,Conjuration
+5,Swift Quiver,Transmutation
+5,Synaptic Static,Enchantment
+5,Telekinesis,Transmutation
+5,Teleportation Circle,Conjuration
+5,Transmute Rock,Transmutation
+5,Tree Stride,Conjuration
+5,Wall of Force,Evocation
+5,Wall of Light,Evocation
+5,Wall of Stone,Evocation
+5,Wrath of Nature,Evocation
+6,Arcane Gate,Conjuration
+6,Blade Barrier,Evocation
+6,Bones of the Earth,Transmutation
+6,Chain Lightning,Evocation
+6,Circle of Death,Necromancy
+6,Conjure Fey,Conjuration
+6,Contingency,Evocation
+6,Create Homunculus,Evocation
+6,Create Undead,Necromancy
+6,Disintegrate,Transmutation
+6,Drawmij's Instant Summons,Conjuration
+6,Druid Grove,Abjuration
+6,Eyebite,Necromancy
+6,Find the Path,Divination
+6,Flesh to Stone,Transmutation
+6,Forbiddance,Abjuration
+6,Globe of Invulnerability,Abjuration
+6,Guards and Wards,Abjuration
+6,Harm,Necromancy
+6,Heal,Evocation
+6,Heroes' Feast,Conjuration
+6,Investiture of Flame,Transmutation
+6,Investiture of Ice,Transmutation
+6,Investiture of Stone,Transmutation
+6,Investiture of Wind,Transmutation
+6,Magic Jar,Necromancy
+6,Mass Suggestion,Enchantment
+6,Mental Prison,Illusion
+6,Move Earth,Transmutation
+6,Otiluke's Freezing Sphere,Evocation
+6,Otto's Irresistible Dance,Enchantment
+6,Planar Ally,Conjuration
+6,Primordial Ward,Abjuration
+6,Programmed Illusion,Illusion
+6,Scatter,Conjuration
+6,Soul Cage,Necromancy
+6,Summon Fiend,Conjuration
+6,Sunbeam,Evocation
+6,Tasha's Otherworldly Curse,Transmutation
+6,Tenser's Transformation,Transmutation
+6,Transport via Plants,Conjuration
+6,True Seeing,Divination
+6,Wall of Ice,Evocation
+6,Wall of Thorns,Conjuration
+6,Wind Walk,Transmutation
+6,Word of Recall,Conjuration
+7,Conjure Celestial,Conjuration
+7,Crown of Stars,Evocation
+7,Delayed Blast Fireball,Evocation
+7,Divine Word,Evocation
+7,Dream of the Blue Veil,Conjuration
+7,Etherealness,Transmutation
+7,Finger of Death,Necromancy
+7,Fire Storm,Evocation
+7,Forcecage,Evocation
+7,Mirage Arcane,Illusion
+7,Mordenkainen's Magnificent Mansion,Conjuration
+7,Mordenkainen's Sword,Evocation
+7,Plane Shift,Conjuration
+7,Power Word Pain,Enchantment
+7,Prismatic Spray,Evocation
+7,Project Image,Illusion
+7,Regenerate,Transmutation
+7,Resurrection,Necromancy
+7,Reverse Gravity,Transmutation
+7,Sequester,Transmutation
+7,Simulacrum,Illusion
+7,Symbol,Abjuration
+7,Teleport,Conjuration
+7,Temple of the Gods,Conjuration
+7,Whirlwind,Evocation
+8,Abi-Dalzim's Horrid Wilting,Necromancy
+8,Animal Shapes,Transmutation
+8,Antimagic Field,Abjuration
+8,Antipathy/Sympathy,Enchantment
+8,Clone,Necromancy
+8,Control Weather,Transmutation
+8,Demiplane,Conjuration
+8,Dominate Monster,Enchantment
+8,Earthquake,Evocation
+8,Feeblemind,Enchantment
+8,Glibness,Transmutation
+8,Holy Aura,Abjuration
+8,Illusory Dragon,Illusion
+8,Incendiary Cloud,Conjuration
+8,Maddening Darkness,Evocation
+8,Maze,Conjuration
+8,Mighty Fortress,Conjuration
+8,Mind Blank,Abjuration
+8,Power Word Stun,Enchantment
+8,Sunburst,Evocation
+8,Telepathy,Evocation
+8,Tsunami,Conjuration
+9,Astral Projection,Necromancy
+9,Blade of Disaster,Conjuration
+9,Foresight,Divination
+9,Gate,Conjuration
+9,Imprisonment,Abjuration
+9,Invulnerability,Abjuration
+9,Mass Heal,Conjuration
+9,Mass Polymorph,Transmutation
+9,Meteor Swarm,Evocation
+9,Power Word Heal,Evocation
+9,Power Word Kill,Enchantment
+9,Prismatic Wall,Abjuration
+9,Psychic Scream,Enchantment
+9,Shapechange,Transmutation
+9,Storm of Vengeance,Conjuration
+9,Time Stop,Transmutation
+9,True Polymorph,Transmutation
+9,True Resurrection,Necromancy
+9,Weird,Illusion
+9,Wish,Conjuration

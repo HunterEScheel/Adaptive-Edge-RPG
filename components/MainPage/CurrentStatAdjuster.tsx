@@ -7,6 +7,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { ThemedText } from "../ThemedText";
 import { ThemedView } from "../ThemedView";
 import { IconSymbol } from "../ui/IconSymbol";
+import { calculateTotalMaxHP } from "../Utility/CalculateTotals";
 
 type CurrentStatAdjusterProps = {
     statType: "hp" | "energy";
@@ -17,12 +18,14 @@ export function CurrentStatAdjuster({ statType, compact = false }: CurrentStatAd
     const cssStyle = useResponsiveStyles();
     const dispatch = useDispatch();
     const base = useSelector((state: RootState) => state.character.base);
+    const character = useSelector((state: RootState) => state.character);
     const [modalVisible, setModalVisible] = useState(false);
     const [valueInput, setValueInput] = useState("");
 
     // Determine which stat we're working with
     const currentValue = statType === "hp" ? base.hitPoints : base.energy;
-    const maxValue = statType === "hp" ? base.maxHitPoints : base.maxEnergy;
+    const totalMaxHP = calculateTotalMaxHP(character);
+    const maxValue = statType === "hp" ? totalMaxHP : base.maxEnergy;
     const fieldName = statType === "hp" ? "hitPoints" : "energy";
     const statName = statType === "hp" ? "HP" : "Energy";
     const statColor = statType === "hp" ? "#e74c3c" : "#3498db";

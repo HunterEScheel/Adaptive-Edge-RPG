@@ -1,6 +1,6 @@
 import { useResponsive, useResponsiveStyles } from "@/app/contexts/ResponsiveContext";
-import { ListManager } from "@/components/Common/ListManager";
 import { CompactListManager } from "@/components/Common/CompactListManager";
+import { ListManager } from "@/components/Common/ListManager";
 import { MiniListManager } from "@/components/Common/MiniListManager";
 import { Weapon } from "@/constants/Item";
 import { RootState } from "@/store/rootReducer";
@@ -24,7 +24,7 @@ export function WeaponList({ variant = "full" }: WeaponListProps) {
     const [weaponModalOpen, setWeaponModalOpen] = useState(false);
 
     // Calculate total value
-    const totalValue = weapons.reduce((sum, weapon) => sum + (weapon.value * (weapon.qty || 1)), 0);
+    const totalValue = weapons.reduce((sum, weapon) => sum + weapon.value * (weapon.qty || 1), 0);
 
     const handleRemoveWeapon = (weaponId: string) => {
         dispatch(removeWeapon(weaponId));
@@ -36,13 +36,20 @@ export function WeaponList({ variant = "full" }: WeaponListProps) {
 
     const getDiceType = (damageDice: number) => {
         switch (damageDice) {
-            case 1: return "d4";
-            case 2: return "d6";
-            case 3: return "d8";
-            case 4: return "d10";
-            case 5: return "d12";
-            case 6: return "d20";
-            default: return `d${damageDice}`;
+            case 1:
+                return "d4";
+            case 2:
+                return "d6";
+            case 3:
+                return "d8";
+            case 4:
+                return "d10";
+            case 5:
+                return "d12";
+            case 6:
+                return "d20";
+            default:
+                return `d${damageDice}`;
         }
     };
 
@@ -55,7 +62,8 @@ export function WeaponList({ variant = "full" }: WeaponListProps) {
                             {item.name} {item.equipped && <ThemedText style={cssStyle.hint}>(Equipped)</ThemedText>}
                         </ThemedText>
                         <ThemedText style={cssStyle.description}>
-                            {item.damageDiceCount}{getDiceType(item.damageDice)}
+                            {item.damageDiceCount}
+                            {getDiceType(item.damageDice)}
                             {item.attackBonus ? ` +${item.attackBonus}` : ""}
                             {item.twoHanded && " • Two-Handed"}
                             {item.versatile && " • Versatile"}
@@ -63,22 +71,17 @@ export function WeaponList({ variant = "full" }: WeaponListProps) {
                     </View>
                     <View style={[cssStyle.row, { gap: 8 }]}>
                         <Pressable
-                            style={[cssStyle.condensedButton, item.equipped ? cssStyle.secondaryColors : cssStyle.primaryColors]}
+                            style={[cssStyle.defaultButton, item.equipped ? cssStyle.secondaryColors : cssStyle.primaryColors]}
                             onPress={() => handleEquipToggle(item.id)}
                         >
-                            <ThemedText style={item.equipped ? cssStyle.secondaryText : cssStyle.primaryText}>
-                                {item.equipped ? "Unequip" : "Equip"}
-                            </ThemedText>
+                            <ThemedText style={item.equipped ? cssStyle.secondaryText : cssStyle.primaryText}>{item.equipped ? "Unequip" : "Equip"}</ThemedText>
                         </Pressable>
-                        <Pressable
-                            style={[cssStyle.condensedButton, cssStyle.dangerColors]}
-                            onPress={() => handleRemoveWeapon(item.id)}
-                        >
+                        <Pressable style={[cssStyle.condensedButton, cssStyle.secondaryColors]} onPress={() => handleRemoveWeapon(item.id)}>
                             <FontAwesome name="trash" size={14} color="white" />
                         </Pressable>
                     </View>
                 </View>
-                {(item.charges !== undefined && item.maxCharges > 0) && (
+                {item.charges !== undefined && item.maxCharges > 0 && (
                     <ThemedText style={cssStyle.smallText}>
                         Charges: {item.charges}/{item.maxCharges}
                     </ThemedText>
@@ -90,8 +93,8 @@ export function WeaponList({ variant = "full" }: WeaponListProps) {
     const renderMiniWeaponItem = ({ item }: { item: Weapon }) => {
         return (
             <ThemedText style={{ fontSize: 11 }} numberOfLines={1}>
-                • {item.name} ({item.damageDiceCount}{getDiceType(item.damageDice)})
-                {item.equipped && " [E]"}
+                • {item.name} ({item.damageDiceCount}
+                {getDiceType(item.damageDice)}){item.equipped && " [E]"}
             </ThemedText>
         );
     };

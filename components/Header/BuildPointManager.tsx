@@ -12,23 +12,22 @@ export function BuildPointManager() {
     const cssStyle = useResponsiveStyles();
     const dispatch = useDispatch();
     const base = useSelector((state: RootState) => state.character.base);
-    const buildPoints = base.buildPointsRemaining;
     const [modalVisible, setModalVisible] = useState(false);
     const [pointsInput, setPointsInput] = useState("");
 
     const openModal = () => {
-        setPointsInput(buildPoints.toString());
+        setPointsInput(base.buildPointsRemaining.toString());
         setModalVisible(true);
     };
 
     const handleIncrement = () => {
-        const newPoints = buildPoints + 1;
+        const newPoints = base.buildPointsRemaining + 1;
         setPointsInput(newPoints.toString());
     };
 
     const handleDecrement = () => {
-        if (buildPoints > 0) {
-            const newPoints = buildPoints - 1;
+        if (base.buildPointsRemaining > 0) {
+            const newPoints = base.buildPointsRemaining - 1;
             setPointsInput(newPoints.toString());
         } else {
             Alert.alert("Error", "Build points cannot be negative.");
@@ -38,17 +37,17 @@ export function BuildPointManager() {
     const handleSetPoints = () => {
         const newPoints = parseInt(pointsInput);
         if (!isNaN(newPoints) && newPoints >= 0) {
-            // Calculate the difference to update buildPointsSpent accordingly
-            const pointsDifference = newPoints - buildPoints;
+            // Calculate the difference to update base.buildPointsRemainingSpent accordingly
+            const pointsDifference = newPoints - base.buildPointsRemaining;
 
-            // If adding points (pointsDifference > 0), decrease buildPointsSpent
-            // If removing points (pointsDifference < 0), increase buildPointsSpent
-            const newBuildPointsSpent = Math.max(0, base.buildPointsSpent - pointsDifference);
+            // If adding points (pointsDifference > 0), decrease base.buildPointsRemainingSpent
+            // If removing points (pointsDifference < 0), increase base.buildPointsRemainingSpent
+            const newbuildPointsRemainingSpent = Math.max(0, base.buildPointsSpent - pointsDifference);
 
             dispatch(
                 updateMultipleFields([
                     { field: "buildPointsRemaining", value: newPoints },
-                    { field: "buildPointsSpent", value: newBuildPointsSpent },
+                    { field: "buildPointsSpent", value: newbuildPointsRemainingSpent },
                 ])
             );
             setModalVisible(false);
@@ -58,16 +57,16 @@ export function BuildPointManager() {
     };
 
     const handleDirectUpdate = (amount: number) => {
-        const newPoints = buildPoints + amount;
+        const newPoints = base.buildPointsRemaining + amount;
         if (newPoints >= 0) {
-            // If adding points (amount > 0), decrease buildPointsSpent
-            // If removing points (amount < 0), increase buildPointsSpent
-            const newBuildPointsSpent = Math.max(0, base.buildPointsSpent - amount);
+            // If adding points (amount > 0), decrease base.buildPointsRemainingSpent
+            // If removing points (amount < 0), increase base.buildPointsRemainingSpent
+            const newbuildPointsSpent = Math.max(0, base.buildPointsSpent - amount);
 
             dispatch(
                 updateMultipleFields([
                     { field: "buildPointsRemaining", value: newPoints },
-                    { field: "buildPointsSpent", value: newBuildPointsSpent },
+                    { field: "buildPointsSpent", value: newbuildPointsSpent },
                 ])
             );
         } else {
@@ -87,7 +86,7 @@ export function BuildPointManager() {
                     accessibilityLabel="Manage build points"
                 >
                     <View style={cssStyle.row}>
-                        <ThemedText style={[cssStyle.valueText, { color: "#007AFF" }]}>{buildPoints}</ThemedText>
+                        <ThemedText style={[cssStyle.valueText, { color: "#007AFF" }]}>{base.buildPointsRemaining}</ThemedText>
                         <ThemedText style={[cssStyle.smallText, { color: "#007AFF", fontWeight: "bold" }]}>BP</ThemedText>
                     </View>
                 </Pressable>

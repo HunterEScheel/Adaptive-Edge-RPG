@@ -1,4 +1,11 @@
-import { Character, setCharacter } from "@/store/slices/characterSlice";
+import { Character } from "@/store/slices/characterSlice";
+import { setBaseState } from "@/store/slices/baseSlice";
+import { setInventoryState } from "@/store/slices/inventorySlice";
+import { setSkillsState } from "@/store/slices/skillsSlice";
+import { setAbilitiesState } from "@/store/slices/abilitiesSlice";
+import { setMagicState } from "@/store/slices/magicSlice";
+import { setNotesState } from "@/store/slices/notesSlice";
+import { setTethersState } from "@/store/slices/tethersSlice";
 import * as DocumentPicker from "expo-document-picker";
 import * as FileSystem from "expo-file-system";
 import { isAvailableAsync, shareAsync } from "expo-sharing";
@@ -16,28 +23,36 @@ export const ImportFile = ({ onImportSuccess }: ImportFileProps) => {
     const dispatch = useDispatch();
 
     const handleFileSelection = async () => {
-        if (Platform.OS === 'web') {
+        if (Platform.OS === "web") {
             // Create a file input element for web
-            const input = document.createElement('input');
-            input.type = 'file';
-            input.accept = '.txt,.json';
-            
+            const input = document.createElement("input");
+            input.type = "file";
+            input.accept = ".txt,.json";
+
             input.onchange = async (e: any) => {
                 const file = e.target.files[0];
                 if (file) {
                     setFilePath(file.name);
-                    
+
                     try {
                         const content = await file.text();
                         setFileContent(content);
-                        
+
                         try {
-                            const parsed = JSON.parse(content);
+                            const parsed: Character = JSON.parse(content);
+                            console.log(content, parsed);
                             
-                            // Basic validation check: does it have expected keys?
-                            dispatch(setCharacter(parsed as Character));
-                            console.log("Parsed character:", parsed);
+                            // Dispatch to each individual slice
+                            if (parsed.base) dispatch(setBaseState(parsed.base));
+                            if (parsed.inventory) dispatch(setInventoryState(parsed.inventory));
+                            if (parsed.skills) dispatch(setSkillsState(parsed.skills));
+                            if (parsed.abilities) dispatch(setAbilitiesState(parsed.abilities));
+                            if (parsed.magic) dispatch(setMagicState(parsed.magic));
+                            if (parsed.notes) dispatch(setNotesState(parsed.notes));
+                            if (parsed.tethers) dispatch(setTethersState(parsed.tethers));
                             
+                            console.log("Character imported successfully");
+
                             // Call the success callback if provided
                             if (onImportSuccess) {
                                 onImportSuccess();
@@ -50,7 +65,7 @@ export const ImportFile = ({ onImportSuccess }: ImportFileProps) => {
                     }
                 }
             };
-            
+
             input.click();
         } else {
             // Mobile platforms use DocumentPicker
@@ -69,11 +84,19 @@ export const ImportFile = ({ onImportSuccess }: ImportFileProps) => {
                     setFileContent(content);
 
                     try {
-                        const parsed = JSON.parse(content);
-
-                        // Basic validation check: does it have expected keys?
-                        dispatch(setCharacter(parsed as Character));
+                        const parsed: Character = JSON.parse(content);
                         console.log("Parsed character:", parsed);
+
+                        // Dispatch to each individual slice
+                        if (parsed.base) dispatch(setBaseState(parsed.base));
+                        if (parsed.inventory) dispatch(setInventoryState(parsed.inventory));
+                        if (parsed.skills) dispatch(setSkillsState(parsed.skills));
+                        if (parsed.abilities) dispatch(setAbilitiesState(parsed.abilities));
+                        if (parsed.magic) dispatch(setMagicState(parsed.magic));
+                        if (parsed.notes) dispatch(setNotesState(parsed.notes));
+                        if (parsed.tethers) dispatch(setTethersState(parsed.tethers));
+                        
+                        console.log("Character imported successfully");
 
                         // Call the success callback if provided
                         if (onImportSuccess) {
