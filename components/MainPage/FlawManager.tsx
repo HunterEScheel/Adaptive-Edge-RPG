@@ -4,16 +4,16 @@ import { useDispatch, useSelector } from "react-redux";
 
 import { useResponsive, useResponsiveStyles } from "@/app/contexts/ResponsiveContext";
 import { CompactListManager } from "@/components/Common/CompactListManager";
-import { ListManager } from "@/components/Common/ListManager";
 import { RootState } from "@/store/rootReducer";
 import { Flaw, FlawSeverity, addFlaw, removeFlaw } from "@/store/slices/abilitiesSlice";
 import { updateMultipleFields } from "@/store/slices/baseSlice";
+import { ListManagerDesktop } from "../Common/ListManager.desktop";
 import { ThemedText } from "../ThemedText";
 import { ThemedView } from "../ThemedView";
 
 export const FlawManager = () => {
     const cssStyle = useResponsiveStyles();
-    const { isPhone } = useResponsive();
+    const { isMobile } = useResponsive();
     const dispatch = useDispatch();
     const flaws = useSelector((state: RootState) => state.character.abilities.flaws || []);
     const base = useSelector((state: RootState) => state.character.base);
@@ -106,7 +106,7 @@ export const FlawManager = () => {
 
     return (
         <>
-            {isPhone ? (
+            {isMobile ? (
                 <CompactListManager<Flaw>
                     title={`Flaws (+${flaws.reduce((total, flaw) => total + getBuildPointsForSeverity(flaw.severity), 0)} BP)`}
                     data={flaws}
@@ -117,7 +117,7 @@ export const FlawManager = () => {
                     emptyStateText="No flaws added"
                 />
             ) : (
-                <ListManager<Flaw>
+                <ListManagerDesktop<Flaw>
                     title="Character Flaws"
                     description={`${flaws.length} flaw${flaws.length !== 1 ? "s" : ""} • ${flaws.reduce(
                         (total, flaw) => total + getBuildPointsForSeverity(flaw.severity),

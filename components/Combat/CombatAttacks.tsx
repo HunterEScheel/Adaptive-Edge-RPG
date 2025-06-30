@@ -6,14 +6,14 @@ import { useResponsive, useResponsiveStyles } from "@/app/contexts/ResponsiveCon
 import { RootState } from "@/store/rootReducer";
 import { Attack, addAttack, removeAttack } from "@/store/slices/abilitiesSlice";
 import { spendEnergy } from "@/store/slices/baseSlice";
-import { ListManager } from "../Common/ListManager";
 import { CompactListManager } from "../Common/CompactListManager";
+import { ListManager } from "../Common/ListManager";
 import { ThemedText } from "../ThemedText";
 import { ThemedView } from "../ThemedView";
 
 export function CombatAttacks() {
     const cssStyle = useResponsiveStyles();
-    const { isPhone } = useResponsive();
+    const { isMobile } = useResponsive();
     const dispatch = useDispatch();
     const character = useSelector((state: RootState) => state.character);
     const attacks = useSelector((state: RootState) => state.character.abilities.attacks || []);
@@ -109,7 +109,7 @@ export function CombatAttacks() {
 
     return (
         <>
-            {isPhone ? (
+            {isMobile ? (
                 <CompactListManager
                     title={`Attacks (${attacks.length})`}
                     data={attacks}

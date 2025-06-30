@@ -15,7 +15,7 @@ export const cssStyle = StyleSheet.create<ResponsiveStyles>({
         justifyContent: "space-around",
     },
     card: {
-        backgroundColor: "#fff",
+        backgroundColor: "#222",
         borderRadius: 16,
         padding: 28,
         marginBottom: 24,
@@ -26,7 +26,7 @@ export const cssStyle = StyleSheet.create<ResponsiveStyles>({
         elevation: 4,
     },
     sectionContainer: {
-        backgroundColor: "#fafafa",
+        backgroundColor: "#2a2a2a",
         borderRadius: 12,
         padding: 20,
         marginVertical: 12,
@@ -71,7 +71,7 @@ export const cssStyle = StyleSheet.create<ResponsiveStyles>({
         width: '85%',
         maxWidth: 700,
         maxHeight: '85%',
-        backgroundColor: "white",
+        backgroundColor: "#222",
         borderRadius: 20,
         padding: 24,
         shadowColor: "#000",
@@ -116,7 +116,7 @@ export const cssStyle = StyleSheet.create<ResponsiveStyles>({
     },
     modalTable: {
         padding: 12,
-        backgroundColor: "white",
+        backgroundColor: "#333",
         borderRadius: 10,
         shadowColor: "#000",
         shadowOffset: { width: 0, height: 1 },

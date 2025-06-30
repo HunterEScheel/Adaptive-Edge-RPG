@@ -1,6 +1,6 @@
-import { ScrollView, View, Pressable } from "react-native";
-import { useSelector } from "react-redux";
 import { useState } from "react";
+import { Pressable, ScrollView, View } from "react-native";
+import { useSelector } from "react-redux";
 
 import { FlawManager } from "@/components/MainPage/FlawManager";
 import { SkillManager } from "@/components/MainPage/SkillManager";
@@ -25,54 +25,39 @@ export default function HomeScreen() {
     }
 
     return (
-        <ThemedView>
+        <ThemedView style={{ backgroundColor: "#1a1a1a", flex: 1 }}>
             {/* Tab selector */}
-            <View style={[styles.row, { borderBottomWidth: 1, borderBottomColor: "#e0e0e0", backgroundColor: "#fff" }]}>
+            <View style={[styles.row, { borderBottomWidth: 1, borderBottomColor: "#333", backgroundColor: "#222" }]}>
                 <Pressable
                     style={[
                         { flex: 1, paddingVertical: 12, alignItems: "center" },
-                        activeTab === "skills" && { borderBottomWidth: 2, borderBottomColor: "#2196F3" }
+                        activeTab === "skills" && { borderBottomWidth: 2, borderBottomColor: "#2196F3" },
                     ]}
                     onPress={() => setActiveTab("skills")}
                 >
-                    <ThemedText style={[
-                        styles.subtitle,
-                        activeTab === "skills" && { color: "#2196F3" }
-                    ]}>
-                        Skills
-                    </ThemedText>
+                    <ThemedText style={[styles.subtitle, activeTab === "skills" && { color: "#2196F3" }]}>Skills</ThemedText>
                 </Pressable>
                 <Pressable
                     style={[
                         { flex: 1, paddingVertical: 12, alignItems: "center" },
-                        activeTab === "flaws" && { borderBottomWidth: 2, borderBottomColor: "#2196F3" }
+                        activeTab === "flaws" && { borderBottomWidth: 2, borderBottomColor: "#2196F3" },
                     ]}
                     onPress={() => setActiveTab("flaws")}
                 >
-                    <ThemedText style={[
-                        styles.subtitle,
-                        activeTab === "flaws" && { color: "#2196F3" }
-                    ]}>
-                        Flaws
-                    </ThemedText>
+                    <ThemedText style={[styles.subtitle, activeTab === "flaws" && { color: "#2196F3" }]}>Flaws</ThemedText>
                 </Pressable>
                 <Pressable
                     style={[
                         { flex: 1, paddingVertical: 12, alignItems: "center" },
-                        activeTab === "tethers" && { borderBottomWidth: 2, borderBottomColor: "#2196F3" }
+                        activeTab === "tethers" && { borderBottomWidth: 2, borderBottomColor: "#2196F3" },
                     ]}
                     onPress={() => setActiveTab("tethers")}
                 >
-                    <ThemedText style={[
-                        styles.subtitle,
-                        activeTab === "tethers" && { color: "#2196F3" }
-                    ]}>
-                        Tethers
-                    </ThemedText>
+                    <ThemedText style={[styles.subtitle, activeTab === "tethers" && { color: "#2196F3" }]}>Tethers</ThemedText>
                 </Pressable>
             </View>
 
-            <ScrollView>
+            <ScrollView style={{ backgroundColor: "#1a1a1a" }}>
                 {/* Content based on active tab */}
                 {activeTab === "skills" && <SkillManager />}
                 {activeTab === "flaws" && <FlawManager />}

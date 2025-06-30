@@ -1,6 +1,5 @@
 import { useResponsive, useResponsiveStyles } from "@/app/contexts/ResponsiveContext";
 import { CompactListManager } from "@/components/Common/CompactListManager";
-import { ListManager } from "@/components/Common/ListManager";
 import { MiniListManager } from "@/components/Common/MiniListManager";
 import { Weapon } from "@/constants/Item";
 import { RootState } from "@/store/rootReducer";
@@ -9,6 +8,7 @@ import { FontAwesome } from "@expo/vector-icons";
 import React, { useState } from "react";
 import { Pressable, View } from "react-native";
 import { useDispatch, useSelector } from "react-redux";
+import { ListManagerDesktop } from "../Common/ListManager.desktop";
 import { ThemedText } from "../ThemedText";
 import { WeaponModal } from "./WeaponModal";
 
@@ -18,7 +18,7 @@ interface WeaponListProps {
 
 export function WeaponList({ variant = "full" }: WeaponListProps) {
     const cssStyle = useResponsiveStyles();
-    const { isPhone } = useResponsive();
+    const { isMobile } = useResponsive();
     const dispatch = useDispatch();
     const weapons = useSelector((state: RootState) => state.character.inventory?.weapons || []);
     const [weaponModalOpen, setWeaponModalOpen] = useState(false);
@@ -119,7 +119,7 @@ export function WeaponList({ variant = "full" }: WeaponListProps) {
     }
 
     // Handle compact variant or phone view
-    if (variant === "compact" || isPhone) {
+    if (variant === "compact" || isMobile) {
         return (
             <>
                 <CompactListManager<Weapon>
@@ -139,7 +139,7 @@ export function WeaponList({ variant = "full" }: WeaponListProps) {
     // Full variant
     return (
         <>
-            <ListManager<Weapon>
+            <ListManagerDesktop<Weapon>
                 title="Weapons"
                 description={`${weapons.length} weapon${weapons.length !== 1 ? "s" : ""} • Total value: ${totalValue} gp`}
                 data={weapons}

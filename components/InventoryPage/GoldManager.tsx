@@ -12,7 +12,7 @@ import { CompactGoldManager } from "./CompactGoldManager";
 
 export function GoldManager() {
     const cssStyle = useResponsiveStyles();
-    const { isPhone } = useResponsive();
+    const { isMobile } = useResponsive();
     const character = useSelector((state: RootState) => state.character);
     const dispatch = useDispatch();
     const [showAdjustment, setShowAdjustment] = useState(false);
@@ -34,7 +34,7 @@ export function GoldManager() {
     };
 
     // Use compact version for phone
-    if (isPhone) {
+    if (isMobile) {
         return <CompactGoldManager />;
     }
 

@@ -8,13 +8,11 @@ export type CompleteStyles = ResponsiveStyles & ConsistentStyles;
 
 interface ResponsiveContextType {
   styles: CompleteStyles;
-  isPhone: boolean;
-  isTablet: boolean;
+  isMobile: boolean;
   isDesktop: boolean;
   // Helper function to get responsive style based on device
   responsiveStyle: <T extends ViewStyle | TextStyle>(
-    phone: T,
-    tablet?: T,
+    mobile: T,
     desktop?: T
   ) => T;
 }
@@ -24,34 +22,28 @@ const ResponsiveContext = createContext<ResponsiveContextType | undefined>(undef
 export const ResponsiveProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
   const { width } = useWindowDimensions();
   const [styles, setStyles] = useState<CompleteStyles>(() => getResponsiveStyles());
-  const [isPhone, setIsPhone] = useState(width <= 480);
-  const [isTablet, setIsTablet] = useState(width > 480 && width <= 1024);
-  const [isDesktop, setIsDesktop] = useState(width > 1024);
+  const [isMobile, setIsMobile] = useState(width <= 768);
+  const [isDesktop, setIsDesktop] = useState(width > 768);
 
   // Handle window resize
   useEffect(() => {
     const newStyles = getResponsiveStyles();
     setStyles(newStyles);
-    setIsPhone(width <= 480);
-    setIsTablet(width > 480 && width <= 1024);
-    setIsDesktop(width > 1024);
+    setIsMobile(width <= 768);
+    setIsDesktop(width > 768);
   }, [width]);
 
   // Helper function to get responsive style based on device
   const responsiveStyle = <T extends ViewStyle | TextStyle>(
-    phone: T,
-    tablet: T = phone,
-    desktop: T = tablet || phone
+    mobile: T,
+    desktop: T = mobile
   ): T => {
-    if (isPhone) return phone;
-    if (isTablet) return tablet;
-    return desktop;
+    return isMobile ? mobile : desktop;
   };
 
   const value = {
     styles,
-    isPhone,
-    isTablet,
+    isMobile,
     isDesktop,
     responsiveStyle,
   };

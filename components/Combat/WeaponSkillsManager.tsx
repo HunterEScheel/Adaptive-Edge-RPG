@@ -7,8 +7,8 @@ import React, { useState } from "react";
 import { FaTrash } from "react-icons/fa";
 import { Alert, Modal, Pressable, ScrollView, TouchableOpacity, View } from "react-native";
 import { useDispatch, useSelector } from "react-redux";
-import { ListManager } from "../Common/ListManager";
 import { CompactListManager } from "../Common/CompactListManager";
+import { ListManagerDesktop } from "../Common/ListManager.desktop";
 import { ThemedText } from "../ThemedText";
 import { ThemedView } from "../ThemedView";
 
@@ -45,10 +45,10 @@ const weaponOptions: WeaponSkill[] = [
         weaponType: "Fire",
     },
     {
-        id: 5,
+        id: 7,
         level: 1,
         weaponHeft: "1H",
-        weaponType: "Fire",
+        weaponType: "Stab",
     },
     {
         id: 6,
@@ -57,16 +57,16 @@ const weaponOptions: WeaponSkill[] = [
         weaponType: "Swing",
     },
     {
-        id: 7,
-        level: 1,
-        weaponHeft: "1H",
-        weaponType: "Stab",
-    },
-    {
         id: 8,
         level: 1,
         weaponHeft: "1H",
         weaponType: "Draw",
+    },
+    {
+        id: 5,
+        level: 1,
+        weaponHeft: "1H",
+        weaponType: "Fire",
     },
     {
         id: 9,
@@ -90,7 +90,7 @@ const weaponOptions: WeaponSkill[] = [
 
 export function WeaponSkillManager() {
     const cssStyle = useResponsiveStyles();
-    const { isPhone } = useResponsive();
+    const { isMobile } = useResponsive();
     const dispatch = useDispatch();
     const { base } = useSelector((state: RootState) => state.character);
     const { weaponSkills } = useSelector((state: RootState) => state.character.skills);
@@ -230,7 +230,7 @@ export function WeaponSkillManager() {
 
     return (
         <>
-            {isPhone ? (
+            {isMobile ? (
                 <CompactListManager<WeaponSkill>
                     title={`Weapon Skills (${totalSkillPoints} BP)`}
                     data={skills}
@@ -241,7 +241,7 @@ export function WeaponSkillManager() {
                     emptyStateText="No skills added yet"
                 />
             ) : (
-                <ListManager<WeaponSkill>
+                <ListManagerDesktop
                     title="Weapon Skills"
                     description={`${totalSkillPoints} BP spent`}
                     data={skills}

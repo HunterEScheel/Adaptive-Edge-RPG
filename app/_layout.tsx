@@ -81,7 +81,7 @@ export default function RootLayout() {
             <Provider store={store}>
                 <ThemeProvider value={DefaultTheme}>
                     <ResponsiveProvider>
-                        <View style={{ flex: 1 }}>
+                        <View style={{ flex: 1, backgroundColor: '#1a1a1a' }}>
                             <ErrorBoundaryWrapper>
                                 <Stack
                                     screenOptions={{
@@ -96,11 +96,11 @@ export default function RootLayout() {
                                         name="+not-found"
                                         options={{
                                             headerShown: false,
-                                            contentStyle: { backgroundColor: "white" },
+                                            contentStyle: { backgroundColor: "333" },
                                         }}
                                     />
                                 </Stack>
-                                <StatusBar style="auto" />
+                                <StatusBar style="light" />
                             </ErrorBoundaryWrapper>
                         </View>
                     </ResponsiveProvider>

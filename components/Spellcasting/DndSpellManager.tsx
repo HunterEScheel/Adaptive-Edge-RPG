@@ -29,7 +29,7 @@ interface DndSpell {
 
 export function DndSpellManager() {
     const cssStyle = useResponsiveStyles();
-    const { isPhone } = useResponsive();
+    const { isMobile } = useResponsive();
     const [spells, setSpells] = useState<DndSpell[]>([]);
     const [filteredSpells, setFilteredSpells] = useState<DndSpell[]>([]);
     const [loading, setLoading] = useState(true);
@@ -216,7 +216,6 @@ export function DndSpellManager() {
                                     </ThemedText>
                                 </View>
                             )}
-
 
                             {selectedSpell.ritual && (
                                 <View style={[cssStyle.badge, { backgroundColor: "#2196F3", alignSelf: "flex-start", marginTop: 8 }]}>

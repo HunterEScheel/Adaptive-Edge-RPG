@@ -1,14 +1,15 @@
 import { TextStyle, ViewStyle } from "react-native";
 
 export const app_theme = {
-    primary_component_bg: "#260",
-    secondary_component_bg: "#600",
-    primary_component_text: "#AAF",
-    secondary_component_text: "#AAF",
+    primary_component_bg: "#3a7a3a",
+    secondary_component_bg: "#7a3a3a",
+    primary_component_text: "#e0e0ff",
+    secondary_component_text: "#e0e0ff",
 };
 
 export interface ResponsiveStyles {
     card: ViewStyle;
+    compactCard: ViewStyle;
     sectionContainer: ViewStyle;
     sectionHeaderContainer: ViewStyle;
     sectionItem: ViewStyle;

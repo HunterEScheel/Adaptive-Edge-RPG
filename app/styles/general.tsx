@@ -23,7 +23,7 @@ export const cssStyle = StyleSheet.create<ConsistentStyles>({
         justifyContent: "center",
     },
     disabledButton: {
-        backgroundColor: "#ccc",
+        backgroundColor: "#555",
     },
     primaryButton: {
         backgroundColor: app_theme.primary_component_bg,
@@ -46,17 +46,17 @@ export const cssStyle = StyleSheet.create<ConsistentStyles>({
 
     // Text for buttons
     buttonText: {
-        color: "#FFFFFF",
+        color: "#AAA",
         fontSize: 16,
         fontWeight: "600",
     },
     smallButtonText: {
-        color: "#FFFFFF",
+        color: "#AAA",
         fontSize: 14,
         fontWeight: "500",
     },
     secondaryButtonText: {
-        color: "#333333",
+        color: "#AAA",
         fontSize: 16,
         fontWeight: "600",
     },
@@ -69,10 +69,10 @@ export const cssStyle = StyleSheet.create<ConsistentStyles>({
         backgroundColor: app_theme.secondary_component_bg,
     },
     containerColors: {
-        backgroundColor: "rgba(0, 0, 0, 0.05)",
+        backgroundColor: "rgba(255, 255, 255, 0.05)",
     },
     disabledColors: {
-        backgroundColor: "#ccc",
+        backgroundColor: "#1e1e1e",
     },
 
     // Text Styles
@@ -82,21 +82,26 @@ export const cssStyle = StyleSheet.create<ConsistentStyles>({
     title: {
         fontSize: 24,
         fontWeight: "bold",
+        color: "#f0f0f0",
     },
     sectionTitle: {
         fontSize: 20,
         fontWeight: "bold",
+        color: "#f0f0f0",
     },
     subtitle: {
         fontSize: 18,
         fontWeight: "bold",
+        color: "#f0f0f0",
     },
     description: {
         fontSize: 16,
+        color: "#ccc",
     },
     hint: {
         fontSize: 14,
         fontStyle: "italic",
+        color: "#aaa",
     },
     primaryText: {
         color: app_theme.primary_component_text,
@@ -106,30 +111,32 @@ export const cssStyle = StyleSheet.create<ConsistentStyles>({
     },
     smallText: {
         fontSize: 12,
-        color: "#666",
+        color: "#888",
     },
     valueText: {
         fontSize: 18,
         fontWeight: "bold",
+        color: "#f0f0f0",
     },
     label: {
         fontSize: 14,
-        color: "#666",
+        color: "#888",
         marginBottom: 4,
     },
     largeValue: {
         fontSize: 32,
         fontWeight: "bold",
+        color: "#f0f0f0",
     },
     modalTitle: {
         fontSize: 20,
         fontWeight: "bold",
-        color: "#333",
+        color: "#888",
     },
 
     //Containers
     container: {
-        backgroundColor: "rgba(0, 0, 0, 0.05)",
+        backgroundColor: "#222",
         display: "flex",
     },
     row: {
@@ -174,7 +181,7 @@ export const cssStyle = StyleSheet.create<ConsistentStyles>({
         marginTop: 16,
         paddingTop: 16,
         borderTopWidth: 1,
-        borderTopColor: "rgba(0, 0, 0, 0.1)",
+        borderTopColor: "rgba(255, 255, 255, 0.15)",
     },
     modalCloseButton: {
         padding: 8,
@@ -185,10 +192,10 @@ export const cssStyle = StyleSheet.create<ConsistentStyles>({
     //Inputs
     input: {
         borderWidth: 1,
-        borderColor: "#c0c0c0",
+        borderColor: "#444",
         borderRadius: 12,
         padding: 16,
-        backgroundColor: "#fff",
+        backgroundColor: "#333",
     },
     inputContainer: {
         marginBottom: 12,
@@ -203,7 +210,7 @@ export const cssStyle = StyleSheet.create<ConsistentStyles>({
         marginLeft: 8,
     },
     bonusText: {
-        color: "#4CAF50",
+        color: "#FFF",
         fontSize: 12,
         fontWeight: "600",
     },
@@ -256,7 +263,7 @@ export const cssStyle = StyleSheet.create<ConsistentStyles>({
         flex: 1,
     },
     itemContainer: {
-        backgroundColor: "rgba(0, 0, 0, 0.05)",
+        backgroundColor: "rgba(255, 255, 255, 0.05)",
         borderRadius: 8,
         padding: 12,
         marginBottom: 8,
@@ -285,9 +292,8 @@ export const cssStyle = StyleSheet.create<ConsistentStyles>({
     },
     dropdown: {
         borderWidth: 1,
-        borderColor: "#c0c0c0",
+        borderColor: "#444",
         borderRadius: 12,
-        backgroundColor: "#fff",
         minHeight: 50,
         minWidth: 200,
     },
@@ -299,10 +305,10 @@ export const cssStyle = StyleSheet.create<ConsistentStyles>({
     },
     textArea: {
         borderWidth: 1,
-        borderColor: "#c0c0c0",
+        borderColor: "#444",
         borderRadius: 12,
         padding: 16,
-        backgroundColor: "#fff",
+        color: "#FFF",
         minHeight: 100,
         textAlignVertical: "top",
     },
@@ -310,7 +316,7 @@ export const cssStyle = StyleSheet.create<ConsistentStyles>({
         width: 24,
         height: 24,
         borderWidth: 2,
-        borderColor: "#c0c0c0",
+        borderColor: "#444",
         borderRadius: 4,
         marginRight: 8,
         alignItems: "center",
@@ -320,7 +326,7 @@ export const cssStyle = StyleSheet.create<ConsistentStyles>({
     // Layout elements
     divider: {
         height: 1,
-        backgroundColor: "rgba(0, 0, 0, 0.1)",
+        backgroundColor: "rgba(255, 255, 255, 0.1)",
         marginVertical: 16,
     },
     parallaxContainer: {
@@ -360,7 +366,7 @@ export const cssStyle = StyleSheet.create<ConsistentStyles>({
         padding: 20,
     },
     noteCard: {
-        backgroundColor: "#fff",
+        backgroundColor: "#555",
         borderRadius: 12,
         padding: 16,
         marginBottom: 12,
@@ -397,7 +403,7 @@ export const cssStyle = StyleSheet.create<ConsistentStyles>({
         marginBottom: 12,
     },
     levelDisplay: {
-        backgroundColor: "rgba(0, 0, 0, 0.05)",
+        backgroundColor: "rgba(255, 255, 255, 0.05)",
         borderRadius: 8,
         padding: 8,
         marginLeft: 8,
@@ -413,13 +419,13 @@ export const cssStyle = StyleSheet.create<ConsistentStyles>({
         alignItems: "center",
     },
     currentValueContainer: {
-        backgroundColor: "rgba(0, 0, 0, 0.05)",
+        backgroundColor: "rgba(255, 255, 255, 0.05)",
         borderRadius: 8,
         padding: 12,
         marginVertical: 8,
     },
     lightContainer: {
-        backgroundColor: "rgba(255, 255, 255, 0.9)",
+        backgroundColor: "rgba(255, 255, 255, 0.05)",
         borderRadius: 12,
         padding: 16,
     },
@@ -429,7 +435,7 @@ export const cssStyle = StyleSheet.create<ConsistentStyles>({
         marginVertical: 16,
     },
     suggestionsContainer: {
-        backgroundColor: "white",
+        backgroundColor: "#2a2a2a",
         borderRadius: 12,
         padding: 16,
         marginTop: 16,
@@ -444,7 +450,7 @@ export const cssStyle = StyleSheet.create<ConsistentStyles>({
     },
     relationshipScale: {
         height: 4,
-        backgroundColor: "rgba(0, 0, 0, 0.1)",
+        backgroundColor: "rgba(255, 255, 255, 0.1)",
         borderRadius: 2,
         marginVertical: 8,
     },
@@ -462,6 +468,7 @@ export const cssStyle = StyleSheet.create<ConsistentStyles>({
         fontSize: 28,
         fontWeight: "bold",
         marginBottom: 16,
+        color: "#f0f0f0",
     },
     modalHeader: {
         flexDirection: "row",
@@ -470,46 +477,47 @@ export const cssStyle = StyleSheet.create<ConsistentStyles>({
         marginBottom: 16,
         paddingBottom: 12,
         borderBottomWidth: 1,
-        borderBottomColor: "rgba(0, 0, 0, 0.1)",
+        borderBottomColor: "rgba(255, 255, 255, 0.15)",
     },
     sectionHeader: {
         fontSize: 18,
         fontWeight: "600",
         marginBottom: 12,
+        color: "#f0f0f0",
     },
     sectionSubtitle: {
         fontSize: 14,
-        color: "#666",
+        color: "#888",
         marginBottom: 8,
     },
     activeTabText: {
-        color: app_theme.primary_component_bg,
+        color: "#FFF",
         fontWeight: "600",
     },
     tabText: {
         fontSize: 14,
-        color: "#666",
+        color: "#FFF",
     },
     inputLabel: {
         fontSize: 14,
         fontWeight: "500",
         marginBottom: 6,
-        color: "#333",
+        color: "#f0f0f0",
     },
     statLabel: {
         fontSize: 12,
-        color: "#666",
+        color: "#FFF",
         textTransform: "uppercase",
         letterSpacing: 0.5,
     },
     costText: {
         fontSize: 14,
-        color: app_theme.secondary_component_bg,
+        color: app_theme.secondary_component_text,
         fontWeight: "600",
     },
     costLabel: {
         fontSize: 12,
-        color: "#666",
+        color: "#FFF",
         marginLeft: 4,
     },
     currentValue: {
@@ -519,18 +527,18 @@ export const cssStyle = StyleSheet.create<ConsistentStyles>({
     },
     emptyText: {
         fontSize: 16,
-        color: "#999",
+        color: "#666",
         fontStyle: "italic",
     },
     emptyStateText: {
         fontSize: 16,
-        color: "#666",
+        color: "#FFF",
         textAlign: "center",
         marginTop: 8,
     },
     themedTextDefault: {
         fontSize: 16,
-        color: "#000",
+        color: "#AAA",
     },
     themedTextLink: {
         fontSize: 16,
@@ -540,7 +548,7 @@ export const cssStyle = StyleSheet.create<ConsistentStyles>({
 
     // Ability/skill related
     abilityItem: {
-        backgroundColor: "rgba(0, 0, 0, 0.05)",
+        backgroundColor: "rgba(255, 255, 255, 0.05)",
         borderRadius: 12,
         padding: 16,
         marginBottom: 12,
@@ -552,20 +560,21 @@ export const cssStyle = StyleSheet.create<ConsistentStyles>({
         marginTop: 12,
         paddingTop: 12,
         borderTopWidth: 1,
-        borderTopColor: "rgba(0, 0, 0, 0.1)",
+        borderTopColor: "rgba(255, 255, 255, 0.15)",
     },
     abilityName: {
         fontSize: 18,
         fontWeight: "600",
         marginBottom: 4,
+        color: "#f0f0f0",
     },
     abilityDescription: {
         fontSize: 14,
-        color: "#666",
+        color: "#FFF",
         lineHeight: 20,
     },
     skillItem: {
-        backgroundColor: "rgba(0, 0, 0, 0.05)",
+        backgroundColor: "rgba(255, 255, 255, 0.05)",
         borderRadius: 12,
         padding: 16,
         marginBottom: 12,
@@ -574,10 +583,11 @@ export const cssStyle = StyleSheet.create<ConsistentStyles>({
         fontSize: 16,
         fontWeight: "600",
         marginBottom: 4,
+        color: "#f0f0f0",
     },
     skillDescription: {
         fontSize: 14,
-        color: "#666",
+        color: "#FFF",
     },
     skillNameContainer: {
         flex: 1,
@@ -594,28 +604,29 @@ export const cssStyle = StyleSheet.create<ConsistentStyles>({
     bodyText: {
         fontSize: 16,
         lineHeight: 24,
-        color: "#333",
+        color: "#f0f0f0",
     },
     checkboxText: {
         fontSize: 16,
-        color: "#333",
+        color: "#f0f0f0",
         flex: 1,
     },
     placeholderStyle: {
         fontSize: 16,
-        color: "#999",
+        color: "#666",
     },
     selectedTextStyle: {
         fontSize: 16,
-        color: "#333",
+        color: "#f0f0f0",
     },
     suggestionsTitle: {
         fontSize: 16,
         fontWeight: "600",
         marginBottom: 12,
+        color: "#f0f0f0",
     },
     suggestionItem: {
-        backgroundColor: "rgba(0, 0, 0, 0.05)",
+        backgroundColor: "rgba(255, 255, 255, 0.05)",
         borderRadius: 8,
         padding: 12,
         marginBottom: 8,
@@ -638,7 +649,7 @@ export const cssStyle = StyleSheet.create<ConsistentStyles>({
         justifyContent: "space-between",
         paddingVertical: 8,
         paddingHorizontal: 12,
-        backgroundColor: "rgba(0, 0, 0, 0.03)",
+        backgroundColor: "rgba(255, 255, 255, 0.03)",
         borderRadius: 8,
         marginTop: 8,
     },
@@ -651,11 +662,11 @@ export const cssStyle = StyleSheet.create<ConsistentStyles>({
     statValue: {
         fontSize: 16,
         fontWeight: "bold",
-        color: "#333",
+        color: "#f0f0f0",
     },
     statLabelSmall: {
         fontSize: 10,
-        color: "#666",
+        color: "#FFF",
         marginTop: 2,
         textTransform: "uppercase",
         letterSpacing: 0.5,

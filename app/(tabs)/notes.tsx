@@ -7,8 +7,8 @@ import { cssStyle } from "../styles/desktop";
 
 export default function NotesScreen() {
     return (
-        <ThemedView style={cssStyle.container}>
-            <ScrollView>
+        <ThemedView style={[cssStyle.container, { backgroundColor: "#1a1a1a", flex: 1 }]}>
+            <ScrollView style={{ backgroundColor: "#1a1a1a" }}>
                 <GeneralNotes />
                 <NPCTracker />
             </ScrollView>

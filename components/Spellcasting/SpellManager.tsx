@@ -1,5 +1,4 @@
 import { useResponsive, useResponsiveStyles } from "@/app/contexts/ResponsiveContext";
-import { CompactListManager } from "@/components/Common/CompactListManager";
 import { ListManager } from "@/components/Common/ListManager";
 import { fetchDndSpells } from "@/services/dndSpellsService";
 import { RootState } from "@/store/rootReducer";
@@ -13,7 +12,7 @@ import { ThemedText } from "../ThemedText";
 
 export function SpellManager() {
     const cssStyle = useResponsiveStyles();
-    const { isPhone } = useResponsive();
+    const { isDesktop } = useResponsive();
     const magic = useSelector((state: RootState) => state.character?.magic || { magicSchools: [], spells: [], magicSchoolCredit: false });
     const base = useSelector((state: RootState) => state.character?.base || { buildPointsRemaining: 0, buildPointsSpent: 0, energy: 0 });
     const dispatch = useDispatch();
@@ -147,31 +146,35 @@ export function SpellManager() {
 
     const renderSpellItem = ({ item: spell }: { item: Spell }) => {
         const isExpanded = expandedSpells.has(spell.id);
+        const cardStyle = isDesktop ? cssStyle.card : cssStyle.compactCard;
+        const chevronSize = isDesktop ? 12 : 10;
+        const textSize = isDesktop ? undefined : 12;
+        const labelSize = isDesktop ? undefined : 10;
 
         return (
-            <View style={[cssStyle.card, { overflow: "visible" }]}>
+            <View style={[cardStyle, { overflow: "visible" }]}>
                 <View style={cssStyle.headerRow}>
                     <Pressable onPress={() => toggleSpellExpanded(spell.id)} style={{ flex: 1, flexDirection: "row", alignItems: "center", paddingRight: 8 }}>
-                        <FontAwesome name={isExpanded ? "chevron-down" : "chevron-right"} size={12} color="#666" style={{ marginRight: 8 }} />
+                        <FontAwesome name={isExpanded ? "chevron-down" : "chevron-right"} size={chevronSize} color="#666" style={{ marginRight: 4 }} />
                         <View style={{ flex: 1 }}>
                             <View style={{ flexDirection: "row", alignItems: "center", flexWrap: "wrap" }}>
-                                <ThemedText style={cssStyle.subtitle}>{spell.name}</ThemedText>
-                                <ThemedText style={[cssStyle.label, { marginLeft: 8, color: "#4CAF50" }]}>{spell.school}</ThemedText>
-                                <ThemedText style={[cssStyle.label, { marginLeft: 8 }]}>{spell.energyCost} EP</ThemedText>
+                                <ThemedText style={[cssStyle.subtitle, textSize && { fontSize: textSize }]}>{spell.name}</ThemedText>
+                                <ThemedText style={[cssStyle.label, { marginLeft: 4, color: "#4CAF50" }, labelSize && { fontSize: labelSize }]}>{spell.school}</ThemedText>
+                                <ThemedText style={[cssStyle.label, { marginLeft: 4 }, labelSize && { fontSize: labelSize }]}>{spell.energyCost} EP</ThemedText>
                             </View>
                         </View>
                     </Pressable>
                     <View style={{ flexDirection: "row", alignItems: "center", flexShrink: 0 }}>
                         {(base.energy || 0) >= spell.energyCost ? (
                             <Pressable
-                                style={[cssStyle.primaryButton, { marginRight: 8, paddingHorizontal: 12, paddingVertical: 10 }]}
+                                style={[cssStyle.primaryButton, { marginRight: 4, paddingHorizontal: isDesktop ? 12 : 8, paddingVertical: isDesktop ? 10 : 6 }]}
                                 onPress={() => handleUseSpell(spell)}
                                 disabled={(base.energy || 0) < spell.energyCost}
                             >
-                                <ThemedText style={[cssStyle.buttonText, { fontSize: 20 }]}>Cast</ThemedText>
+                                <ThemedText style={[cssStyle.buttonText, { fontSize: isDesktop ? 20 : 14 }]}>Cast</ThemedText>
                             </Pressable>
                         ) : (
-                            <ThemedText style={[cssStyle.hint, { marginRight: 8, color: "red" }]}> Not Enough Energy </ThemedText>
+                            <ThemedText style={[cssStyle.hint, { marginRight: 4, color: "red", fontSize: isDesktop ? undefined : 10 }]}>{isDesktop ? " Not Enough Energy " : "No EP"}</ThemedText>
                         )}
                         <Pressable
                             onPress={() => {
@@ -180,46 +183,46 @@ export function SpellManager() {
                             }}
                             hitSlop={{ top: 20, bottom: 20, left: 20, right: 20 }}
                             style={({ pressed }) => ({
-                                padding: 8,
+                                padding: isDesktop ? 8 : 4,
                                 backgroundColor: pressed ? "rgba(0,0,0,0.1)" : "transparent",
                                 borderRadius: 4,
-                                minWidth: 40,
-                                minHeight: 40,
+                                minWidth: isDesktop ? 40 : 30,
+                                minHeight: isDesktop ? 40 : 30,
                                 justifyContent: "center",
                                 alignItems: "center",
                             })}
                         >
-                            <FontAwesome name="trash" size={16} color="#f44336" />
+                            <FontAwesome name="trash" size={isDesktop ? 16 : 14} color="#f44336" />
                         </Pressable>
                     </View>
                 </View>
 
                 {isExpanded && (
                     <>
-                        <ThemedText style={[cssStyle.bodyText, { marginTop: 8 }]}>{spell.description}</ThemedText>
-                        <View style={[cssStyle.container, { marginTop: 8 }]}>
+                        <ThemedText style={[cssStyle.bodyText, { marginTop: isDesktop ? 8 : 4, fontSize: isDesktop ? undefined : 11 }]}>{spell.description}</ThemedText>
+                        <View style={[cssStyle.container, { marginTop: isDesktop ? 8 : 4 }]}>
                             {spell.damage && (
                                 <View style={cssStyle.detailItem}>
-                                    <ThemedText style={cssStyle.label}>Damage:</ThemedText>
-                                    <ThemedText style={cssStyle.valueText}>{spell.damage}</ThemedText>
+                                    <ThemedText style={[cssStyle.label, labelSize && { fontSize: labelSize }]}>Damage:</ThemedText>
+                                    <ThemedText style={[cssStyle.valueText, labelSize && { fontSize: labelSize }]}>{spell.damage}</ThemedText>
                                 </View>
                             )}
                             {spell.range && (
                                 <View style={cssStyle.detailItem}>
-                                    <ThemedText style={cssStyle.label}>Range:</ThemedText>
-                                    <ThemedText style={cssStyle.valueText}>{spell.range}</ThemedText>
+                                    <ThemedText style={[cssStyle.label, labelSize && { fontSize: labelSize }]}>Range:</ThemedText>
+                                    <ThemedText style={[cssStyle.valueText, labelSize && { fontSize: labelSize }]}>{spell.range}</ThemedText>
                                 </View>
                             )}
                             {spell.area && (
                                 <View style={cssStyle.detailItem}>
-                                    <ThemedText style={cssStyle.label}>Area:</ThemedText>
-                                    <ThemedText style={cssStyle.valueText}>{spell.area}</ThemedText>
+                                    <ThemedText style={[cssStyle.label, labelSize && { fontSize: labelSize }]}>Area:</ThemedText>
+                                    <ThemedText style={[cssStyle.valueText, labelSize && { fontSize: labelSize }]}>{spell.area}</ThemedText>
                                 </View>
                             )}
                             {spell.duration && (
                                 <View style={cssStyle.detailItem}>
-                                    <ThemedText style={cssStyle.label}>Duration:</ThemedText>
-                                    <ThemedText style={cssStyle.valueText}>{spell.duration}</ThemedText>
+                                    <ThemedText style={[cssStyle.label, labelSize && { fontSize: labelSize }]}>Duration:</ThemedText>
+                                    <ThemedText style={[cssStyle.valueText, labelSize && { fontSize: labelSize }]}>{spell.duration}</ThemedText>
                                 </View>
                             )}
                         </View>
@@ -231,59 +234,47 @@ export function SpellManager() {
 
     return (
         <>
-            {isPhone ? (
-                <CompactListManager<Spell>
-                    title={`Spells (${magic.spells?.length || 0})`}
-                    data={magic.spells || []}
-                    renderItem={renderSpellItem}
-                    keyExtractor={(item) => item.id}
-                    onAddPress={() => setModalVisible(true)}
-                    addButtonText="Learn"
-                    emptyStateText="No spells learned yet"
-                />
-            ) : (
-                <ListManager<Spell>
-                    title="Spells"
-                    description={`${magic.spells?.length || 0} spell${(magic.spells?.length || 0) !== 1 ? "s" : ""} learned`}
-                    data={magic.spells || []}
-                    renderItem={renderSpellItem}
-                    keyExtractor={(item) => item.id}
-                    onAddPress={() => setModalVisible(true)}
-                    addButtonText="Learn Spell"
-                    emptyStateText="You haven't learned any spells yet. Learn a magic school first, then add spells from that school."
-                />
-            )}
+            <ListManager<Spell>
+                title="Spells"
+                description={`${magic.spells?.length || 0} spell${(magic.spells?.length || 0) !== 1 ? "s" : ""} learned`}
+                data={magic.spells || []}
+                renderItem={renderSpellItem}
+                keyExtractor={(item) => item.id}
+                onAddPress={() => setModalVisible(true)}
+                addButtonText="Learn Spell"
+                emptyStateText="You haven't learned any spells yet. Learn a magic school first, then add spells from that school."
+            />
 
             <Modal animationType="slide" transparent={true} visible={modalVisible} onRequestClose={() => setModalVisible(false)}>
                 <Pressable style={cssStyle.modalOverlay} onPress={() => setModalVisible(false)}>
                     <View style={cssStyle.modalView}>
-                        <ThemedText style={cssStyle.title}>Learn New Spell</ThemedText>
+                        <ThemedText style={[cssStyle.title, !isDesktop && { fontSize: 18 }]}>Learn New Spell</ThemedText>
 
                         {loading ? (
-                            <View style={[cssStyle.centered, { paddingVertical: 50 }]}>
+                            <View style={[cssStyle.centered, { paddingVertical: isDesktop ? 50 : 30 }]}>
                                 <ActivityIndicator size="large" />
-                                <ThemedText style={{ marginTop: 16 }}>Loading available spells...</ThemedText>
+                                <ThemedText style={{ marginTop: 16, fontSize: isDesktop ? undefined : 14 }}>Loading available spells...</ThemedText>
                             </View>
                         ) : (
                             <FlatList
                                 data={availableSpells}
                                 keyExtractor={(item) => item.name}
                                 renderItem={({ item }: { item: Omit<Spell, "id"> }) => (
-                                    <Pressable style={cssStyle.card} onPress={() => handleLearnSpell(item)}>
+                                    <Pressable style={isDesktop ? cssStyle.card : cssStyle.compactCard} onPress={() => handleLearnSpell(item)}>
                                         <View style={cssStyle.headerRow}>
-                                            <ThemedText style={cssStyle.subtitle}>{item.name}</ThemedText>
-                                            <ThemedText style={[cssStyle.subtitle, { color: "#4CAF50" }]}>{item.buildPointCost} BP</ThemedText>
+                                            <ThemedText style={[cssStyle.subtitle, !isDesktop && { fontSize: 14 }]}>{item.name}</ThemedText>
+                                            <ThemedText style={[cssStyle.subtitle, { color: "#4CAF50" }, !isDesktop && { fontSize: 14 }]}>{item.buildPointCost} BP</ThemedText>
                                         </View>
-                                        <ThemedText style={[cssStyle.bodyText, { fontStyle: "italic" }]}>{item.school}</ThemedText>
-                                        <ThemedText style={cssStyle.bodyText}>{item.description}</ThemedText>
-                                        <View style={[cssStyle.row, { flexWrap: "wrap" }]}>
-                                            <ThemedText style={cssStyle.valueText}>Energy: {item.energyCost}</ThemedText>
-                                            {item.damage ? <ThemedText style={cssStyle.valueText}>Damage: {item.damage}</ThemedText> : null}
+                                        <ThemedText style={[cssStyle.bodyText, { fontStyle: "italic" }, !isDesktop && { fontSize: 11 }]}>{item.school}</ThemedText>
+                                        <ThemedText style={[cssStyle.bodyText, !isDesktop && { fontSize: 11 }]}>{item.description}</ThemedText>
+                                        <View style={[cssStyle.row, { flexWrap: "wrap", marginTop: isDesktop ? 8 : 4 }]}>
+                                            <ThemedText style={[cssStyle.valueText, !isDesktop && { fontSize: 10, marginRight: 8 }]}>Energy: {item.energyCost}</ThemedText>
+                                            {item.damage ? <ThemedText style={[cssStyle.valueText, !isDesktop && { fontSize: 10 }]}>Damage: {item.damage}</ThemedText> : null}
                                         </View>
                                     </Pressable>
                                 )}
                                 ListEmptyComponent={
-                                    <ThemedText style={cssStyle.emptyText}>
+                                    <ThemedText style={[cssStyle.emptyText, !isDesktop && { fontSize: 14 }]}>
                                         {magic.magicSchools?.length > 0
                                             ? "You've learned all available spells for your magic schools!"
                                             : "You need to learn a magic school before you can learn spells."}

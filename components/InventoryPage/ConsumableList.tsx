@@ -1,6 +1,6 @@
 import { useResponsive, useResponsiveStyles } from "@/app/contexts/ResponsiveContext";
-import { ListManager } from "@/components/Common/ListManager";
 import { CompactListManager } from "@/components/Common/CompactListManager";
+import { ListManager } from "@/components/Common/ListManager";
 import { MiniListManager } from "@/components/Common/MiniListManager";
 import { Consumable } from "@/constants/Item";
 import { ePlayerStat } from "@/constants/Stats";
@@ -19,21 +19,21 @@ interface ConsumableListProps {
 
 export function ConsumableList({ variant = "full" }: ConsumableListProps) {
     const cssStyle = useResponsiveStyles();
-    const { isPhone } = useResponsive();
+    const { isMobile } = useResponsive();
     const dispatch = useDispatch();
     const character = useSelector((state: RootState) => state.character);
     const consumables = character.inventory?.consumables || [];
     const [consumableModalOpen, setConsumableModalOpen] = useState(false);
 
     // Calculate total value
-    const totalValue = consumables.reduce((sum, item) => sum + (item.value * (item.qty || 1)), 0);
+    const totalValue = consumables.reduce((sum, item) => sum + item.value * (item.qty || 1), 0);
 
     const handleRemoveConsumable = (consumableId: string) => {
         dispatch(removeConsumable(consumableId));
     };
 
     const handleUseConsumable = (consumableId: string) => {
-        const item = consumables.find(c => c.id === consumableId);
+        const item = consumables.find((c) => c.id === consumableId);
         if (!item) return;
 
         // Check if character has enough current HP/energy to use items that cost those resources
@@ -60,25 +60,35 @@ export function ConsumableList({ variant = "full" }: ConsumableListProps) {
 
     const getStatName = (stat: number) => {
         switch (stat) {
-            case ePlayerStat.hp: return "HP";
-            case ePlayerStat.energy: return "Energy";
-            case ePlayerStat.bp: return "BP";
-            case ePlayerStat.evasion: return "Evasion";
-            case ePlayerStat.str: return "STR";
-            case ePlayerStat.dex: return "DEX";
-            case ePlayerStat.con: return "CON";
-            case ePlayerStat.foc: return "FOC";
-            case ePlayerStat.int: return "INT";
-            case ePlayerStat.cha: return "CHA";
-            case ePlayerStat.movement: return "Speed";
-            default: return "Unknown";
+            case ePlayerStat.hp:
+                return "HP";
+            case ePlayerStat.energy:
+                return "Energy";
+            case ePlayerStat.bp:
+                return "BP";
+            case ePlayerStat.evasion:
+                return "Evasion";
+            case ePlayerStat.str:
+                return "STR";
+            case ePlayerStat.dex:
+                return "DEX";
+            case ePlayerStat.con:
+                return "CON";
+            case ePlayerStat.foc:
+                return "FOC";
+            case ePlayerStat.int:
+                return "INT";
+            case ePlayerStat.cha:
+                return "CHA";
+            case ePlayerStat.movement:
+                return "Speed";
+            default:
+                return "Unknown";
         }
     };
 
     const renderConsumableItem = ({ item }: { item: Consumable }) => {
-        const effectDisplay = item.statModifier 
-            ? `${getStatName(item.statEffected)} ${item.statModifier > 0 ? '+' : ''}${item.statModifier}` 
-            : "No effect";
+        const effectDisplay = item.statModifier ? `${getStatName(item.statEffected)} ${item.statModifier > 0 ? "+" : ""}${item.statModifier}` : "No effect";
 
         return (
             <View style={cssStyle.itemContainer}>
@@ -99,10 +109,7 @@ export function ConsumableList({ variant = "full" }: ConsumableListProps) {
                         >
                             <ThemedText style={cssStyle.primaryText}>Use</ThemedText>
                         </Pressable>
-                        <Pressable
-                            style={[cssStyle.condensedButton, cssStyle.dangerColors]}
-                            onPress={() => handleRemoveConsumable(item.id)}
-                        >
+                        <Pressable style={[cssStyle.condensedButton, cssStyle.dangerColors]} onPress={() => handleRemoveConsumable(item.id)}>
                             <FontAwesome name="trash" size={14} color="white" />
                         </Pressable>
                     </View>
@@ -114,8 +121,8 @@ export function ConsumableList({ variant = "full" }: ConsumableListProps) {
     const renderMiniConsumableItem = ({ item }: { item: Consumable }) => {
         return (
             <ThemedText style={{ fontSize: 11 }} numberOfLines={1}>
-                • {item.name} ({getStatName(item.statEffected)} {item.statModifier > 0 ? '+' : ''}{item.statModifier})
-                {item.qty && item.qty > 1 && ` x${item.qty}`}
+                • {item.name} ({getStatName(item.statEffected)} {item.statModifier > 0 ? "+" : ""}
+                {item.statModifier}){item.qty && item.qty > 1 && ` x${item.qty}`}
             </ThemedText>
         );
     };
@@ -140,7 +147,7 @@ export function ConsumableList({ variant = "full" }: ConsumableListProps) {
     }
 
     // Handle compact variant or phone view
-    if (variant === "compact" || isPhone) {
+    if (variant === "compact" || isMobile) {
         return (
             <>
                 <CompactListManager<Consumable>

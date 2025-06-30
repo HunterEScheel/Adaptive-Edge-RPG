@@ -19,11 +19,11 @@ function TabBarLabel({ label, focused, color }: { label: string; focused: boolea
 export default function TabLayout() {
     return (
         <ProtectedRoute>
-            <View style={{ flex: 1, overflowY: "scroll" }}>
+            <View style={{ flex: 1, overflowY: "scroll", backgroundColor: '#1a1a1a' }}>
                 <CharacterHeader />
                 <Tabs
                     screenOptions={{
-                        tabBarActiveTintColor: Colors["light"].tint,
+                        tabBarActiveTintColor: Colors["dark"].tint,
                         headerShown: false,
                         tabBarButton: HapticTab,
                         tabBarBackground: TabBarBackground,
@@ -32,7 +32,10 @@ export default function TabLayout() {
                                 // Use a transparent background on iOS to show the blur effect
                                 position: "absolute",
                             },
-                            default: {},
+                            default: {
+                                backgroundColor: '#1a1a1a',
+                                borderTopColor: '#444',
+                            },
                         }),
                         tabBarLabelPosition: "below-icon",
                     }}

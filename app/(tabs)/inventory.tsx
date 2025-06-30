@@ -15,7 +15,7 @@ const styles = StyleSheet.create({
         flexDirection: "row",
         marginBottom: 16,
         borderBottomWidth: 1,
-        borderBottomColor: "#ddd",
+        borderBottomColor: "#333",
     },
     tab: {
         flex: 1,
@@ -30,7 +30,7 @@ const styles = StyleSheet.create({
     },
     tabText: {
         fontSize: 16,
-        color: "#666",
+        color: "#999",
     },
     activeTabText: {
         color: app_theme.primary_component_text,
@@ -58,12 +58,12 @@ type TabType = "armor-weapons" | "equipment" | "other";
 
 export default function InventoryScreen() {
     const cssStyle = useResponsiveStyles();
-    const { isPhone, isTablet } = useResponsive();
+    const { isMobile, isTablet } = useResponsive();
     const [activeTab, setActiveTab] = useState<TabType>("armor-weapons");
 
     // Determine which variant to use based on device type
     const getListVariant = (): "full" | "compact" | "mini" => {
-        if (isPhone) return "compact";
+        if (isMobile) return "compact";
         if (isTablet) return "compact";
         return "full";
     };
@@ -82,8 +82,8 @@ export default function InventoryScreen() {
     const renderOtherTab = () => <ConsumableList variant={getListVariant()} />;
 
     return (
-        <ScrollView>
-            <ThemedView style={cssStyle.container}>
+        <ScrollView style={{ backgroundColor: "#1a1a1a", flex: 1 }}>
+            <ThemedView style={[cssStyle.container, { backgroundColor: "#1a1a1a" }]}>
                 {/* Gold Manager Section */}
                 <GoldManager />
 
@@ -101,7 +101,7 @@ export default function InventoryScreen() {
                 </View>
 
                 {/* Tab Content */}
-                <ScrollView style={{ flex: 1 }}>
+                <ScrollView style={{ flex: 1, backgroundColor: "#1a1a1a" }}>
                     {activeTab === "armor-weapons" && renderArmorWeaponsTab()}
                     {activeTab === "equipment" && renderEquipmentTab()}
                     {activeTab === "other" && renderOtherTab()}

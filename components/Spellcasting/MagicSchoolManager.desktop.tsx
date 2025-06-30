@@ -1,4 +1,4 @@
-import { useResponsive, useResponsiveStyles } from "@/app/contexts/ResponsiveContext";
+import { useResponsiveStyles } from "@/app/contexts/ResponsiveContext";
 import { RootState } from "@/store/rootReducer";
 import { updateMultipleFields } from "@/store/slices/baseSlice";
 import { MagicSchool, addMagicSchool, removeMagicSchool, setMagicSchoolCredit } from "@/store/slices/magicSlice";
@@ -71,9 +71,8 @@ const MAGIC_SCHOOLS = [
 
 const MAGIC_SCHOOL_COST = 25;
 
-export function MagicSchoolManager() {
+export function MagicSchoolManagerDesktop() {
     const cssStyle = useResponsiveStyles();
-    const { isPhone } = useResponsive();
     const magic = useSelector((state: RootState) => state.character?.magic || { magicSchools: [], spells: [], magicSchoolCredit: false });
     const base = useSelector((state: RootState) => state.character?.base || { buildPointsRemaining: 0, buildPointsSpent: 0, energy: 0 });
     const dispatch = useDispatch();
@@ -127,12 +126,8 @@ export function MagicSchoolManager() {
     };
 
     const handleRemoveSchool = (schoolName: string) => {
-        console.log("handleRemoveSchool called with:", schoolName);
         const school = magic.magicSchools?.find((s) => s.name === schoolName);
-        if (!school) {
-            console.log("School not found:", schoolName);
-            return;
-        }
+        if (!school) return;
 
         // Count spells from this school
         const spellsFromSchool = magic.spells?.filter((spell) => spell.school === schoolName).length || 0;
@@ -145,7 +140,6 @@ export function MagicSchoolManager() {
             return;
         }
 
-        console.log("Removing school:", schoolName);
         const newBuildPoints = base.buildPointsRemaining + MAGIC_SCHOOL_COST;
         dispatch(removeMagicSchool(school.id));
         dispatch(
@@ -198,10 +192,7 @@ export function MagicSchoolManager() {
                                         {spellCount} spell{spellCount !== 1 ? "s" : ""}
                                     </ThemedText>
                                     <Pressable
-                                        onPress={() => {
-                                            console.log("Delete button pressed for school:", school.name);
-                                            handleRemoveSchool(school.name);
-                                        }}
+                                        onPress={() => handleRemoveSchool(school.name)}
                                         hitSlop={{ top: 20, bottom: 20, left: 20, right: 20 }}
                                         style={({ pressed }) => ({
                                             padding: 8,

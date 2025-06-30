@@ -14,7 +14,7 @@ interface ArmorListProps {
 
 export function ArmorList({ variant = "full" }: ArmorListProps) {
     const cssStyle = useResponsiveStyles();
-    const { isPhone } = useResponsive();
+    const { isMobile } = useResponsive();
     const dispatch = useDispatch();
     const character = useSelector((state: RootState) => state.character);
     const currentArmor = character.inventory?.armor;
@@ -82,7 +82,7 @@ export function ArmorList({ variant = "full" }: ArmorListProps) {
     }
 
     // Compact variant or phone view
-    if (variant === "compact" || isPhone) {
+    if (variant === "compact" || isMobile) {
         return (
             <View style={[cssStyle.container, { padding: 8, marginVertical: 4 }]}>
                 <View style={[cssStyle.row, { justifyContent: "space-between", alignItems: "center", marginBottom: 8 }]}>

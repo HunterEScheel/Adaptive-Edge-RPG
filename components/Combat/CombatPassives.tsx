@@ -5,14 +5,14 @@ import { useDispatch, useSelector } from "react-redux";
 import { useResponsive, useResponsiveStyles } from "@/app/contexts/ResponsiveContext";
 import { RootState } from "@/store/rootReducer";
 import { Passive, addPassive, removePassive } from "@/store/slices/abilitiesSlice";
-import { ListManager } from "../Common/ListManager";
 import { CompactListManager } from "../Common/CompactListManager";
+import { ListManager } from "../Common/ListManager";
 import { ThemedText } from "../ThemedText";
 import { ThemedView } from "../ThemedView";
 
 export function CombatPassives() {
     const cssStyle = useResponsiveStyles();
-    const { isPhone } = useResponsive();
+    const { isMobile } = useResponsive();
     const dispatch = useDispatch();
     const passives = useSelector((state: RootState) => state.character.abilities.passives || []);
 
@@ -77,7 +77,7 @@ export function CombatPassives() {
 
     return (
         <>
-            {isPhone ? (
+            {isMobile ? (
                 <CompactListManager
                     title={`Passives (${passives.length})`}
                     data={passives}

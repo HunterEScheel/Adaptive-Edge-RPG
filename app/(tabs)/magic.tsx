@@ -1,4 +1,4 @@
-import { MagicSchoolManager } from "@/components/Spellcasting/MagicSchoolManagerV2";
+import { MagicSchoolManager } from "@/components/Spellcasting/MagicSchoolManager";
 import { SpellManager } from "@/components/Spellcasting/SpellManager";
 import { DndSpellManager } from "@/components/Spellcasting/DndSpellManager";
 import { ThemedView } from "@/components/ThemedView";
@@ -12,10 +12,10 @@ export default function MagicScreen() {
     const [activeTab, setActiveTab] = useState<"schools" | "character" | "dnd">("schools");
 
     return (
-        <ScrollView>
-            <ThemedView>
+        <ScrollView style={{ backgroundColor: "#1a1a1a", flex: 1 }}>
+            <ThemedView style={{ backgroundColor: "#1a1a1a" }}>
                 {/* Tab selector */}
-                <View style={[cssStyle.row, { marginBottom: 16, borderBottomWidth: 1, borderBottomColor: "#e0e0e0" }]}>
+                <View style={[cssStyle.row, { marginBottom: 16, borderBottomWidth: 1, borderBottomColor: "#333", backgroundColor: "#222" }]}>
                     <Pressable
                         style={[
                             { flex: 1, paddingVertical: 12, alignItems: "center" },
