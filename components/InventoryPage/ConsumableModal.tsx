@@ -38,7 +38,7 @@ export function ConsumableModal({ visible, onClose }: ConsumableModalProps) {
                 return "Energy";
             case ePlayerStat.bp:
                 return "BP";
-            case ePlayerStat.ac:
+            case ePlayerStat.evasion:
                 return "Evasion";
             case ePlayerStat.str:
                 return "STR";
@@ -46,8 +46,8 @@ export function ConsumableModal({ visible, onClose }: ConsumableModalProps) {
                 return "DEX";
             case ePlayerStat.con:
                 return "CON";
-            case ePlayerStat.wis:
-                return "WIS";
+            case ePlayerStat.foc:
+                return "FOC";
             case ePlayerStat.int:
                 return "INT";
             case ePlayerStat.cha:
@@ -70,7 +70,7 @@ export function ConsumableModal({ visible, onClose }: ConsumableModalProps) {
             <Pressable style={[cssStyle.condensedButton, cssStyle.primaryColors]} onPress={() => handleUseConsumable(item.id)}>
                 <ThemedText style={cssStyle.primaryText}>Use</ThemedText>
             </Pressable>
-            <Pressable style={[cssStyle.condensedButton, cssStyle.dangerColors]} onPress={() => handleRemoveConsumable(item.id)}>
+            <Pressable style={[cssStyle.condensedButton, cssStyle.secondaryColors]} onPress={() => handleRemoveConsumable(item.id)}>
                 <FontAwesome name="trash" size={16} color="white" />
             </Pressable>
         </View>,

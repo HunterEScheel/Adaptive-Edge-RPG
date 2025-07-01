@@ -1,15 +1,15 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
-import { Character } from "./characterReducer";
+import { Character } from "../slices/characterSlice";
 
 // Define the reducer
 const presetSlice = createSlice({
-  name: "character",
-  initialState: [] as Character[],
-  reducers: {
-    setPresets: (state, action: PayloadAction<Character[]>) => {
-      return action.payload;
+    name: "character",
+    initialState: [] as Character[],
+    reducers: {
+        setPresets: (state, action: PayloadAction<Character[]>) => {
+            return action.payload;
+        },
     },
-  },
 });
 
 // Export the actions

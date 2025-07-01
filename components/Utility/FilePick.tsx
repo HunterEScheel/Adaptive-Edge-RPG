@@ -1,11 +1,9 @@
-import { Character } from "@/store/slices/characterSlice";
-import { setBaseState } from "@/store/slices/baseSlice";
-import { setInventoryState } from "@/store/slices/inventorySlice";
-import { setSkillsState } from "@/store/slices/skillsSlice";
 import { setAbilitiesState } from "@/store/slices/abilitiesSlice";
+import { setBaseState } from "@/store/slices/baseSlice";
+import { Character } from "@/store/slices/characterSlice";
+import { setInventoryState } from "@/store/slices/inventorySlice";
 import { setMagicState } from "@/store/slices/magicSlice";
-import { setNotesState } from "@/store/slices/notesSlice";
-import { setTethersState } from "@/store/slices/tethersSlice";
+import { setSkillsState } from "@/store/slices/skillsSlice";
 import * as DocumentPicker from "expo-document-picker";
 import * as FileSystem from "expo-file-system";
 import { isAvailableAsync, shareAsync } from "expo-sharing";
@@ -40,18 +38,13 @@ export const ImportFile = ({ onImportSuccess }: ImportFileProps) => {
 
                         try {
                             const parsed: Character = JSON.parse(content);
-                            console.log(content, parsed);
-                            
+
                             // Dispatch to each individual slice
                             if (parsed.base) dispatch(setBaseState(parsed.base));
                             if (parsed.inventory) dispatch(setInventoryState(parsed.inventory));
                             if (parsed.skills) dispatch(setSkillsState(parsed.skills));
                             if (parsed.abilities) dispatch(setAbilitiesState(parsed.abilities));
                             if (parsed.magic) dispatch(setMagicState(parsed.magic));
-                            if (parsed.notes) dispatch(setNotesState(parsed.notes));
-                            if (parsed.tethers) dispatch(setTethersState(parsed.tethers));
-                            
-                            console.log("Character imported successfully");
 
                             // Call the success callback if provided
                             if (onImportSuccess) {
@@ -85,7 +78,6 @@ export const ImportFile = ({ onImportSuccess }: ImportFileProps) => {
 
                     try {
                         const parsed: Character = JSON.parse(content);
-                        console.log("Parsed character:", parsed);
 
                         // Dispatch to each individual slice
                         if (parsed.base) dispatch(setBaseState(parsed.base));
@@ -93,10 +85,6 @@ export const ImportFile = ({ onImportSuccess }: ImportFileProps) => {
                         if (parsed.skills) dispatch(setSkillsState(parsed.skills));
                         if (parsed.abilities) dispatch(setAbilitiesState(parsed.abilities));
                         if (parsed.magic) dispatch(setMagicState(parsed.magic));
-                        if (parsed.notes) dispatch(setNotesState(parsed.notes));
-                        if (parsed.tethers) dispatch(setTethersState(parsed.tethers));
-                        
-                        console.log("Character imported successfully");
 
                         // Call the success callback if provided
                         if (onImportSuccess) {
@@ -133,7 +121,6 @@ export const saveCharacter = async (fileName: string, fileContent: Character) =>
             a.click();
             document.body.removeChild(a);
             URL.revokeObjectURL(url);
-            console.log(`File downloaded: ${fileName}.txt`);
         } catch (error: any) {
             console.error("Download failed:", error.message || error.toString());
         }
@@ -147,12 +134,9 @@ export const saveCharacter = async (fileName: string, fileContent: Character) =>
     }
 
     const fileUri = `${FileSystem.documentDirectory}${fileName}.txt`;
-    console.log("Attempting to write to:", fileUri);
 
     try {
         await FileSystem.writeAsStringAsync(fileUri, JSON.stringify(fileContent));
-        console.log(`File created: ${fileUri}`);
-
         await saveFile(fileUri, fileName, "text/plain");
     } catch (error: any) {
         console.error("File write failed:", error.message || error.toString());
@@ -174,8 +158,6 @@ async function saveFile(uri: string, fileName: string, mimeType: string) {
                 await FileSystem.writeAsStringAsync(newFileUri, base64, {
                     encoding: FileSystem.EncodingType.Base64,
                 });
-
-                console.log("File successfully saved to user directory.");
             } else {
                 console.warn("Permission denied, falling back to sharing.");
                 await shareFile(uri);

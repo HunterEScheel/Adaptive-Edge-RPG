@@ -42,8 +42,8 @@ export function EquipmentModal({ visible, onClose }: EquipmentModalProps) {
                 return "DEX";
             case ePlayerStat.con:
                 return "CON";
-            case ePlayerStat.wis:
-                return "WIS";
+            case ePlayerStat.foc:
+                return "FOC";
             case ePlayerStat.int:
                 return "INT";
             case ePlayerStat.cha:
@@ -62,7 +62,7 @@ export function EquipmentModal({ visible, onClose }: EquipmentModalProps) {
         item.statModifier ? `${getStatName(item.statEffected)} +${item.statModifier}` : "-",
         item.requiresAttunement ? (item.attunement ? "Attuned" : "Not Attuned") : "N/A",
         item.equipped ? "Yes" : "No",
-        <Pressable key={item.id} style={[cssStyle.condensedButton, cssStyle.dangerColors]} onPress={() => handleRemoveEquipment(item.id)}>
+        <Pressable key={item.id} style={[cssStyle.condensedButton, cssStyle.secondaryColors]} onPress={() => handleRemoveEquipment(item.id)}>
             <FontAwesome name="trash" size={16} color="white" />
         </Pressable>,
     ]);

@@ -5,14 +5,11 @@ import { eDamageDice } from "@/constants/Stats";
 import { addWeapon } from "@/store/slices/inventorySlice";
 import { FontAwesome } from "@expo/vector-icons";
 import React, { useEffect, useRef, useState } from "react";
-import { Alert, Dimensions, Pressable, ScrollView, View } from "react-native";
+import { Alert, Pressable, ScrollView, View } from "react-native";
 import BouncyCheckbox from "react-native-bouncy-checkbox";
 import { Dropdown } from "react-native-element-dropdown";
 import { useDispatch } from "react-redux";
 import { default as VersatileInput } from "../../Input";
-
-// Get screen dimensions for responsive layout
-const { width, height } = Dimensions.get("window");
 
 // Extended Weapon type with additional properties
 interface ExtendedWeapon extends Weapon {

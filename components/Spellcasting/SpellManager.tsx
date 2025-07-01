@@ -1,5 +1,4 @@
 import { useResponsive, useResponsiveStyles } from "@/app/contexts/ResponsiveContext";
-import { ListManager } from "@/components/Common/ListManager";
 import { fetchDndSpells } from "@/services/dndSpellsService";
 import { RootState } from "@/store/rootReducer";
 import { updateField, updateMultipleFields } from "@/store/slices/baseSlice";
@@ -8,6 +7,7 @@ import { FontAwesome } from "@expo/vector-icons";
 import React, { useEffect, useState } from "react";
 import { ActivityIndicator, Alert, FlatList, Modal, Pressable, View } from "react-native";
 import { useDispatch, useSelector } from "react-redux";
+import { ListManagerDesktop } from "../Common/ListManager.desktop";
 import { ThemedText } from "../ThemedText";
 
 export function SpellManager() {
@@ -89,15 +89,12 @@ export function SpellManager() {
     };
 
     const handleRemoveSpell = (spellId: string) => {
-        console.log("handleRemoveSpell called with spellId:", spellId);
         // Find the spell to get its cost for refund
         const spell = magic.spells?.find((s) => s.id === spellId);
         if (!spell) {
-            console.log("Spell not found:", spellId);
             return;
         }
 
-        console.log("Removing spell:", spell.name);
         // Refund build points and remove the spell
         const newBuildPoints = base.buildPointsRemaining + spell.buildPointCost;
         dispatch(removeSpell(spellId));
@@ -159,7 +156,9 @@ export function SpellManager() {
                         <View style={{ flex: 1 }}>
                             <View style={{ flexDirection: "row", alignItems: "center", flexWrap: "wrap" }}>
                                 <ThemedText style={[cssStyle.subtitle, textSize && { fontSize: textSize }]}>{spell.name}</ThemedText>
-                                <ThemedText style={[cssStyle.label, { marginLeft: 4, color: "#4CAF50" }, labelSize && { fontSize: labelSize }]}>{spell.school}</ThemedText>
+                                <ThemedText style={[cssStyle.label, { marginLeft: 4, color: "#4CAF50" }, labelSize && { fontSize: labelSize }]}>
+                                    {spell.school}
+                                </ThemedText>
                                 <ThemedText style={[cssStyle.label, { marginLeft: 4 }, labelSize && { fontSize: labelSize }]}>{spell.energyCost} EP</ThemedText>
                             </View>
                         </View>
@@ -174,11 +173,12 @@ export function SpellManager() {
                                 <ThemedText style={[cssStyle.buttonText, { fontSize: isDesktop ? 20 : 14 }]}>Cast</ThemedText>
                             </Pressable>
                         ) : (
-                            <ThemedText style={[cssStyle.hint, { marginRight: 4, color: "red", fontSize: isDesktop ? undefined : 10 }]}>{isDesktop ? " Not Enough Energy " : "No EP"}</ThemedText>
+                            <ThemedText style={[cssStyle.hint, { marginRight: 4, color: "red", fontSize: isDesktop ? undefined : 10 }]}>
+                                {isDesktop ? " Not Enough Energy " : "No EP"}
+                            </ThemedText>
                         )}
                         <Pressable
                             onPress={() => {
-                                console.log("Delete button pressed for spell:", spell.name);
                                 handleRemoveSpell(spell.id);
                             }}
                             hitSlop={{ top: 20, bottom: 20, left: 20, right: 20 }}
@@ -199,7 +199,9 @@ export function SpellManager() {
 
                 {isExpanded && (
                     <>
-                        <ThemedText style={[cssStyle.bodyText, { marginTop: isDesktop ? 8 : 4, fontSize: isDesktop ? undefined : 11 }]}>{spell.description}</ThemedText>
+                        <ThemedText style={[cssStyle.bodyText, { marginTop: isDesktop ? 8 : 4, fontSize: isDesktop ? undefined : 11 }]}>
+                            {spell.description}
+                        </ThemedText>
                         <View style={[cssStyle.container, { marginTop: isDesktop ? 8 : 4 }]}>
                             {spell.damage && (
                                 <View style={cssStyle.detailItem}>
@@ -234,7 +236,7 @@ export function SpellManager() {
 
     return (
         <>
-            <ListManager<Spell>
+            <ListManagerDesktop<Spell>
                 title="Spells"
                 description={`${magic.spells?.length || 0} spell${(magic.spells?.length || 0) !== 1 ? "s" : ""} learned`}
                 data={magic.spells || []}
@@ -263,13 +265,21 @@ export function SpellManager() {
                                     <Pressable style={isDesktop ? cssStyle.card : cssStyle.compactCard} onPress={() => handleLearnSpell(item)}>
                                         <View style={cssStyle.headerRow}>
                                             <ThemedText style={[cssStyle.subtitle, !isDesktop && { fontSize: 14 }]}>{item.name}</ThemedText>
-                                            <ThemedText style={[cssStyle.subtitle, { color: "#4CAF50" }, !isDesktop && { fontSize: 14 }]}>{item.buildPointCost} BP</ThemedText>
+                                            <ThemedText style={[cssStyle.subtitle, { color: "#4CAF50" }, !isDesktop && { fontSize: 14 }]}>
+                                                {item.buildPointCost} BP
+                                            </ThemedText>
                                         </View>
-                                        <ThemedText style={[cssStyle.bodyText, { fontStyle: "italic" }, !isDesktop && { fontSize: 11 }]}>{item.school}</ThemedText>
+                                        <ThemedText style={[cssStyle.bodyText, { fontStyle: "italic" }, !isDesktop && { fontSize: 11 }]}>
+                                            {item.school}
+                                        </ThemedText>
                                         <ThemedText style={[cssStyle.bodyText, !isDesktop && { fontSize: 11 }]}>{item.description}</ThemedText>
                                         <View style={[cssStyle.row, { flexWrap: "wrap", marginTop: isDesktop ? 8 : 4 }]}>
-                                            <ThemedText style={[cssStyle.valueText, !isDesktop && { fontSize: 10, marginRight: 8 }]}>Energy: {item.energyCost}</ThemedText>
-                                            {item.damage ? <ThemedText style={[cssStyle.valueText, !isDesktop && { fontSize: 10 }]}>Damage: {item.damage}</ThemedText> : null}
+                                            <ThemedText style={[cssStyle.valueText, !isDesktop && { fontSize: 10, marginRight: 8 }]}>
+                                                Energy: {item.energyCost}
+                                            </ThemedText>
+                                            {item.damage ? (
+                                                <ThemedText style={[cssStyle.valueText, !isDesktop && { fontSize: 10 }]}>Damage: {item.damage}</ThemedText>
+                                            ) : null}
                                         </View>
                                     </Pressable>
                                 )}

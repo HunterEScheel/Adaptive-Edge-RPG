@@ -1,6 +1,5 @@
 import { useResponsive, useResponsiveStyles } from "@/app/contexts/ResponsiveContext";
 import { CompactListManager } from "@/components/Common/CompactListManager";
-import { ListManager } from "@/components/Common/ListManager";
 import { MiniListManager } from "@/components/Common/MiniListManager";
 import { Consumable } from "@/constants/Item";
 import { ePlayerStat } from "@/constants/Stats";
@@ -10,6 +9,7 @@ import { FontAwesome } from "@expo/vector-icons";
 import React, { useState } from "react";
 import { Alert, Pressable, View } from "react-native";
 import { useDispatch, useSelector } from "react-redux";
+import { ListManagerDesktop } from "../Common/ListManager.desktop";
 import { ThemedText } from "../ThemedText";
 import { ConsumableModal } from "./ConsumableModal";
 
@@ -109,7 +109,7 @@ export function ConsumableList({ variant = "full" }: ConsumableListProps) {
                         >
                             <ThemedText style={cssStyle.primaryText}>Use</ThemedText>
                         </Pressable>
-                        <Pressable style={[cssStyle.condensedButton, cssStyle.dangerColors]} onPress={() => handleRemoveConsumable(item.id)}>
+                        <Pressable style={[cssStyle.condensedButton, cssStyle.secondaryColors]} onPress={() => handleRemoveConsumable(item.id)}>
                             <FontAwesome name="trash" size={14} color="white" />
                         </Pressable>
                     </View>
@@ -167,7 +167,7 @@ export function ConsumableList({ variant = "full" }: ConsumableListProps) {
     // Full variant
     return (
         <>
-            <ListManager<Consumable>
+            <ListManagerDesktop<Consumable>
                 title="Consumables"
                 description={`${consumables.length} item${consumables.length !== 1 ? "s" : ""} • Total value: ${totalValue} gp`}
                 data={consumables}

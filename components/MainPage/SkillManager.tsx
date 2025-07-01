@@ -1,7 +1,6 @@
 import { useResponsive, useResponsiveStyles } from "@/app/contexts/ResponsiveContext";
 import { findMatchingSkills } from "@/components/ai/compareEmbedding";
 import { CompactListManager } from "@/components/Common/CompactListManager";
-import { ListManager } from "@/components/Common/ListManager";
 import { Skill, calculateSkillCost, calculateTotalSkillCost } from "@/constants/Skills";
 import embeddingDatabase from "@/services/embeddingDatabase";
 import { RootState } from "@/store/rootReducer";
@@ -11,6 +10,7 @@ import { FontAwesome } from "@expo/vector-icons";
 import React, { useCallback, useEffect, useState } from "react";
 import { ActivityIndicator, Alert, Modal, ScrollView, TextInput, TouchableOpacity, View } from "react-native";
 import { useDispatch, useSelector } from "react-redux";
+import { ListManagerDesktop } from "../Common/ListManager.desktop";
 import { ThemedText } from "../ThemedText";
 
 // Simple ID generator function
@@ -47,7 +47,6 @@ export function SkillManager() {
 
     // Network connectivity check function - detects if we're on WiFi
     const checkConnectivity = useCallback(async () => {
-        console.log("Checking connectivity status...");
         setIsCheckingConnectivity(true);
         try {
             // Try multiple endpoints to ensure we're not blocked by firewalls
@@ -77,29 +76,22 @@ export function SkillManager() {
 
                     // For no-cors mode, we can't read the response but if fetch succeeds, we're online
                     connected = true;
-                    console.log(`Successfully connected via ${endpoint}`);
                     break;
                 } catch (err) {
-                    console.log(`Failed to connect via ${endpoint}`);
                     continue;
                 }
             }
-
-            console.log(`Connection status determined: ${connected ? "ONLINE" : "OFFLINE"}`);
             setIsOnline(connected);
 
             // Update offline mode in embedding database
             if (embeddingDatabase && typeof embeddingDatabase.setOfflineMode === "function") {
-                console.log(`Setting embedding database to ${connected ? "ONLINE" : "OFFLINE"} mode`);
                 await embeddingDatabase.setOfflineMode(!connected);
             }
 
             // Initialize the embedding database if online
             if (connected) {
                 try {
-                    console.log("Connected to network, syncing embeddings from cloud...");
                     await embeddingDatabase.syncFromCloud();
-                    console.log("Successfully synced embeddings from cloud");
                 } catch (error) {
                     console.error("Error syncing embeddings:", error);
                 }
@@ -107,7 +99,6 @@ export function SkillManager() {
 
             return connected;
         } catch (error) {
-            console.log("Network check failed:", error);
             setIsOnline(false);
 
             // Update offline mode in embedding database
@@ -158,7 +149,6 @@ export function SkillManager() {
 
         // Still try to get suggestions even if offline - the embedding database might have cached data
         if (!isOnline) {
-            console.log("Getting suggestions in offline mode (from cache if available)");
         }
 
         try {
@@ -167,8 +157,6 @@ export function SkillManager() {
 
             // Show all matches with at least 35% similarity
             setSuggestions(matchingSkills.filter((match: { skill: string; similarity: number }) => match.similarity > 0.35));
-
-            console.log(`Found ${matchingSkills.length} matches, ${matchingSkills.filter((m: any) => m.similarity > 0.35).length} above 35% threshold`);
             setShowSuggestions(true);
             setLoadingSuggestions(false);
         } catch (error) {
@@ -181,7 +169,7 @@ export function SkillManager() {
     // Use debounce to avoid excessive API calls
     useEffect(() => {
         const debounceTimer = setTimeout(() => {
-            if (newSkillName.trim().length > 2 && isOnline) {
+            if (newSkillName.trim().length > 2) {
                 getSuggestions(newSkillName);
             } else {
                 setSuggestions([]);
@@ -190,22 +178,19 @@ export function SkillManager() {
         }, 500);
 
         return () => clearTimeout(debounceTimer);
-    }, [newSkillName, isOnline]);
+    }, [newSkillName]);
 
     // Select a suggested skill
     const selectSuggestion = (suggestion: string) => {
         // Calculate cost for level 1
         const cost = calculateTotalSkillCost(1);
-        
+
         // Check if enough build points are available
         if (base.buildPointsRemaining < cost) {
-            Alert.alert(
-                "Not Enough Build Points", 
-                `You need ${cost} build points to add this skill. You have ${base.buildPointsRemaining} remaining.`
-            );
+            Alert.alert("Not Enough Build Points", `You need ${cost} build points to add this skill. You have ${base.buildPointsRemaining} remaining.`);
             return;
         }
-        
+
         // Create the new skill
         const newSkill: Skill = {
             id: generateId(),
@@ -430,7 +415,7 @@ export function SkillManager() {
         return (
             <View style={cssStyle.skillItem}>
                 <View style={cssStyle.headerRow}>
-                    <View style={cssStyle.skillNameContainer}>
+                    <View style={cssStyle.contentContainer}>
                         <ThemedText style={cssStyle.skillName} numberOfLines={1} ellipsizeMode="tail">
                             {item.name}
                         </ThemedText>
@@ -480,7 +465,7 @@ export function SkillManager() {
                     emptyStateText="No skills added yet"
                 />
             ) : (
-                <ListManager<Skill>
+                <ListManagerDesktop<Skill>
                     title="Skills"
                     description={`${skills.length} skill${skills.length !== 1 ? "s" : ""} • ${totalSkillPoints} BP spent`}
                     data={skills}
@@ -508,9 +493,13 @@ export function SkillManager() {
                                 style={{ padding: 4 }}
                             >
                                 {isOnline ? (
-                                    <ThemedText style={cssStyle.onlineIndicator}>Online ⟳</ThemedText>
+                                    <View style={cssStyle.onlineIndicator}>
+                                        <ThemedText>Online ⟳</ThemedText>
+                                    </View>
                                 ) : (
-                                    <ThemedText style={cssStyle.offlineIndicator}>Offline ⟳</ThemedText>
+                                    <View style={cssStyle.offlineIndicator}>
+                                        <ThemedText>Offline ⟳</ThemedText>
+                                    </View>
                                 )}
                             </TouchableOpacity>
                         </View>

@@ -1,44 +1,34 @@
+import { useResponsiveStyles } from "@/app/contexts/ResponsiveContext";
 import { ThemedText } from "@/components/ThemedText";
 import { Consumable, eItemClassifications, iItem } from "@/constants/Item";
 import { ePlayerStat, pStatOptions } from "@/constants/Stats";
+import { addConsumable } from "@/store/slices/inventorySlice";
 import { FontAwesome } from "@expo/vector-icons";
-import React, { useEffect, useRef, useState } from "react";
-import { Dimensions, ScrollView, View } from "react-native";
+import React, { useState } from "react";
+import { Dimensions, Pressable, ScrollView, View } from "react-native";
 import { Dropdown } from "react-native-element-dropdown";
+import { useDispatch } from "react-redux";
 import { default as VersatileInput } from "../../Input";
-import { useResponsiveStyles } from "@/app/contexts/ResponsiveContext";
 
 type AddConsumableProps = {
-    onChange: (item: Partial<iItem>) => void;
+    onChange?: (item: Partial<iItem>) => void;
 };
 
 // Get screen dimensions for responsive layout
 const { width } = Dimensions.get("window");
 
-export function AddConsumable({ onChange }: AddConsumableProps) {
+export function AddConsumable() {
     const cssStyle = useResponsiveStyles();
-    const [consumable, setConsumable] = useState<Partial<Consumable>>({
+    const [consumable, setConsumable] = useState<Consumable>({
         class: eItemClassifications.consumable,
         name: "",
         qty: 1,
         value: 0,
         statEffected: ePlayerStat.hp,
         statModifier: 0,
+        id: "",
     });
-
-    // Update parent component when consumable state changes
-    // Use a ref to track if this is the first render
-    const isFirstRender = useRef(true);
-
-    useEffect(() => {
-        // Skip the first render to prevent initial state update loop
-        if (isFirstRender.current) {
-            isFirstRender.current = false;
-            return;
-        }
-        onChange(consumable);
-    }, [consumable]);
-
+    const dispatch = useDispatch();
     return (
         <ScrollView style={cssStyle.container} contentContainerStyle={cssStyle.container}>
             <ThemedText style={cssStyle.title}>Consumable Details</ThemedText>
@@ -80,7 +70,6 @@ export function AddConsumable({ onChange }: AddConsumableProps) {
             {/* Effect Section */}
             <View style={cssStyle.card}>
                 <ThemedText style={cssStyle.subtitle}>Consumable Effects</ThemedText>
-
                 <View style={cssStyle.formRow}>
                     <View style={cssStyle.container}>
                         <ThemedText style={cssStyle.label}>Affects Stat</ThemedText>
@@ -106,7 +95,10 @@ export function AddConsumable({ onChange }: AddConsumableProps) {
                         style={cssStyle.input}
                         placeholder="0"
                     />
-                </View>
+                </View>{" "}
+                <Pressable style={[cssStyle.primaryButton]} onPress={() => dispatch(addConsumable(consumable))}>
+                    Add Consumable
+                </Pressable>
             </View>
         </ScrollView>
     );

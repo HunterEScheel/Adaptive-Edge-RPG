@@ -127,11 +127,6 @@ export async function testEmbeddingComparison(word, useCharFile = false) {
         const matches = await findMatchingSkills(word, useCharFile);
         const topMatches = matches.slice(0, 10);
 
-        console.log(`Top 10 matching ${useCharFile ? "character" : "skill"} items:`);
-        topMatches.forEach((match) => {
-            console.log(`${match.skill} (${(match.similarity * 100).toFixed(2)}%)`);
-        });
-
         return topMatches;
     } catch (error) {
         console.error("Error in embedding comparison test:", error);

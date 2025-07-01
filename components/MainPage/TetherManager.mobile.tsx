@@ -111,7 +111,7 @@ export function TetherManagerMobile() {
                 <View style={[cssStyle.headerRow, { marginBottom: 12 }]}>
                     <View style={{ flex: 1 }}>
                         <ThemedText style={[cssStyle.title, { fontSize: 20 }]}>Tethers</ThemedText>
-                        <ThemedText style={[cssStyle.label, { fontSize: 12 }]}>Connections that bind you</ThemedText>
+                        <ThemedText style={[cssStyle.label, { fontSize: 12 }]}>Connections to the world</ThemedText>
                     </View>
                     <Pressable
                         style={[cssStyle.primaryButton, { paddingHorizontal: 16, paddingVertical: 8 }]}

@@ -1,3 +1,4 @@
+import React from "react";
 import { Text, type TextProps } from "react-native";
 
 import { useResponsiveStyles } from "@/app/contexts/ResponsiveContext";
@@ -18,7 +19,7 @@ export function ThemedText({ style, lightColor, darkColor, type = "default", ...
             style={[
                 { color },
                 type === "default" ? cssStyle.themedTextDefault : undefined,
-                type === "title" ? cssStyle.themedTextTitle : undefined,
+                type === "title" ? cssStyle.title : undefined,
                 type === "defaultSemiBold" ? cssStyle.headerText : undefined,
                 type === "subtitle" ? cssStyle.smallText : undefined,
                 type === "link" ? cssStyle.themedTextLink : undefined,

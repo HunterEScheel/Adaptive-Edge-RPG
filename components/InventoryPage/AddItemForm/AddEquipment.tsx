@@ -1,25 +1,21 @@
 import { useResponsiveStyles } from "@/app/contexts/ResponsiveContext";
 import { ThemedText } from "@/components/ThemedText";
-import { eItemClassifications, Equipment, iItem } from "@/constants/Item";
+import { eItemClassifications, Equipment } from "@/constants/Item";
 import { ePlayerStat, pStatOptions } from "@/constants/Stats";
+import { addEquipment } from "@/store/slices/inventorySlice";
 import { FontAwesome } from "@expo/vector-icons";
 import { useTheme } from "@react-navigation/native";
-import React, { useEffect, useRef, useState } from "react";
-import { Dimensions, ScrollView, View } from "react-native";
+import React, { useState } from "react";
+import { Pressable, ScrollView, View } from "react-native";
 import BouncyCheckbox from "react-native-bouncy-checkbox";
 import { Dropdown } from "react-native-element-dropdown";
+import { useDispatch } from "react-redux";
 import { default as VersatileInput } from "../../Input";
-
-type AddEquipmentProps = {
-    onChange: (item: Partial<iItem>) => void;
-};
-
-// Get screen dimensions for responsive layout
-const { width } = Dimensions.get("window");
-
-export function AddEquipment({ onChange }: AddEquipmentProps) {
+export function AddEquipment() {
     const theme = useTheme();
     const styles = useResponsiveStyles();
+
+    const dispatch = useDispatch();
 
     const [equipment, setEquipment] = useState<Equipment>({
         id: "0",
@@ -35,19 +31,6 @@ export function AddEquipment({ onChange }: AddEquipmentProps) {
         maxCharges: 0,
         recharge: false,
     });
-
-    // Update parent component when equipment state changes
-    // Use a ref to track if this is the first render
-    const isFirstRender = useRef(true);
-
-    useEffect(() => {
-        // Skip the first render to prevent initial state update loop
-        if (isFirstRender.current) {
-            isFirstRender.current = false;
-            return;
-        }
-        onChange(equipment);
-    }, [equipment]);
 
     return (
         <ScrollView style={styles.container} contentContainerStyle={{ padding: 16 }}>
@@ -209,6 +192,9 @@ export function AddEquipment({ onChange }: AddEquipmentProps) {
                     </View>
                 </View>
             </View>
+            <Pressable onPress={() => dispatch(addEquipment(equipment))} style={[styles.primaryButton, { marginBottom: 16 }]}>
+                Add Item
+            </Pressable>
         </ScrollView>
     );
 }

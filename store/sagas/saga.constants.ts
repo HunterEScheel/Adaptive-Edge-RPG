@@ -1,4 +1,4 @@
-import { characterPresetsService } from "@/services/characterPresets";
+import { deletePreset, getPresetById, getPresets, savePreset } from "@/services/characterPresets";
 import { PayloadAction } from "@reduxjs/toolkit";
 import { call, put, select, takeEvery } from "redux-saga/effects";
 import { DELETE_PRESET, FETCH_PRESETS, LOAD_PRESET, SAVE_PRESET } from "../actions";
@@ -7,11 +7,10 @@ import { RootState } from "../rootReducer";
 import { Character, setCharacter } from "../slices/characterSlice";
 
 // Fetch all presets from Supabase
-function* fetchPresets(): Generator<any, void, any> {
+function* fetch(): Generator<any, void, any> {
     try {
         // Call the service method to get presets
-        const response = yield call(characterPresetsService.getPresets);
-        console.log(response);
+        const response = yield call(getPresets);
 
         if (response.success) {
             // If successful, update the Redux store with the fetched presets
@@ -28,14 +27,14 @@ function* fetchPresets(): Generator<any, void, any> {
 }
 
 // Delete a preset by ID
-function* deletePreset(action: PayloadAction<Character>): Generator<any, void, any> {
+function* deletePresetById(action: PayloadAction<Character>): Generator<any, void, any> {
     try {
         const presetId = action.payload.base.id;
-        const response = yield call(characterPresetsService.deletePreset, presetId);
+        const response = yield call(deletePreset, presetId.toString());
 
         if (response.success) {
             // Refresh presets after deletion
-            yield call(fetchPresets);
+            yield call(fetch);
         } else {
             console.error("Error deleting preset:", response.error);
         }
@@ -52,7 +51,7 @@ interface SavePresetPayload {
     tags?: string[];
 }
 
-function* savePreset(action: PayloadAction<SavePresetPayload>): Generator<any, void, any> {
+function* save(action: PayloadAction<SavePresetPayload>): Generator<any, void, any> {
     try {
         // Get the current character from the store if not provided in action
 
@@ -67,11 +66,11 @@ function* savePreset(action: PayloadAction<SavePresetPayload>): Generator<any, v
         const description = action.payload.description || "";
         const tags = action.payload.tags || [];
 
-        const response = yield call([characterPresetsService, "savePreset"], presetName, description, character, tags);
+        const response = yield call(savePreset, presetName, description, character);
 
         if (response.success) {
             // Refresh presets after saving
-            yield call(fetchPresets);
+            yield call(fetch);
         } else {
             console.error("Error saving preset:", response.error);
         }
@@ -81,10 +80,10 @@ function* savePreset(action: PayloadAction<SavePresetPayload>): Generator<any, v
 }
 
 // Load a preset by ID
-function* loadPreset(action: PayloadAction<number>): Generator<any, void, any> {
+function* load(action: PayloadAction<number>): Generator<any, void, any> {
     try {
         const presetId = action.payload;
-        const response = yield call(characterPresetsService.getPresetById, presetId);
+        const response = yield call(getPresetById, presetId.toString());
 
         if (response.success && response.data) {
             // Set the loaded character as the current character in the store
@@ -99,8 +98,8 @@ function* loadPreset(action: PayloadAction<number>): Generator<any, void, any> {
 
 // Root saga that combines all sagas for presets
 export function* presetSaga(): Generator<any, void, any> {
-    yield takeEvery(FETCH_PRESETS, fetchPresets);
-    yield takeEvery(DELETE_PRESET, deletePreset);
-    yield takeEvery(SAVE_PRESET, savePreset);
-    yield takeEvery(LOAD_PRESET, loadPreset);
+    yield takeEvery(FETCH_PRESETS, fetch);
+    yield takeEvery(DELETE_PRESET, deletePresetById);
+    yield takeEvery(SAVE_PRESET, save);
+    yield takeEvery(LOAD_PRESET, load);
 }

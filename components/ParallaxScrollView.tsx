@@ -1,10 +1,10 @@
-import type { PropsWithChildren, ReactElement } from "react";
+import React, { PropsWithChildren, ReactElement } from "react";
 import { View } from "react-native";
 import Animated, { interpolate, useAnimatedRef, useAnimatedStyle, useScrollViewOffset } from "react-native-reanimated";
 
+import { useResponsiveStyles } from "@/app/contexts/ResponsiveContext";
 import { ThemedView } from "@/components/ThemedView";
 import { useBottomTabOverflow } from "@/components/ui/TabBarBackground";
-import { useResponsiveStyles } from "@/app/contexts/ResponsiveContext";
 
 const HEADER_HEIGHT = 250;
 
