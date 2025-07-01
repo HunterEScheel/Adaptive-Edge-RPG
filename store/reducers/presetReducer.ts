@@ -1,12 +1,12 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
-import { Character } from "../slices/characterSlice";
+import { BaseState } from "../slices/baseSlice";
 
 // Define the reducer
 const presetSlice = createSlice({
     name: "character",
-    initialState: [] as Character[],
+    initialState: [] as BaseState[],
     reducers: {
-        setPresets: (state, action: PayloadAction<Character[]>) => {
+        setPresets: (state, action: PayloadAction<BaseState[]>) => {
             return action.payload;
         },
     },

@@ -3,13 +3,13 @@ import { ThemedView } from "@/components/ThemedView";
 import { ImportFile } from "@/components/Utility/FilePick";
 import { TemplateSelector } from "@/components/Common/TemplateSelector";
 import { setCharacterLoaded } from "@/store/characterAuthSlice";
-import { AbilitiesState } from "@/store/slices/abilitiesSlice";
-import { BaseState } from "@/store/slices/baseSlice";
-import { Character, setCharacter } from "@/store/slices/characterSlice";
-import { InventoryState } from "@/store/slices/inventorySlice";
-import { MagicState } from "@/store/slices/magicSlice";
-import { NotesState } from "@/store/slices/notesSlice";
-import { SkillsState } from "@/store/slices/skillsSlice";
+import { AbilitiesState, setAbilitiesState } from "@/store/slices/abilitiesSlice";
+import { BaseState, setBaseState } from "@/store/slices/baseSlice";
+import { Character } from "@/store/slices/characterSlice";
+import { InventoryState, setInventoryState } from "@/store/slices/inventorySlice";
+import { MagicState, setMagicState } from "@/store/slices/magicSlice";
+import { NotesState, setNotesState } from "@/store/slices/notesSlice";
+import { SkillsState, setSkillsState } from "@/store/slices/skillsSlice";
 import { useRouter } from "expo-router";
 import React, { useState } from "react";
 import { Button, Image } from "react-native";
@@ -24,18 +24,64 @@ export default function WelcomeScreen() {
     const router = useRouter();
 
     const handleCreateNewCharacter = () => {
-        // Create a new default character
-        const newCharacter: Character = {
-            base: {} as BaseState,
-            inventory: {} as InventoryState,
-            abilities: {} as AbilitiesState,
-            magic: {} as MagicState,
-            notes: {} as NotesState,
-            skills: {} as SkillsState,
+        // Create a new default character with proper initial values
+        const defaultBase: BaseState = {
+            id: 0,
+            name: "",
+            buildPointsSpent: 0,
+            buildPointsRemaining: 100,
+            energy: 10,
+            maxEnergy: 10,
+            hitPoints: 10,
+            maxHitPoints: 10,
+            movement: 30,
+            str: 0,
+            dex: 0,
+            con: 0,
+            int: 0,
+            foc: 0,
+            cha: 0,
         };
 
-        // Set the character in Redux and mark as loaded
-        dispatch(setCharacter(newCharacter));
+        const defaultInventory: InventoryState = {
+            weapons: [],
+            equipment: [],
+            consumables: [],
+            armor: {},
+            gold: 0,
+        };
+
+        const defaultAbilities: AbilitiesState = {
+            flaws: [],
+            attacks: [],
+            passives: [],
+        };
+
+        const defaultMagic: MagicState = {
+            magicSchools: [],
+            spells: [],
+            magicSchoolCredit: true,
+        };
+
+        const defaultNotes: NotesState = {
+            notes: [],
+            npcs: [],
+        };
+
+        const defaultSkills: SkillsState = {
+            skills: [],
+            dodge: 0,
+            parry: 0,
+            weaponSkills: [],
+        };
+
+        // Set each slice individually
+        dispatch(setBaseState(defaultBase));
+        dispatch(setInventoryState(defaultInventory));
+        dispatch(setAbilitiesState(defaultAbilities));
+        dispatch(setMagicState(defaultMagic));
+        dispatch(setNotesState(defaultNotes));
+        dispatch(setSkillsState(defaultSkills));
         dispatch(setCharacterLoaded());
 
         // Use a timeout to ensure the state is updated before navigation

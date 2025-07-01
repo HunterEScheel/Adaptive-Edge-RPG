@@ -4,6 +4,7 @@
 import { Armor } from "@/constants/Item";
 import { Skill } from "@/constants/Skills";
 import { Attack, Flaw, Passive } from "@/store/slices/abilitiesSlice";
+import { BaseState } from "@/store/slices/baseSlice";
 import { Character } from "@/store/slices/characterSlice";
 import { MagicSchool, Spell } from "@/store/slices/magicSlice";
 import { supabase } from "./supabase";
@@ -16,7 +17,6 @@ export async function savePreset(presetName: string, description: string, charac
             .insert({
                 preset_name: presetName,
                 // Character basic info
-                character_name: character.base.name,
                 build_points_spent: character.base.buildPointsSpent,
                 build_points_remaining: character.base.buildPointsRemaining,
                 max_energy: character.base.maxEnergy,
@@ -163,12 +163,10 @@ export async function savePreset(presetName: string, description: string, charac
  * @param {boolean} includeFullData - Whether to include character data
  * @returns {Promise<Array>} - List of all presets
  */
-export async function getPresets(includeFullData = false) {
+export async function getPresets() {
     try {
         // Select basic preset info or include character stats
-        const query = includeFullData
-            ? supabase.from("character_presets").select("*")
-            : supabase.from("character_presets").select("id, preset_name, created_at, updated_at, character_name");
+        const query = supabase.from("character_presets").select("*");
 
         const { data: presets, error } = await query.order("updated_at", { ascending: false });
 
@@ -178,17 +176,26 @@ export async function getPresets(includeFullData = false) {
         }
 
         // Format the response for consistent API
-        const formattedPresets =
-            presets?.map((preset) => ({
-                id: preset.id,
-                preset_name: preset.preset_name,
-                created_at: preset.created_at,
-                updated_at: preset.updated_at,
-                // Include a basic character summary
-                character_summary: {
-                    name: preset.character_name,
-                },
-            })) || [];
+        const formattedPresets: BaseState[] = presets.map((preset) => ({
+            id: preset.id,
+            preset_name: preset.preset_name,
+            created_at: preset.created_at,
+            updated_at: preset.updated_at,
+            buildPointsRemaining: 0,
+            buildPointsSpent: preset.build_points_spent,
+            name: preset.preset_name,
+            cha: preset.cha,
+            con: preset.con,
+            dex: preset.dex,
+            int: preset.int,
+            foc: preset.foc,
+            hitPoints: preset.hit_points,
+            maxEnergy: preset.max_energy,
+            maxHitPoints: preset.max_hit_points,
+            movement: preset.movement,
+            str: preset.str,
+            energy: preset.energy,
+        }));
         console.log(formattedPresets);
         return { success: true, data: formattedPresets };
     } catch (error) {
@@ -261,14 +268,13 @@ export async function getPresetById(presetId: string) {
             // Basic info
             base: {
                 id: preset.id,
-                name: preset.character_name,
+                name: preset.preset_name,
                 buildPointsSpent: preset.build_points_spent,
                 buildPointsRemaining: preset.build_points_remaining,
                 energy: preset.max_energy, // Default to max when loading preset
                 maxEnergy: preset.max_energy,
                 hitPoints: preset.max_hit_points, // Default to max when loading preset
                 maxHitPoints: preset.max_hit_points,
-                ac: 10, // Default AC since not stored in preset
                 movement: preset.movement,
 
                 // Stats

@@ -4,7 +4,13 @@ import { call, put, select, takeEvery } from "redux-saga/effects";
 import { DELETE_PRESET, FETCH_PRESETS, LOAD_PRESET, SAVE_PRESET } from "../actions";
 import { setPresets } from "../reducers/presetReducer";
 import { RootState } from "../rootReducer";
-import { Character, setCharacter } from "../slices/characterSlice";
+import { Character } from "../slices/characterSlice";
+import { setBaseState } from "../slices/baseSlice";
+import { setInventoryState } from "../slices/inventorySlice";
+import { setSkillsState } from "../slices/skillsSlice";
+import { setAbilitiesState } from "../slices/abilitiesSlice";
+import { setMagicState } from "../slices/magicSlice";
+import { setNotesState } from "../slices/notesSlice";
 
 // Fetch all presets from Supabase
 function* fetch(): Generator<any, void, any> {
@@ -86,8 +92,16 @@ function* load(action: PayloadAction<number>): Generator<any, void, any> {
         const response = yield call(getPresetById, presetId.toString());
 
         if (response.success && response.data) {
-            // Set the loaded character as the current character in the store
-            yield put(setCharacter(response.data));
+            // Extract the character data from the response
+            const characterData = response.data.character;
+            
+            // Update each slice individually
+            yield put(setBaseState(characterData.base));
+            yield put(setInventoryState(characterData.inventory));
+            yield put(setSkillsState(characterData.skills));
+            yield put(setAbilitiesState(characterData.abilities));
+            yield put(setMagicState(characterData.magic));
+            yield put(setNotesState(characterData.notes));
         } else {
             console.error("Error loading preset:", response.error);
         }

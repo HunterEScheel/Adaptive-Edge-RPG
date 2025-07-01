@@ -2,8 +2,9 @@ import { useResponsiveStyles } from "@/app/contexts/ResponsiveContext";
 import { ThemedText } from "@/components/ThemedText";
 import { ThemedView } from "@/components/ThemedView";
 import { FETCH_PRESETS, LOAD_PRESET } from "@/store/actions";
+import { BaseState } from "@/store/slices/baseSlice";
 import React, { useEffect, useState } from "react";
-import { ActivityIndicator, Modal, ScrollView, Text, TouchableOpacity, View } from "react-native";
+import { ActivityIndicator, Modal, ScrollView, TouchableOpacity, View } from "react-native";
 import { useDispatch, useSelector } from "react-redux";
 
 interface Preset {
@@ -24,7 +25,7 @@ export const TemplateSelector: React.FC<TemplateSelectorProps> = ({ onSelectTemp
     const dispatch = useDispatch();
     const cssStyle = useResponsiveStyles();
     const [loading, setLoading] = useState(true);
-    const [selectedPreset, setSelectedPreset] = useState<Preset | null>(null);
+    const [selectedPreset, setSelectedPreset] = useState<BaseState | null>(null);
     const [showConfirmModal, setShowConfirmModal] = useState(false);
 
     const presets = useSelector((state: any) => state.presets) || [];
@@ -34,7 +35,7 @@ export const TemplateSelector: React.FC<TemplateSelectorProps> = ({ onSelectTemp
         setLoading(false);
     }, [dispatch]);
 
-    const handleSelectPreset = (preset: Preset) => {
+    const handleSelectPreset = (preset: BaseState) => {
         setSelectedPreset(preset);
         setShowConfirmModal(true);
     };
@@ -43,7 +44,7 @@ export const TemplateSelector: React.FC<TemplateSelectorProps> = ({ onSelectTemp
         if (selectedPreset) {
             dispatch({
                 type: LOAD_PRESET,
-                payload: { presetId: selectedPreset.id },
+                payload: selectedPreset.id,
             });
             setShowConfirmModal(false);
             onSelectTemplate();
@@ -71,7 +72,7 @@ export const TemplateSelector: React.FC<TemplateSelectorProps> = ({ onSelectTemp
                 </View>
             ) : (
                 <ScrollView style={{ flex: 1 }}>
-                    {presets.map((preset: Preset) => (
+                    {presets.map((preset: BaseState) => (
                         <TouchableOpacity
                             key={preset.id}
                             style={[
@@ -86,28 +87,7 @@ export const TemplateSelector: React.FC<TemplateSelectorProps> = ({ onSelectTemp
                             onPress={() => handleSelectPreset(preset)}
                         >
                             <ThemedText style={[cssStyle.sectionHeader, { marginBottom: 8 }]}>{preset.name}</ThemedText>
-                            {preset.characterName && <ThemedText style={{ marginBottom: 4 }}>Character: {preset.characterName}</ThemedText>}
-                            {preset.description && <ThemedText style={{ marginBottom: 8, fontStyle: "italic" }}>{preset.description}</ThemedText>}
                             <ThemedText style={{ fontSize: 12 }}>Build Points: {preset.buildPointsSpent || 0}</ThemedText>
-                            {preset.tags && preset.tags.length > 0 && (
-                                <View style={{ flexDirection: "row", flexWrap: "wrap", marginTop: 8 }}>
-                                    {preset.tags.map((tag, index) => (
-                                        <View
-                                            key={index}
-                                            style={{
-                                                backgroundColor: "#333",
-                                                paddingHorizontal: 8,
-                                                paddingVertical: 4,
-                                                borderRadius: 4,
-                                                marginRight: 4,
-                                                marginBottom: 4,
-                                            }}
-                                        >
-                                            <Text style={{ color: "#fff", fontSize: 12 }}>{tag}</Text>
-                                        </View>
-                                    ))}
-                                </View>
-                            )}
                         </TouchableOpacity>
                     ))}
                 </ScrollView>

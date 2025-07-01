@@ -21,12 +21,6 @@ const characterSlice = createSlice({
     name: "character",
     initialState: {} as Character,
     reducers: {
-        // Set the entire character state at once (useful for loading saved characters)
-        setCharacter: (state, action: PayloadAction<Character>) => {
-            console.log(action.payload);
-            state = action.payload;
-        },
-
         // Reset the character to initial state (useful for creating a new character)
         resetCharacter: () => {
             return {} as Character;
@@ -47,6 +41,6 @@ const characterSlice = createSlice({
     },
 });
 
-export const { setCharacter, resetCharacter, longRest } = characterSlice.actions;
+export const { resetCharacter, longRest } = characterSlice.actions;
 
 export default characterSlice.reducer;

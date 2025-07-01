@@ -1,7 +1,7 @@
 import { useResponsiveStyles } from "@/app/contexts/ResponsiveContext";
-import { DELETE_PRESET, FETCH_PRESETS, SAVE_PRESET } from "@/store/actions";
+import { DELETE_PRESET, FETCH_PRESETS, SAVE_PRESET, LOAD_PRESET } from "@/store/actions";
 import { RootState } from "@/store/rootReducer";
-import { Character, setCharacter } from "@/store/slices/characterSlice";
+import { Character } from "@/store/slices/characterSlice";
 import { Ionicons } from "@expo/vector-icons";
 import React, { useEffect, useState } from "react";
 import { FlatList, Modal, TextInput, TouchableOpacity, View } from "react-native";
@@ -45,7 +45,7 @@ const CharacterPresetManager = () => {
 
     // Load a character preset
     const handleLoadPreset = (selection: Character) => {
-        dispatch(setCharacter(selection));
+        dispatch({ type: LOAD_PRESET, payload: selection.base.id });
         setShowLoadModal(false);
     };
 
