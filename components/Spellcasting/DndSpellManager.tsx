@@ -243,54 +243,47 @@ export function DndSpellManager() {
             </View>
 
             <ThemedText style={cssStyle.label}>Spell Level</ThemedText>
-            <ScrollView horizontal showsHorizontalScrollIndicator={false} style={{ marginBottom: 12 }}>
-                <Pressable
-                    style={[
-                        { backgroundColor: "#f5f5f5", padding: 8, marginRight: 8, borderRadius: 4 },
-                        selectedLevel === null && { backgroundColor: "#2196F3" },
-                    ]}
-                    onPress={() => setSelectedLevel(null)}
-                >
-                    <ThemedText style={selectedLevel === null ? { color: "white" } : {}}>All</ThemedText>
-                </Pressable>
-                {spellLevels.map((level) => (
+            <FlatList
+                horizontal
+                showsHorizontalScrollIndicator={false}
+                style={{ marginBottom: 12 }}
+                data={[null, ...spellLevels]}
+                keyExtractor={(item) => item === null ? 'all' : item.toString()}
+                renderItem={({ item: level }) => (
                     <Pressable
-                        key={level}
                         style={[
                             { backgroundColor: "#f5f5f5", padding: 8, marginRight: 8, borderRadius: 4 },
                             selectedLevel === level && { backgroundColor: "#2196F3" },
                         ]}
                         onPress={() => setSelectedLevel(level)}
                     >
-                        <ThemedText style={selectedLevel === level ? { color: "white" } : {}}>{getLevelText(level)}</ThemedText>
+                        <ThemedText style={selectedLevel === level ? { color: "white" } : {}}>
+                            {level === null ? "All" : getLevelText(level)}
+                        </ThemedText>
                     </Pressable>
-                ))}
-            </ScrollView>
+                )}
+            />
 
             <ThemedText style={cssStyle.label}>School</ThemedText>
-            <ScrollView horizontal showsHorizontalScrollIndicator={false}>
-                <Pressable
-                    style={[
-                        { backgroundColor: "#f5f5f5", padding: 8, marginRight: 8, borderRadius: 4, borderColor: "#333", borderWidth: 1 },
-                        selectedSchool === null && { backgroundColor: "#4CAF50" },
-                    ]}
-                    onPress={() => setSelectedSchool(null)}
-                >
-                    <ThemedText style={selectedSchool === null ? { color: "white" } : {}}>All</ThemedText>
-                </Pressable>
-                {spellSchools.map((school) => (
+            <FlatList
+                horizontal
+                showsHorizontalScrollIndicator={false}
+                data={[null, ...spellSchools]}
+                keyExtractor={(item) => item === null ? 'all' : item}
+                renderItem={({ item: school }) => (
                     <Pressable
-                        key={school}
                         style={[
                             { backgroundColor: "#f5f5f5", padding: 8, marginRight: 8, borderRadius: 4, borderColor: "#333", borderWidth: 1 },
                             selectedSchool === school && { backgroundColor: "#4CAF50" },
                         ]}
                         onPress={() => setSelectedSchool(school)}
                     >
-                        <ThemedText style={selectedSchool === school ? { color: "white" } : {}}>{school}</ThemedText>
+                        <ThemedText style={selectedSchool === school ? { color: "white" } : {}}>
+                            {school === null ? "All" : school}
+                        </ThemedText>
                     </Pressable>
-                ))}
-            </ScrollView>
+                )}
+            />
         </View>
     );
 

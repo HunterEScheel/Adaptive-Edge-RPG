@@ -7,7 +7,7 @@ import { RootState } from "@/store/rootReducer";
 import { Attack, addAttack, removeAttack } from "@/store/slices/abilitiesSlice";
 import { spendEnergy } from "@/store/slices/baseSlice";
 import { CompactListManager } from "../Common/CompactListManager";
-import { ListManager } from "../Common/ListManager";
+import { ListManagerDesktop } from "../Common/ListManager.desktop";
 import { ThemedText } from "../ThemedText";
 import { ThemedView } from "../ThemedView";
 
@@ -120,7 +120,7 @@ export function CombatAttacks() {
                     emptyStateText="No attacks added yet"
                 />
             ) : (
-                <ListManager
+                <ListManagerDesktop<Attack>
                     title="Combat Attacks"
                     description={`${attacks.length} attack${attacks.length !== 1 ? "s" : ""}`}
                     data={attacks}

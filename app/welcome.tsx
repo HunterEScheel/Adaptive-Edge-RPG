@@ -1,28 +1,29 @@
 import { useResponsiveStyles } from "@/app/contexts/ResponsiveContext";
-import { ThemedView } from "@/components/ThemedView";
-import { ThemedText } from "@/components/ThemedText";
-import { ImportFile } from "@/components/Utility/FilePick";
 import { TemplateSelector } from "@/components/Common/TemplateSelector";
+import { ThemedView } from "@/components/ThemedView";
+import { IconSymbol } from "@/components/ui/IconSymbol";
+import { ImportFile } from "@/components/Utility/FilePick";
+import SettingsModal from "@/components/Settings/SettingsModal";
+import { Armor } from "@/constants/Item";
 import { setCharacterLoaded } from "@/store/characterAuthSlice";
+import { RootState } from "@/store/rootReducer";
 import { AbilitiesState, setAbilitiesState } from "@/store/slices/abilitiesSlice";
 import { BaseState, setBaseState } from "@/store/slices/baseSlice";
-import { Character } from "@/store/slices/characterSlice";
 import { InventoryState, setInventoryState } from "@/store/slices/inventorySlice";
 import { MagicState, setMagicState } from "@/store/slices/magicSlice";
 import { NotesState, setNotesState } from "@/store/slices/notesSlice";
 import { SkillsState, setSkillsState } from "@/store/slices/skillsSlice";
 import { useRouter } from "expo-router";
 import React, { useState } from "react";
-import { Button, Image, View, TouchableOpacity } from "react-native";
+import { Button, Image, TouchableOpacity, View } from "react-native";
 import { useDispatch, useSelector } from "react-redux";
-import { RootState } from "@/store/rootReducer";
 import AdaptiveEdgeImage from "./AdaptiveEdge.png";
-import { IconSymbol } from "@/components/ui/IconSymbol";
 
 export default function WelcomeScreen() {
     const cssStyle = useResponsiveStyles();
     const [showImport, setShowImport] = useState(false);
     const [showTemplates, setShowTemplates] = useState(false);
+    const [showSettings, setShowSettings] = useState(false);
     const dispatch = useDispatch();
     const router = useRouter();
     const settings = useSelector((state: RootState) => state.settings);
@@ -51,7 +52,7 @@ export default function WelcomeScreen() {
             weapons: [],
             equipment: [],
             consumables: [],
-            armor: {},
+            armor: {} as Armor,
             gold: 0,
         };
 
@@ -131,24 +132,20 @@ export default function WelcomeScreen() {
 
     return (
         <ThemedView style={{ flex: 1 }}>
-            <View style={{ position: 'relative', height: '50%' }}>
+            <View style={{ position: "relative", height: "50%" }}>
                 <Image source={AdaptiveEdgeImage} style={{ width: "100%", height: "100%", resizeMode: "contain" }} />
-                <TouchableOpacity 
-                    style={{ 
-                        position: 'absolute', 
-                        top: 40, 
-                        right: 20, 
+                <TouchableOpacity
+                    style={{
+                        position: "absolute",
+                        top: 40,
+                        right: 20,
                         padding: 10,
-                        backgroundColor: 'rgba(255, 255, 255, 0.1)',
+                        backgroundColor: "rgba(255, 255, 255, 0.1)",
                         borderRadius: 20,
                     }}
-                    onPress={() => router.push('/settings-config')}
+                    onPress={() => setShowSettings(true)}
                 >
-                    <IconSymbol 
-                        name="gearshape.fill" 
-                        size={24} 
-                        color={!settings.isConfigured ? '#ffcc00' : '#fff'}
-                    />
+                    <IconSymbol name="gearshape.fill" size={24} color={!settings.isConfigured ? "#ffcc00" : "#fff"} />
                 </TouchableOpacity>
             </View>
             <ThemedView style={[cssStyle.container, { flex: 1 }]}>
@@ -167,13 +164,14 @@ export default function WelcomeScreen() {
                     </>
                 ) : (
                     <>
-                        <TemplateSelector 
-                            onSelectTemplate={handleTemplateSelected}
-                            onBack={() => setShowTemplates(false)}
-                        />
+                        <TemplateSelector onSelectTemplate={handleTemplateSelected} onBack={() => setShowTemplates(false)} />
                     </>
                 )}
             </ThemedView>
+            <SettingsModal 
+                visible={showSettings} 
+                onClose={() => setShowSettings(false)} 
+            />
         </ThemedView>
     );
 }

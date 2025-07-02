@@ -4,6 +4,8 @@ import { mmkvStorage, supabase } from "./supabase";
 
 // Constants for storage keys
 const OFFLINE_MODE_KEY = "@embeddings_offline_mode";
+const LAST_SYNC_TIME_KEY = "@embeddings_last_sync";
+const EMBEDDINGS_CACHE_KEY = "@embeddings_cache";
 
 /**
  * Embedding Database Service
@@ -43,6 +45,21 @@ class EmbeddingDatabaseService {
      */
     getOfflineMode() {
         return this.isOfflineMode;
+    }
+
+    /**
+     * Get the last sync time
+     */
+    async getLastSyncTime() {
+        const timeStr = await mmkvStorage.getString(LAST_SYNC_TIME_KEY);
+        return timeStr ? parseInt(timeStr, 10) : null;
+    }
+
+    /**
+     * Update the last sync time
+     */
+    async updateLastSyncTime() {
+        await mmkvStorage.set(LAST_SYNC_TIME_KEY, Date.now().toString());
     }
 
 
@@ -125,6 +142,9 @@ class EmbeddingDatabaseService {
 
                 // No caching - we'll fetch from cloud every time
 
+                // Update last sync time
+                await this.updateLastSyncTime();
+
                 console.log(`Synced ${data.length} embeddings from cloud. Not storing full embeddings locally.`);
                 return this.embeddings;
             }
@@ -187,6 +207,9 @@ class EmbeddingDatabaseService {
             }
 
             // No caching
+
+            // Update last sync time
+            await this.updateLastSyncTime();
 
             return true;
         } catch (error) {

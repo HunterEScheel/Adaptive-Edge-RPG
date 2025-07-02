@@ -1,7 +1,6 @@
 import { saveCharacter } from "@/components/Utility/FilePick";
 import { RootState } from "@/store/rootReducer";
 import React, { useState } from "react";
-import { FaSave } from "react-icons/fa";
 import { Modal, Pressable, TextInput, View } from "react-native";
 import { useSelector } from "react-redux";
 import { useResponsiveStyles } from "../../app/contexts/ResponsiveContext";
@@ -27,7 +26,7 @@ export function SaveButton() {
     return (
         <>
             <Pressable style={[styles.condensedButton, styles.primaryColors]} onPress={() => setShowSaveDialog(true)}>
-                <FaSave color="white" />
+                !
             </Pressable>
 
             <Modal visible={showSaveDialog} transparent animationType="fade">

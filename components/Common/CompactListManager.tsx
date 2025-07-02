@@ -1,7 +1,7 @@
 import { useResponsiveStyles } from "@/app/contexts/ResponsiveContext";
 import { FontAwesome } from "@expo/vector-icons";
 import React from "react";
-import { FlatList, TouchableOpacity, View } from "react-native";
+import { TouchableOpacity, View } from "react-native";
 import { ThemedText } from "../ThemedText";
 import { ThemedView } from "../ThemedView";
 
@@ -56,13 +56,13 @@ export function CompactListManager<T>({
                     <ThemedText style={[cssStyle.emptyStateText, { fontSize: 14 }]}>{emptyStateText}</ThemedText>
                 </ThemedView>
             ) : (
-                <FlatList 
-                    data={data} 
-                    renderItem={renderItem} 
-                    keyExtractor={keyExtractor} 
-                    style={[cssStyle.list, { maxHeight: 200 }]}
-                    showsVerticalScrollIndicator={false}
-                />
+                <View style={[cssStyle.list, { maxHeight: 200 }]}>
+                    {data.map((item) => (
+                        <View key={keyExtractor(item)}>
+                            {renderItem({ item })}
+                        </View>
+                    ))}
+                </View>
             )}
         </View>
     );

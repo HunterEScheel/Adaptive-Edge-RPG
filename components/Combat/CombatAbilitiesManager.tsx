@@ -180,7 +180,9 @@ export function CombatAbilitiesManager() {
                 <ThemedText style={cssStyle.costText}>
                     <ThemedText style={cssStyle.costLabel}>BP Cost:</ThemedText> {item.buildPointCost}
                 </ThemedText>
-                <ThemedText style={[cssStyle.passiveTag]}>PASSIVE</ThemedText>
+                <View style={[cssStyle.passiveTag]}>
+                    <ThemedText>PASSIVE</ThemedText>
+                </View>
             </View>
         </ThemedView>
     );

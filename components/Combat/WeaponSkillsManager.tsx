@@ -4,8 +4,7 @@ import { RootState } from "@/store/rootReducer";
 import { updateMultipleFields } from "@/store/slices/baseSlice";
 import { updateWeaponSkills } from "@/store/slices/skillsSlice";
 import React, { useState } from "react";
-import { FaTrash } from "react-icons/fa";
-import { Alert, Modal, Pressable, ScrollView, TouchableOpacity, View } from "react-native";
+import { Alert, FlatList, Modal, Pressable, TouchableOpacity, View } from "react-native";
 import { useDispatch, useSelector } from "react-redux";
 import { CompactListManager } from "../Common/CompactListManager";
 import { ListManagerDesktop } from "../Common/ListManager.desktop";
@@ -219,9 +218,7 @@ export function WeaponSkillManager() {
                         <ThemedText style={cssStyle.primaryText}>+</ThemedText>
                     </Pressable>
                     <Pressable style={[cssStyle.defaultButton]} onPress={() => handleDeleteSkill(item)}>
-                        <ThemedText style={cssStyle.description}>
-                            <FaTrash />
-                        </ThemedText>
+                        <ThemedText style={cssStyle.description}>X</ThemedText>
                     </Pressable>
                 </View>
             </View>
@@ -231,7 +228,7 @@ export function WeaponSkillManager() {
     return (
         <>
             {isMobile ? (
-                <CompactListManager<WeaponSkill>
+                <CompactListManager
                     title={`Weapon Skills (${totalSkillPoints} BP)`}
                     data={skills}
                     renderItem={renderSkillItem}
@@ -263,15 +260,16 @@ export function WeaponSkillManager() {
 
                         <View style={cssStyle.formGroup}>
                             <View style={cssStyle.suggestionsContainer}>
-                                <ScrollView>
-                                    {weaponOptions.map((weapon, index) => (
-                                        <TouchableOpacity key={index} style={cssStyle.suggestionItem} onPress={() => selectWeaponSkill(weapon)}>
+                                <FlatList
+                                    data={weaponOptions}
+                                    renderItem={(weapon) => (
+                                        <TouchableOpacity key={weapon.index} style={cssStyle.suggestionItem} onPress={() => selectWeaponSkill(weapon.item)}>
                                             <ThemedText>
-                                                {weapon.weaponHeft} - {weapon.weaponType}
+                                                {weapon.item.weaponHeft} - {weapon.item.weaponType}
                                             </ThemedText>
                                         </TouchableOpacity>
-                                    ))}
-                                </ScrollView>
+                                    )}
+                                />
                             </View>
                         </View>
 

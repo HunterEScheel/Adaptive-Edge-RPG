@@ -58,13 +58,12 @@ type TabType = "armor-weapons" | "equipment" | "other";
 
 export default function InventoryScreen() {
     const cssStyle = useResponsiveStyles();
-    const { isMobile, isTablet } = useResponsive();
+    const { isMobile } = useResponsive();
     const [activeTab, setActiveTab] = useState<TabType>("armor-weapons");
 
     // Determine which variant to use based on device type
     const getListVariant = (): "full" | "compact" | "mini" => {
         if (isMobile) return "compact";
-        if (isTablet) return "compact";
         return "full";
     };
 

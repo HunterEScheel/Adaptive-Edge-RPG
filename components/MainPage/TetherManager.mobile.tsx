@@ -3,7 +3,7 @@ import { RootState } from "@/store/rootReducer";
 import { Tether, addTether, removeTether, setMinimumTotalObligation, updateTether } from "@/store/slices/tethersSlice";
 import { FontAwesome } from "@expo/vector-icons";
 import React, { useState } from "react";
-import { Alert, FlatList, Modal, Pressable, ScrollView, TextInput, View } from "react-native";
+import { Alert, FlatList, Modal, Pressable, TextInput, View } from "react-native";
 import { useDispatch, useSelector } from "react-redux";
 import { ThemedText } from "../ThemedText";
 import { ThemedView } from "../ThemedView";
@@ -177,7 +177,6 @@ export function TetherManagerMobile() {
                             {editingTether ? "Edit Tether" : "Add New Tether"}
                         </ThemedText>
 
-                        <ScrollView>
                             <View style={[cssStyle.formGroup, { marginBottom: 16 }]}>
                                 <ThemedText style={[cssStyle.inputLabel, { fontSize: 14 }]}>Name</ThemedText>
                                 <TextInput
@@ -193,32 +192,35 @@ export function TetherManagerMobile() {
                                 <ThemedText style={[cssStyle.inputLabel, { fontSize: 14 }]}>Obligation Level ({formData.obligationLevel})</ThemedText>
                                 <ThemedText style={[cssStyle.label, { marginBottom: 8, fontSize: 12 }]}>How strongly does this motivate you?</ThemedText>
                                 <View style={{ flexDirection: "row", justifyContent: "space-between", marginBottom: 8 }}>
-                                    {[1, 2, 3, 4, 5].map((level) => (
-                                        <Pressable
-                                            key={level}
-                                            style={[
-                                                {
-                                                    flex: 1,
-                                                    padding: 10,
-                                                    margin: 2,
-                                                    borderRadius: 6,
-                                                    backgroundColor: formData.obligationLevel === level ? "#2196F3" : "#f0f0f0",
-                                                    alignItems: "center",
-                                                },
-                                            ]}
-                                            onPress={() => setFormData({ ...formData, obligationLevel: level })}
-                                        >
-                                            <ThemedText
-                                                style={{
-                                                    color: formData.obligationLevel === level ? "white" : "#333",
-                                                    fontWeight: "bold",
-                                                    fontSize: 14,
-                                                }}
+                                    <FlatList
+                                        data={[1, 2, 3, 4, 5]}
+                                        renderItem={(level) => (
+                                            <Pressable
+                                                key={level.item}
+                                                style={[
+                                                    {
+                                                        flex: 1,
+                                                        padding: 10,
+                                                        margin: 2,
+                                                        borderRadius: 6,
+                                                        backgroundColor: formData.obligationLevel === level.item ? "#2196F3" : "#f0f0f0",
+                                                        alignItems: "center",
+                                                    },
+                                                ]}
+                                                onPress={() => setFormData({ ...formData, obligationLevel: level.item })}
                                             >
-                                                {level}
-                                            </ThemedText>
-                                        </Pressable>
-                                    ))}
+                                                <ThemedText
+                                                    style={{
+                                                        color: formData.obligationLevel === level.item ? "white" : "#333",
+                                                        fontWeight: "bold",
+                                                        fontSize: 14,
+                                                    }}
+                                                >
+                                                    {level.item}
+                                                </ThemedText>
+                                            </Pressable>
+                                        )}
+                                    />
                                 </View>
                                 <View style={{ flexDirection: "row", justifyContent: "space-between" }}>
                                     <ThemedText style={[cssStyle.smallText, { flex: 1, textAlign: "center", fontSize: 10 }]}>Minor</ThemedText>
@@ -239,7 +241,6 @@ export function TetherManagerMobile() {
                                     numberOfLines={3}
                                 />
                             </View>
-                        </ScrollView>
 
                         <View style={{ flexDirection: "row", gap: 12, marginTop: 16 }}>
                             <Pressable

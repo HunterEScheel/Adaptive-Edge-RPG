@@ -6,7 +6,7 @@ import { useResponsive, useResponsiveStyles } from "@/app/contexts/ResponsiveCon
 import { RootState } from "@/store/rootReducer";
 import { Passive, addPassive, removePassive } from "@/store/slices/abilitiesSlice";
 import { CompactListManager } from "../Common/CompactListManager";
-import { ListManager } from "../Common/ListManager";
+import { ListManagerDesktop } from "../Common/ListManager.desktop";
 import { ThemedText } from "../ThemedText";
 import { ThemedView } from "../ThemedView";
 
@@ -70,7 +70,9 @@ export function CombatPassives() {
                 <ThemedText style={cssStyle.costText}>
                     <ThemedText style={cssStyle.costLabel}>BP Cost:</ThemedText> {item.buildPointCost}
                 </ThemedText>
-                <ThemedText style={cssStyle.passiveTag}>PASSIVE</ThemedText>
+                <View style={[cssStyle.passiveTag]}>
+                    <ThemedText>PASSIVE</ThemedText>
+                </View>
             </View>
         </ThemedView>
     );
@@ -88,7 +90,7 @@ export function CombatPassives() {
                     emptyStateText="No passives added yet"
                 />
             ) : (
-                <ListManager
+                <ListManagerDesktop<Passive>
                     title="Combat Passives"
                     description={`${passives.length} passive${passives.length !== 1 ? "s" : ""}`}
                     data={passives}

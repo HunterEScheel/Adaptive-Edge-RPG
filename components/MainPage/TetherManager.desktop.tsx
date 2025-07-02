@@ -3,7 +3,7 @@ import { RootState } from "@/store/rootReducer";
 import { Tether, addTether, removeTether, setMinimumTotalObligation, updateTether } from "@/store/slices/tethersSlice";
 import { FontAwesome } from "@expo/vector-icons";
 import React, { useState } from "react";
-import { Alert, FlatList, Modal, Pressable, ScrollView, TextInput, View } from "react-native";
+import { Alert, FlatList, Modal, Pressable, TextInput, View } from "react-native";
 import { useDispatch, useSelector } from "react-redux";
 import { ThemedText } from "../ThemedText";
 import { ThemedView } from "../ThemedView";
@@ -190,7 +190,6 @@ export function TetherManagerDesktop() {
                             {editingTether ? "Edit Tether" : "Add New Tether"}
                         </ThemedText>
 
-                        <ScrollView>
                             <View style={[cssStyle.formGroup, { marginBottom: 20 }]}>
                                 <ThemedText style={[cssStyle.inputLabel, { fontSize: 16 }]}>Name</ThemedText>
                                 <TextInput
@@ -208,32 +207,28 @@ export function TetherManagerDesktop() {
                                     How strongly does this tether motivate your actions?
                                 </ThemedText>
                                 <View style={{ flexDirection: "row", justifyContent: "space-between", marginBottom: 12 }}>
-                                    {[1, 2, 3, 4, 5].map((level) => (
-                                        <Pressable
-                                            key={level}
-                                            style={[
-                                                {
-                                                    flex: 1,
-                                                    padding: 16,
-                                                    margin: 4,
-                                                    borderRadius: 8,
-                                                    backgroundColor: formData.obligationLevel === level ? "#2196F3" : "#f0f0f0",
-                                                    alignItems: "center",
-                                                },
-                                            ]}
-                                            onPress={() => setFormData({ ...formData, obligationLevel: level })}
-                                        >
-                                            <ThemedText
-                                                style={{
-                                                    color: formData.obligationLevel === level ? "white" : "#333",
-                                                    fontWeight: "bold",
-                                                    fontSize: 18,
-                                                }}
-                                            >
-                                                {level}
-                                            </ThemedText>
-                                        </Pressable>
-                                    ))}
+                                    <FlatList
+                                        data={[1, 2, 3, 4, 5]}
+                                        renderItem={({ item }) => (
+                                            <Pressable
+                                                onPress={() => setFormData({ ...formData, obligationLevel: item })}
+                                                style={[
+                                                    {
+                                                        flex: 1,
+                                                        padding: 16,
+                                                        margin: 4,
+                                                        borderRadius: 8,
+                                                        backgroundColor: formData.obligationLevel === item ? "#2196F3" : "#f0f0f0",
+                                                        alignItems: "center",
+                                                    }
+                                                ]}>
+                                                <ThemedText style={[cssStyle.smallText, { fontSize: 16 }]}>{item}</ThemedText>
+                                                </Pressable>
+                                        )}
+                                        keyExtractor={(item) => item.toString()}
+                                        horizontal
+                                        showsHorizontalScrollIndicator={false}
+                                    />
                                 </View>
                                 <View style={{ flexDirection: "row", justifyContent: "space-between" }}>
                                     <ThemedText style={[cssStyle.smallText, { flex: 1, textAlign: "center" }]}>Minor</ThemedText>
@@ -254,7 +249,6 @@ export function TetherManagerDesktop() {
                                     numberOfLines={5}
                                 />
                             </View>
-                        </ScrollView>
 
                         <View style={{ flexDirection: "row", gap: 16, marginTop: 24 }}>
                             <Pressable

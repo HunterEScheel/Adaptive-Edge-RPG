@@ -8,7 +8,7 @@ import { updateMultipleFields } from "@/store/slices/baseSlice";
 import { addSkill, removeSkill, updateSkillLevel } from "@/store/slices/skillsSlice";
 import { FontAwesome } from "@expo/vector-icons";
 import React, { useCallback, useEffect, useState } from "react";
-import { ActivityIndicator, Alert, Modal, ScrollView, TextInput, TouchableOpacity, View } from "react-native";
+import { ActivityIndicator, Alert, FlatList, Modal, TextInput, TouchableOpacity, View } from "react-native";
 import { useDispatch, useSelector } from "react-redux";
 import { ListManagerDesktop } from "../Common/ListManager.desktop";
 import { ThemedText } from "../ThemedText";
@@ -353,7 +353,7 @@ export function SkillManager() {
             <View style={[cssStyle.compactCard, { marginBottom: 8, padding: 12 }]}>
                 <View style={{ flexDirection: "row", justifyContent: "space-between", alignItems: "center" }}>
                     {/* Skill info */}
-                    <View style={{ flex: 1, marginRight: 8 }}>
+                    <View style={{ marginRight: 8 }}>
                         <ThemedText style={{ fontSize: 14, fontWeight: "600", color: "#f0f0f0" }} numberOfLines={1}>
                             {item.name}
                         </ThemedText>
@@ -520,14 +520,21 @@ export function SkillManager() {
                             {showSuggestions && suggestions.length > 0 && (
                                 <View style={cssStyle.suggestionsContainer}>
                                     <ThemedText style={cssStyle.suggestionsTitle}>Suggestions ({suggestions.length}):</ThemedText>
-                                    <ScrollView style={cssStyle.suggestionsScrollView} showsVerticalScrollIndicator={true}>
-                                        {suggestions.map((suggestion, index) => (
-                                            <TouchableOpacity key={index} style={cssStyle.suggestionItem} onPress={() => selectSuggestion(suggestion.skill)}>
-                                                <ThemedText>{suggestion.skill}</ThemedText>
-                                                <ThemedText style={cssStyle.smallText}>{Math.round(suggestion.similarity * 100)}% match</ThemedText>
+                                    <FlatList
+                                        data={suggestions}
+                                        renderItem={(suggestion) => (
+                                            <TouchableOpacity
+                                                key={suggestion.index}
+                                                style={cssStyle.suggestionItem}
+                                                onPress={() => selectSuggestion(suggestion.item.skill)}
+                                            >
+                                                <ThemedText>{suggestion.item.skill}</ThemedText>
+                                                <ThemedText style={cssStyle.smallText}>{Math.round(suggestion.item.similarity * 100)}% match</ThemedText>
                                             </TouchableOpacity>
-                                        ))}
-                                    </ScrollView>
+                                        )}
+                                        style={cssStyle.suggestionsScrollView}
+                                        showsVerticalScrollIndicator={true}
+                                    />
                                 </View>
                             )}
                         </View>

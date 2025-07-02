@@ -2,7 +2,7 @@ export default {
     expo: {
         name: "adaptive_edge",
         slug: "adaptive_edge",
-        version: "1.0.2",
+        version: "1.0.3",
         orientation: "portrait",
         icon: "./assets/images/icon.png",
         scheme: "Adaptive_Edge",

@@ -1,7 +1,7 @@
 import { useResponsiveStyles } from "@/app/contexts/ResponsiveContext";
-import { DELETE_PRESET, FETCH_PRESETS, SAVE_PRESET, LOAD_PRESET } from "@/store/actions";
+import { DELETE_PRESET, FETCH_PRESETS, LOAD_PRESET, SAVE_PRESET } from "@/store/actions";
 import { RootState } from "@/store/rootReducer";
-import { Character } from "@/store/slices/characterSlice";
+import { BaseState } from "@/store/slices/baseSlice";
 import { Ionicons } from "@expo/vector-icons";
 import React, { useEffect, useState } from "react";
 import { FlatList, Modal, TextInput, TouchableOpacity, View } from "react-native";
@@ -18,7 +18,7 @@ const CharacterPresetManager = () => {
 
     const [showSaveModal, setShowSaveModal] = useState(false);
     const [showLoadModal, setShowLoadModal] = useState(false);
-    const [selectedPreset, setSelectedPreset] = useState<Character | null>(null);
+    const [selectedPreset, setSelectedPreset] = useState<BaseState | null>(null);
 
     // Save form state
     const [presetName, setPresetName] = useState("");
@@ -44,13 +44,13 @@ const CharacterPresetManager = () => {
     };
 
     // Load a character preset
-    const handleLoadPreset = (selection: Character) => {
-        dispatch({ type: LOAD_PRESET, payload: selection.base.id });
+    const handleLoadPreset = (selection: BaseState) => {
+        dispatch({ type: LOAD_PRESET, payload: selection.id });
         setShowLoadModal(false);
     };
 
     // Delete a preset
-    const handleDeletePreset = (preset: Character) => {
+    const handleDeletePreset = (preset: BaseState) => {
         dispatch({ type: DELETE_PRESET, payload: preset });
     };
 
@@ -68,7 +68,7 @@ const CharacterPresetManager = () => {
     };
 
     // Render preset item in list
-    const renderPresetItem = ({ item }: { item: Character }) => (
+    const renderPresetItem = ({ item }: { item: BaseState }) => (
         <View style={cssStyle.card}>
             <TouchableOpacity
                 style={{ flex: 1, padding: 12 }}
@@ -78,14 +78,14 @@ const CharacterPresetManager = () => {
                 }}
             >
                 <View style={cssStyle.row}>
-                    <ThemedText style={cssStyle.title}>{item.base.name}</ThemedText>
+                    <ThemedText style={cssStyle.title}>{item.name}</ThemedText>
                 </View>
 
                 <ThemedText style={cssStyle.subtitle} numberOfLines={2}></ThemedText>
 
                 <View style={{ marginVertical: 8 }}>
                     <ThemedText style={cssStyle.bodyText}>
-                        {item.base.name} ({item.base.buildPointsSpent} BP)
+                        {item.name} ({item.buildPointsSpent} BP)
                     </ThemedText>
                 </View>
             </TouchableOpacity>
@@ -106,10 +106,10 @@ const CharacterPresetManager = () => {
             </View>
 
             {presets.length > 0 ? (
-                <FlatList
+                <FlatList<BaseState>
                     data={presets}
                     renderItem={renderPresetItem}
-                    keyExtractor={(item) => item.base.id.toString()}
+                    keyExtractor={(item) => item.id.toString()}
                     contentContainerStyle={{ paddingBottom: 16 }}
                 />
             ) : (
@@ -173,8 +173,8 @@ const CharacterPresetManager = () => {
                                 </View>
 
                                 <View style={{ marginVertical: 12 }}>
-                                    <ThemedText style={cssStyle.title}>{selectedPreset.base.name}</ThemedText>
-                                    <ThemedText style={cssStyle.subtitle}>Build Points Spent: {selectedPreset.base.buildPointsSpent}</ThemedText>
+                                    <ThemedText style={cssStyle.title}>{selectedPreset.name}</ThemedText>
+                                    <ThemedText style={cssStyle.subtitle}>Build Points Spent: {selectedPreset.buildPointsSpent}</ThemedText>
                                 </View>
 
                                 <ThemedText style={cssStyle.bodyText}>

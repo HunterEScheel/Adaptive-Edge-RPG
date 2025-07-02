@@ -82,8 +82,7 @@ export const cssStyle = StyleSheet.create<ResponsiveStyles>({
     // Modal responsive styles for phone
     modalView: {
         width: "95%",
-        maxWidth: "95%",
-        maxHeight: "90%",
+        height: "95%",
         backgroundColor: "#2a2a2a",
         borderRadius: 16,
         padding: 16,

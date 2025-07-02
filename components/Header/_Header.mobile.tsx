@@ -2,7 +2,6 @@ import { useResponsiveStyles } from "@/app/contexts/ResponsiveContext";
 import { RootState } from "@/store/rootReducer";
 import { updateMultipleFields } from "@/store/slices/baseSlice";
 import React, { useEffect, useState } from "react";
-import { FaMinus, FaPlus } from "react-icons/fa";
 import { Pressable, StyleSheet, TextInput, View } from "react-native";
 import { useDispatch, useSelector } from "react-redux";
 import { StatAdjuster } from "../MainPage/StatAdjuster";
@@ -136,8 +135,8 @@ export function CharacterHeaderMobile() {
                                     onPress={() => handleDamage("hp")}
                                     disabled={base.hitPoints <= 0}
                                 >
-                                    <ThemedText style={[styles.description, styles.secondaryText, { fontSize: 10 }]}>
-                                        <FaMinus />
+                                    <ThemedText style={[styles.description, styles.secondaryText, { fontSize: 12 }]}>
+                                        −
                                     </ThemedText>
                                 </Pressable>
                                 <Pressable
@@ -145,8 +144,8 @@ export function CharacterHeaderMobile() {
                                     onPress={() => handleHeal("hp")}
                                     disabled={base.hitPoints >= totalMaxHP}
                                 >
-                                    <ThemedText style={[styles.description, styles.primaryText, { fontSize: 10 }]}>
-                                        <FaPlus />
+                                    <ThemedText style={[styles.description, styles.primaryText, { fontSize: 12 }]}>
+                                        +
                                     </ThemedText>
                                 </Pressable>
                             </View>
@@ -165,8 +164,8 @@ export function CharacterHeaderMobile() {
                                     onPress={() => handleDamage("energy")}
                                     disabled={base.hitPoints <= 0}
                                 >
-                                    <ThemedText style={[styles.description, styles.secondaryText, { fontSize: 10 }]}>
-                                        <FaMinus />
+                                    <ThemedText style={[styles.description, styles.secondaryText, { fontSize: 12 }]}>
+                                        −
                                     </ThemedText>
                                 </Pressable>
                                 <Pressable
@@ -174,8 +173,8 @@ export function CharacterHeaderMobile() {
                                     onPress={() => handleHeal("energy")}
                                     disabled={base.energy >= base.maxEnergy}
                                 >
-                                    <ThemedText style={[styles.description, styles.primaryText, { fontSize: 10 }]}>
-                                        <FaPlus />
+                                    <ThemedText style={[styles.description, styles.primaryText, { fontSize: 12 }]}>
+                                        +
                                     </ThemedText>
                                 </Pressable>
                             </View>

@@ -4,7 +4,7 @@ import { ThemedView } from "@/components/ThemedView";
 import { FETCH_PRESETS, LOAD_PRESET } from "@/store/actions";
 import { BaseState } from "@/store/slices/baseSlice";
 import React, { useEffect, useState } from "react";
-import { ActivityIndicator, Modal, ScrollView, TouchableOpacity, View } from "react-native";
+import { ActivityIndicator, FlatList, Modal, Pressable, TouchableOpacity, View } from "react-native";
 import { useDispatch, useSelector } from "react-redux";
 
 interface Preset {
@@ -71,10 +71,11 @@ export const TemplateSelector: React.FC<TemplateSelectorProps> = ({ onSelectTemp
                     </ThemedText>
                 </View>
             ) : (
-                <ScrollView style={{ flex: 1 }}>
-                    {presets.map((preset: BaseState) => (
-                        <TouchableOpacity
-                            key={preset.id}
+                <FlatList
+                    data={presets}
+                    renderItem={(preset) => (
+                        <Pressable
+                            key={preset.item.id}
                             style={[
                                 cssStyle.card,
                                 {
@@ -84,13 +85,13 @@ export const TemplateSelector: React.FC<TemplateSelectorProps> = ({ onSelectTemp
                                     borderRadius: 8,
                                 },
                             ]}
-                            onPress={() => handleSelectPreset(preset)}
+                            onPress={() => handleSelectPreset(preset.item)}
                         >
-                            <ThemedText style={[cssStyle.sectionHeader, { marginBottom: 8 }]}>{preset.name}</ThemedText>
-                            <ThemedText style={{ fontSize: 12 }}>Build Points: {preset.buildPointsSpent || 0}</ThemedText>
-                        </TouchableOpacity>
-                    ))}
-                </ScrollView>
+                            <ThemedText style={[cssStyle.sectionHeader, { marginBottom: 8 }]}>{preset.item.name}</ThemedText>
+                            <ThemedText style={{ fontSize: 12 }}>Build Points: {preset.item.buildPointsSpent || 0}</ThemedText>
+                        </Pressable>
+                    )}
+                />
             )}
 
             <View style={{ marginTop: 20, marginHorizontal: 16 }}>

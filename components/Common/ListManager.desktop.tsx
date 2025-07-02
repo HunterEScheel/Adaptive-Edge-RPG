@@ -1,7 +1,7 @@
 import { useResponsiveStyles } from "@/app/contexts/ResponsiveContext";
 import { FontAwesome } from "@expo/vector-icons";
 import React from "react";
-import { FlatList, TouchableOpacity, View } from "react-native";
+import { TouchableOpacity, View } from "react-native";
 import { ThemedText } from "../ThemedText";
 import { ThemedView } from "../ThemedView";
 
@@ -17,19 +17,19 @@ interface ListManagerProps<T> {
     showAddButton?: boolean;
 }
 
-export function ListManagerDesktop<T>({ 
-    title, 
-    description, 
-    data, 
-    renderItem, 
-    keyExtractor, 
-    onAddPress, 
-    addButtonText = "Add", 
+export function ListManagerDesktop<T>({
+    title,
+    description,
+    data,
+    renderItem,
+    keyExtractor,
+    onAddPress,
+    addButtonText = "Add",
     emptyStateText,
-    showAddButton = true 
+    showAddButton = true,
 }: ListManagerProps<T>) {
     const cssStyle = useResponsiveStyles();
-    
+
     return (
         <View style={[cssStyle.container, { padding: 24, marginVertical: 16 }]}>
             {/* Header with title and description */}
@@ -39,15 +39,10 @@ export function ListManagerDesktop<T>({
                     {description && <ThemedText style={[cssStyle.hint, { fontSize: 16 }]}>{description}</ThemedText>}
                 </View>
                 {showAddButton && (
-                    <TouchableOpacity 
-                        style={[cssStyle.primaryButton, { paddingHorizontal: 24, paddingVertical: 12 }]} 
-                        onPress={onAddPress}
-                    >
+                    <TouchableOpacity style={[cssStyle.primaryButton, { paddingHorizontal: 24, paddingVertical: 12 }]} onPress={onAddPress}>
                         <View style={{ flexDirection: "row", alignItems: "center" }}>
                             <FontAwesome name="plus" size={16} color="white" style={{ marginRight: 8 }} />
-                            <ThemedText style={[cssStyle.buttonText, { fontSize: 16, color: "white" }]}>
-                                {addButtonText}
-                            </ThemedText>
+                            <ThemedText style={[cssStyle.buttonText, { fontSize: 16, color: "white" }]}>{addButtonText}</ThemedText>
                         </View>
                     </TouchableOpacity>
                 )}
@@ -56,19 +51,16 @@ export function ListManagerDesktop<T>({
             {/* List content */}
             {data.length === 0 ? (
                 <ThemedView style={[cssStyle.emptyState, { padding: 48, minHeight: 200 }]}>
-                    <ThemedText style={[cssStyle.emptyStateText, { fontSize: 18, textAlign: "center" }]}>
-                        {emptyStateText}
-                    </ThemedText>
+                    <ThemedText style={[cssStyle.emptyStateText, { fontSize: 18, textAlign: "center" }]}>{emptyStateText}</ThemedText>
                 </ThemedView>
             ) : (
-                <FlatList 
-                    data={data} 
-                    renderItem={renderItem} 
-                    keyExtractor={keyExtractor} 
-                    style={cssStyle.list}
-                    contentContainerStyle={{ paddingBottom: 16 }}
-                    showsVerticalScrollIndicator={false}
-                />
+                <View style={cssStyle.list}>
+                    {data.map((item) => (
+                        <View key={keyExtractor(item)}>
+                            {renderItem({ item })}
+                        </View>
+                    ))}
+                </View>
             )}
         </View>
     );

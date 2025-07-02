@@ -80,14 +80,6 @@ export default function TabLayout() {
                             tabBarIcon: ({ color }) => <IconSymbol size={28} name="note.text" color={color} />,
                         }}
                     />
-                    <Tabs.Screen
-                        name="settings"
-                        options={{
-                            title: "Settings",
-                            tabBarLabel: ({ focused, color }) => <TabBarLabel label="Settings" focused={focused} color={color} />,
-                            tabBarIcon: ({ color }) => <IconSymbol size={28} name="gearshape.fill" color={color} />,
-                        }}
-                    />
                 </Tabs>
             </View>
         </ProtectedRoute>

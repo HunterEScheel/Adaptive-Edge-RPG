@@ -1,7 +1,6 @@
 import { useResponsiveStyles } from "@/app/contexts/ResponsiveContext";
 import { Ionicons } from "@expo/vector-icons";
 import React, { useState } from "react";
-import { FaCloud } from "react-icons/fa";
 import { Modal, TouchableOpacity, View } from "react-native";
 import { ThemedText } from "../ThemedText";
 import CharacterPresetManager from "./CharacterPresetManager";
@@ -16,7 +15,7 @@ export function PresetManagerButton() {
     return (
         <>
             <TouchableOpacity style={[cssStyle.condensedButton, cssStyle.primaryColors]} onPress={() => setModalVisible(true)}>
-                <FaCloud color={"white"} />
+                ?
             </TouchableOpacity>
 
             {/* Full-screen modal for the preset manager */}

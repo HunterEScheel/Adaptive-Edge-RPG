@@ -9,13 +9,77 @@ import { Character } from "@/store/slices/characterSlice";
 import { MagicSchool, Spell } from "@/store/slices/magicSlice";
 import { getSupabase } from "./supabase";
 
+type DbPresetBase = {
+    id: number;
+    preset_name: string;
+    build_points_spent: number;
+    build_points_remaining: number;
+    max_energy: number;
+    max_hit_points: number;
+    movement: number;
+    dodge: number;
+    parry: number;
+    str: number;
+    dex: number;
+    con: number;
+    int: number;
+    foc: number;
+    cha: number;
+    created_at: string;
+    updated_at: string;
+};
+
+type DbSchool = {
+    name: string;
+    description: string;
+};
+type DbSpell = {
+    name: string;
+    description: string;
+    energyCost: number;
+    buildPointCost: number;
+    damage?: string;
+    range?: string;
+    duration?: string;
+    area?: string;
+};
+type DbSkill = {
+    id: string;
+    skill_name: string;
+    skill_level: number;
+    description: string;
+};
+
+type DbFlaw = {
+    id: string;
+    name: string;
+    severity: number;
+    description: string;
+};
+
+type DbPassive = {
+    id: string;
+    name: string;
+    build_point_cost: number;
+    description: string;
+};
+
+type DbAttack = {
+    id: string;
+    name: string;
+    attack_level: number;
+    description: string;
+    build_point_cost: number;
+    energy_cost: number;
+};
+
 export async function savePreset(presetName: string, description: string, character: Character, tags = []) {
     try {
         const supabase = getSupabase();
         if (!supabase) {
-            return { success: false, error: new Error('Supabase not initialized') };
+            return { success: false, error: new Error("Supabase not initialized") };
         }
-        
+
         // Insert the main character preset record
         const { data: presetData, error: presetError } = await supabase
             .from("character_presets")
@@ -172,9 +236,9 @@ export async function getPresets() {
     try {
         const supabase = getSupabase();
         if (!supabase) {
-            return { success: false, error: new Error('Supabase not initialized') };
+            return { success: false, error: new Error("Supabase not initialized") };
         }
-        
+
         // Select basic preset info or include character stats
         const query = supabase.from("character_presets").select("*");
 
@@ -186,7 +250,7 @@ export async function getPresets() {
         }
 
         // Format the response for consistent API
-        const formattedPresets: BaseState[] = presets.map((preset) => ({
+        const formattedPresets: BaseState[] = presets.map((preset: DbPresetBase) => ({
             id: preset.id,
             preset_name: preset.preset_name,
             created_at: preset.created_at,
@@ -199,12 +263,12 @@ export async function getPresets() {
             dex: preset.dex,
             int: preset.int,
             foc: preset.foc,
-            hitPoints: preset.hit_points,
+            hitPoints: preset.max_hit_points,
             maxEnergy: preset.max_energy,
             maxHitPoints: preset.max_hit_points,
             movement: preset.movement,
             str: preset.str,
-            energy: preset.energy,
+            energy: preset.max_energy,
         }));
         console.log(formattedPresets);
         return { success: true, data: formattedPresets };
@@ -224,9 +288,9 @@ export async function searchPresets(searchTerm = "", tags = []) {
     try {
         const supabase = getSupabase();
         if (!supabase) {
-            return { success: false, error: new Error('Supabase not initialized') };
+            return { success: false, error: new Error("Supabase not initialized") };
         }
-        
+
         let query = supabase.from("character_presets").select("id, preset_name, created_at, updated_at, tags");
 
         // Apply filters if provided
@@ -262,9 +326,9 @@ export async function getPresetById(presetId: string) {
     try {
         const supabase = getSupabase();
         if (!supabase) {
-            return { success: false, error: new Error('Supabase not initialized') };
+            return { success: false, error: new Error("Supabase not initialized") };
         }
-        
+
         // Get the main preset data
         const { data: preset, error: presetError } = await supabase.from("character_presets").select("*").eq("id", presetId).single();
 
@@ -317,7 +381,7 @@ export async function getPresetById(presetId: string) {
             // Arrays of character data
             skills: {
                 skills:
-                    skillsResult.data?.map((skill) => ({
+                    skillsResult.data?.map((skill: DbSkill) => ({
                         id: skill.id.toString(),
                         name: skill.skill_name,
                         level: skill.skill_level,
@@ -330,14 +394,14 @@ export async function getPresetById(presetId: string) {
 
             magic: {
                 magicSchools:
-                    magicSchoolsResult.data?.map((school) => ({
+                    magicSchoolsResult.data?.map((school: any) => ({
                         id: school.id.toString(),
                         name: school.name,
                         description: school.description || "",
                     })) || [],
 
                 spells:
-                    spellsResult.data?.map((spell) => ({
+                    spellsResult.data?.map((spell: any) => ({
                         id: spell.id.toString(),
                         name: spell.name,
                         school: spell.school,
@@ -353,7 +417,7 @@ export async function getPresetById(presetId: string) {
             },
             abilities: {
                 flaws:
-                    flawsResult.data?.map((flaw) => ({
+                    flawsResult.data?.map((flaw: DbFlaw) => ({
                         id: flaw.id.toString(),
                         name: flaw.name,
                         description: flaw.description || "",
@@ -361,7 +425,7 @@ export async function getPresetById(presetId: string) {
                     })) || [],
 
                 attacks:
-                    attacksResult.data?.map((attack) => ({
+                    attacksResult.data?.map((attack: DbAttack) => ({
                         id: attack.id.toString(),
                         name: attack.name,
                         description: attack.description || "",
@@ -370,7 +434,7 @@ export async function getPresetById(presetId: string) {
                     })) || [],
 
                 passives:
-                    passivesResult.data?.map((passive) => ({
+                    passivesResult.data?.map((passive: DbPassive) => ({
                         id: passive.id.toString(),
                         name: passive.name,
                         description: passive.description || "",
@@ -409,9 +473,9 @@ export async function deletePreset(presetId: string) {
     try {
         const supabase = getSupabase();
         if (!supabase) {
-            return { success: false, error: new Error('Supabase not initialized') };
+            return { success: false, error: new Error("Supabase not initialized") };
         }
-        
+
         const { error } = await supabase.from("character_presets").delete().eq("id", presetId);
 
         if (error) {
@@ -436,9 +500,9 @@ export async function updatePreset(presetId: string, updates: { preset_name?: st
     try {
         const supabase = getSupabase();
         if (!supabase) {
-            return { success: false, error: new Error('Supabase not initialized') };
+            return { success: false, error: new Error("Supabase not initialized") };
         }
-        
+
         const { preset_name, description, character, tags } = updates;
         const updateData: any = {};
 

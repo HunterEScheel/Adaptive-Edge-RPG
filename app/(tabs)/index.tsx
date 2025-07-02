@@ -8,6 +8,7 @@ import { TetherManager } from "@/components/MainPage/TetherManager";
 import { ThemedText } from "@/components/ThemedText";
 import { ThemedView } from "@/components/ThemedView";
 import { RootState } from "@/store/rootReducer";
+import React from "react";
 import { useResponsiveStyles } from "../contexts/ResponsiveContext";
 
 export default function HomeScreen() {

@@ -2,7 +2,6 @@ import { useResponsiveStyles } from "@/app/contexts/ResponsiveContext";
 import { RootState } from "@/store/rootReducer";
 import { updateMultipleFields } from "@/store/slices/baseSlice";
 import React, { useEffect, useState } from "react";
-import { FaMinus, FaPlus } from "react-icons/fa";
 import { Pressable, StyleSheet, TextInput, View } from "react-native";
 import { useDispatch, useSelector } from "react-redux";
 import { StatAdjuster } from "../MainPage/StatAdjuster";
@@ -38,7 +37,7 @@ export function CharacterHeaderDesktop() {
     const [evasionBreakdownModalVisible, setEvasionBreakdownModalVisible] = useState(false);
     const [isEditingName, setIsEditingName] = useState(false);
     const [nameValue, setNameValue] = useState(base?.name || "");
-    
+
     const isTablet = false; // You can determine this based on screen size if needed
 
     useEffect(() => {
@@ -135,18 +134,14 @@ export function CharacterHeaderDesktop() {
                                     onPress={() => handleDamage("hp")}
                                     disabled={base.hitPoints <= 0}
                                 >
-                                    <ThemedText style={[styles.description, styles.secondaryText, { fontSize: 12 }]}>
-                                        <FaMinus />
-                                    </ThemedText>
+                                    <ThemedText style={[styles.description, styles.secondaryText, { fontSize: 12 }]}>+</ThemedText>
                                 </Pressable>
                                 <Pressable
                                     style={[styles.condensedButton, styles.primaryColors, { width: 30, height: 30, padding: 4, marginHorizontal: 8 }]}
                                     onPress={() => handleHeal("hp")}
                                     disabled={base.hitPoints >= totalMaxHP}
                                 >
-                                    <ThemedText style={[styles.description, styles.primaryText, { fontSize: 12 }]}>
-                                        <FaPlus />
-                                    </ThemedText>
+                                    <ThemedText style={[styles.description, styles.primaryText, { fontSize: 12 }]}>-</ThemedText>
                                 </Pressable>
                             </View>
                             <Pressable style={[styles.sectionHeaderContainer, { paddingHorizontal: 4 }]} onPress={() => setHpModalVisible(true)}>
@@ -164,18 +159,14 @@ export function CharacterHeaderDesktop() {
                                     onPress={() => handleDamage("energy")}
                                     disabled={base.hitPoints <= 0}
                                 >
-                                    <ThemedText style={[styles.description, styles.secondaryText, { fontSize: 12 }]}>
-                                        <FaMinus />
-                                    </ThemedText>
+                                    <ThemedText style={[styles.description, styles.secondaryText, { fontSize: 12 }]}>-</ThemedText>
                                 </Pressable>
                                 <Pressable
                                     style={[styles.condensedButton, styles.primaryColors, { width: 30, height: 30, padding: 4, marginHorizontal: 8 }]}
                                     onPress={() => handleHeal("energy")}
                                     disabled={base.energy >= base.maxEnergy}
                                 >
-                                    <ThemedText style={[styles.description, styles.primaryText, { fontSize: 12 }]}>
-                                        <FaPlus />
-                                    </ThemedText>
+                                    <ThemedText style={[styles.description, styles.primaryText, { fontSize: 12 }]}>+</ThemedText>
                                 </Pressable>
                             </View>
                             <View>
