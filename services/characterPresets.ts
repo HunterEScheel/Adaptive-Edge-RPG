@@ -7,10 +7,15 @@ import { Attack, Flaw, Passive } from "@/store/slices/abilitiesSlice";
 import { BaseState } from "@/store/slices/baseSlice";
 import { Character } from "@/store/slices/characterSlice";
 import { MagicSchool, Spell } from "@/store/slices/magicSlice";
-import { supabase } from "./supabase";
+import { getSupabase } from "./supabase";
 
 export async function savePreset(presetName: string, description: string, character: Character, tags = []) {
     try {
+        const supabase = getSupabase();
+        if (!supabase) {
+            return { success: false, error: new Error('Supabase not initialized') };
+        }
+        
         // Insert the main character preset record
         const { data: presetData, error: presetError } = await supabase
             .from("character_presets")
@@ -165,6 +170,11 @@ export async function savePreset(presetName: string, description: string, charac
  */
 export async function getPresets() {
     try {
+        const supabase = getSupabase();
+        if (!supabase) {
+            return { success: false, error: new Error('Supabase not initialized') };
+        }
+        
         // Select basic preset info or include character stats
         const query = supabase.from("character_presets").select("*");
 
@@ -212,6 +222,11 @@ export async function getPresets() {
  */
 export async function searchPresets(searchTerm = "", tags = []) {
     try {
+        const supabase = getSupabase();
+        if (!supabase) {
+            return { success: false, error: new Error('Supabase not initialized') };
+        }
+        
         let query = supabase.from("character_presets").select("id, preset_name, created_at, updated_at, tags");
 
         // Apply filters if provided
@@ -245,6 +260,11 @@ export async function searchPresets(searchTerm = "", tags = []) {
  */
 export async function getPresetById(presetId: string) {
     try {
+        const supabase = getSupabase();
+        if (!supabase) {
+            return { success: false, error: new Error('Supabase not initialized') };
+        }
+        
         // Get the main preset data
         const { data: preset, error: presetError } = await supabase.from("character_presets").select("*").eq("id", presetId).single();
 
@@ -387,6 +407,11 @@ export async function getPresetById(presetId: string) {
  */
 export async function deletePreset(presetId: string) {
     try {
+        const supabase = getSupabase();
+        if (!supabase) {
+            return { success: false, error: new Error('Supabase not initialized') };
+        }
+        
         const { error } = await supabase.from("character_presets").delete().eq("id", presetId);
 
         if (error) {
@@ -409,6 +434,11 @@ export async function deletePreset(presetId: string) {
  */
 export async function updatePreset(presetId: string, updates: { preset_name?: string; description?: string; character?: Character; tags?: string[] }) {
     try {
+        const supabase = getSupabase();
+        if (!supabase) {
+            return { success: false, error: new Error('Supabase not initialized') };
+        }
+        
         const { preset_name, description, character, tags } = updates;
         const updateData: any = {};
 

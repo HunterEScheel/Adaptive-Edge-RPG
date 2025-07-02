@@ -43,7 +43,10 @@
             "router": {},
             "eas": {
                 "projectId": "c75014e7-2ee3-44c3-b5f5-30bc9ca028f6"
-            }
+            },
+            "supabaseUrl": "${EXPO_PUBLIC_SUPABASE_URL}",
+            "supabaseServiceKey": "${EXPO_PUBLIC_SUPABASE_SERVICE_KEY}",
+            "openaiApiKey": "${EXPO_PUBLIC_OPENAI_API_KEY}"
         }
     }
 }

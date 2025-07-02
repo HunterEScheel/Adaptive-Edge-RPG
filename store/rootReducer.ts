@@ -8,6 +8,7 @@ import magicReducer from "./slices/magicSlice";
 import notesReducer from "./slices/notesSlice";
 import skillsReducer from "./slices/skillsSlice";
 import tethersReducer from "./slices/tethersSlice";
+import settingsReducer from "./slices/settingsSlice";
 
 export type RootState = ReturnType<typeof rootReducer>;
 
@@ -27,6 +28,9 @@ const rootReducer = combineReducers({
   // Auth and presets
   characterAuth: characterAuthReducer,
   presets: presetReducer,
+  
+  // App settings
+  settings: settingsReducer,
 });
 
 export default rootReducer;

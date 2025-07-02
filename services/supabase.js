@@ -50,16 +50,47 @@ if (typeof window !== "undefined" && window.localStorage) {
   };
 }
 
-// Initialize Supabase client
-export const supabase = createClient(
-  process.env.EXPO_PUBLIC_SUPABASE_URL,
-  process.env.EXPO_PUBLIC_SUPABASE_SERVICE_KEY,
-  {
-    auth: {
-      storage: customStorageAdapter,
-      autoRefreshToken: true,
-      persistSession: true,
-      detectSessionInUrl: false,
-    },
+// Store reference to the supabase client
+let supabaseClient = null;
+
+// Function to initialize or reinitialize Supabase with new settings
+export const initializeSupabase = (supabaseUrl, supabaseServiceKey) => {
+  if (!supabaseUrl || !supabaseServiceKey) {
+    console.warn('Supabase credentials not provided');
+    return null;
   }
-);
+  
+  supabaseClient = createClient(
+    supabaseUrl,
+    supabaseServiceKey,
+    {
+      auth: {
+        storage: customStorageAdapter,
+        autoRefreshToken: true,
+        persistSession: true,
+        detectSessionInUrl: false,
+      },
+    }
+  );
+  
+  return supabaseClient;
+};
+
+// Export a getter function for the supabase client
+export const getSupabase = () => {
+  if (!supabaseClient) {
+    console.warn('Supabase not initialized. Please configure API settings.');
+  }
+  return supabaseClient;
+};
+
+// For backward compatibility, export supabase as a getter
+export const supabase = new Proxy({}, {
+  get: (target, prop) => {
+    const client = getSupabase();
+    if (client && prop in client) {
+      return client[prop];
+    }
+    return undefined;
+  }
+});

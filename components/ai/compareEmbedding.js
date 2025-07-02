@@ -3,10 +3,31 @@ import OpenAI from "openai";
 import { Platform } from "react-native";
 import embeddingDatabase from "../../services/embeddingDatabase";
 
-const openai = new OpenAI({
-    apiKey: process.env.EXPO_PUBLIC_OPENAI_API_KEY,
-    dangerouslyAllowBrowser: true,
-});
+// Store reference to the OpenAI client
+let openaiClient = null;
+
+// Function to initialize or reinitialize OpenAI with new API key
+export const initializeOpenAI = (apiKey) => {
+    if (!apiKey) {
+        console.warn('OpenAI API key not provided');
+        return null;
+    }
+    
+    openaiClient = new OpenAI({
+        apiKey: apiKey,
+        dangerouslyAllowBrowser: true,
+    });
+    
+    return openaiClient;
+};
+
+// Export a getter function for the OpenAI client
+export const getOpenAI = () => {
+    if (!openaiClient) {
+        console.warn('OpenAI not initialized. Please configure API settings.');
+    }
+    return openaiClient;
+};
 
 const outputFile = "embeddings.csv";
 
@@ -65,6 +86,11 @@ async function loadEmbeddingsFromDatabase() {
 }
 
 export async function getEmbedding(text) {
+    const openai = getOpenAI();
+    if (!openai) {
+        throw new Error('OpenAI not initialized. Please configure API settings.');
+    }
+    
     const response = await openai.embeddings.create({
         model: "text-embedding-3-small",
         input: text,

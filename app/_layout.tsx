@@ -9,6 +9,7 @@ import * as React from "react";
 import { Platform, Text, View } from "react-native";
 import { Provider } from "react-redux";
 import { ResponsiveProvider } from "./contexts/ResponsiveContext";
+import { AppInitializer } from "@/components/AppInitializer";
 const createSagaMiddleware = require("redux-saga").default;
 
 // Error boundary component to catch rendering errors
@@ -79,11 +80,12 @@ export default function RootLayout() {
     return (
         <ErrorBoundaryWrapper>
             <Provider store={store}>
-                <ThemeProvider value={DefaultTheme}>
-                    <ResponsiveProvider>
-                        <View style={{ flex: 1, backgroundColor: '#1a1a1a' }}>
-                            <ErrorBoundaryWrapper>
-                                <Stack
+                <AppInitializer>
+                    <ThemeProvider value={DefaultTheme}>
+                        <ResponsiveProvider>
+                            <View style={{ flex: 1, backgroundColor: '#1a1a1a' }}>
+                                <ErrorBoundaryWrapper>
+                                    <Stack
                                     screenOptions={{
                                         headerShown: false,
                                         animation: Platform.OS === "web" ? undefined : "fade",
@@ -92,6 +94,7 @@ export default function RootLayout() {
                                 >
                                     <SafeStackScreen name="(tabs)" options={{ headerShown: false }} />
                                     <SafeStackScreen name="welcome" />
+                                    <SafeStackScreen name="settings-config" options={{ headerShown: false }} />
                                     <SafeStackScreen
                                         name="+not-found"
                                         options={{
@@ -105,6 +108,7 @@ export default function RootLayout() {
                         </View>
                     </ResponsiveProvider>
                 </ThemeProvider>
+            </AppInitializer>
             </Provider>
         </ErrorBoundaryWrapper>
     );

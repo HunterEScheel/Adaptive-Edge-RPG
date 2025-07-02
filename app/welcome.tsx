@@ -1,5 +1,6 @@
 import { useResponsiveStyles } from "@/app/contexts/ResponsiveContext";
 import { ThemedView } from "@/components/ThemedView";
+import { ThemedText } from "@/components/ThemedText";
 import { ImportFile } from "@/components/Utility/FilePick";
 import { TemplateSelector } from "@/components/Common/TemplateSelector";
 import { setCharacterLoaded } from "@/store/characterAuthSlice";
@@ -12,9 +13,11 @@ import { NotesState, setNotesState } from "@/store/slices/notesSlice";
 import { SkillsState, setSkillsState } from "@/store/slices/skillsSlice";
 import { useRouter } from "expo-router";
 import React, { useState } from "react";
-import { Button, Image } from "react-native";
-import { useDispatch } from "react-redux";
+import { Button, Image, View, TouchableOpacity } from "react-native";
+import { useDispatch, useSelector } from "react-redux";
+import { RootState } from "@/store/rootReducer";
 import AdaptiveEdgeImage from "./AdaptiveEdge.png";
+import { IconSymbol } from "@/components/ui/IconSymbol";
 
 export default function WelcomeScreen() {
     const cssStyle = useResponsiveStyles();
@@ -22,6 +25,7 @@ export default function WelcomeScreen() {
     const [showTemplates, setShowTemplates] = useState(false);
     const dispatch = useDispatch();
     const router = useRouter();
+    const settings = useSelector((state: RootState) => state.settings);
 
     const handleCreateNewCharacter = () => {
         // Create a new default character with proper initial values
@@ -126,9 +130,28 @@ export default function WelcomeScreen() {
     };
 
     return (
-        <>
-            <Image source={AdaptiveEdgeImage} style={{ width: "100%", maxHeight: "50%", resizeMode: "center", top: -18 }} />
-            <ThemedView style={cssStyle.container}>
+        <ThemedView style={{ flex: 1 }}>
+            <View style={{ position: 'relative', height: '50%' }}>
+                <Image source={AdaptiveEdgeImage} style={{ width: "100%", height: "100%", resizeMode: "contain" }} />
+                <TouchableOpacity 
+                    style={{ 
+                        position: 'absolute', 
+                        top: 40, 
+                        right: 20, 
+                        padding: 10,
+                        backgroundColor: 'rgba(255, 255, 255, 0.1)',
+                        borderRadius: 20,
+                    }}
+                    onPress={() => router.push('/settings-config')}
+                >
+                    <IconSymbol 
+                        name="gearshape.fill" 
+                        size={24} 
+                        color={!settings.isConfigured ? '#ffcc00' : '#fff'}
+                    />
+                </TouchableOpacity>
+            </View>
+            <ThemedView style={[cssStyle.container, { flex: 1 }]}>
                 {!showImport && !showTemplates ? (
                     <>
                         <Button title="Create New Character" onPress={handleCreateNewCharacter} />
@@ -151,6 +174,6 @@ export default function WelcomeScreen() {
                     </>
                 )}
             </ThemedView>
-        </>
+        </ThemedView>
     );
 }
