@@ -162,7 +162,7 @@ export function CombatAttacks() {
                         </View>
 
                         <View style={cssStyle.formRow}>
-                            <View style={[cssStyle.formGroup, { flex: 1, marginRight: 8 }]}>
+                            <View style={[cssStyle.formGroup, { marginRight: 8 }]}>
                                 <ThemedText style={cssStyle.label}>BP Cost:</ThemedText>
                                 <TextInput
                                     style={cssStyle.input}
@@ -174,7 +174,7 @@ export function CombatAttacks() {
                                 />
                             </View>
 
-                            <View style={[cssStyle.formGroup, { flex: 1, marginLeft: 8 }]}>
+                            <View style={[cssStyle.formGroup, { marginLeft: 8 }]}>
                                 <ThemedText style={cssStyle.label}>Energy Cost:</ThemedText>
                                 <TextInput
                                     style={cssStyle.input}

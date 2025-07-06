@@ -95,7 +95,7 @@ export function AddConsumable() {
                         style={cssStyle.input}
                         placeholder="0"
                     />
-                </View>{" "}
+                </View>
                 <Pressable style={[cssStyle.primaryButton]} onPress={() => dispatch(addConsumable(consumable))}>
                     Add Consumable
                 </Pressable>

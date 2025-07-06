@@ -1,6 +1,7 @@
 import { useResponsiveStyles } from "@/app/contexts/ResponsiveContext";
 import { RootState } from "@/store/rootReducer";
 import { updateMultipleFields } from "@/store/slices/baseSlice";
+import { FontAwesome } from "@expo/vector-icons";
 import React, { useState } from "react";
 import { Alert, Modal, Pressable, TextInput, View } from "react-native";
 import { useDispatch, useSelector } from "react-redux";
@@ -60,7 +61,7 @@ export function LongRestButton() {
     return (
         <>
             <Pressable style={[cssStyle.condensedButton, { backgroundColor: "#6C3483" }]} onPress={handleLongRest} accessibilityLabel="Take a long rest">
-                Z
+                <FontAwesome name="bed" size={15} color="#fff" />
             </Pressable>
 
             {/* Rest Duration Modal */}

@@ -1,9 +1,9 @@
 import { useResponsiveStyles } from "@/app/contexts/ResponsiveContext";
 import { TemplateSelector } from "@/components/Common/TemplateSelector";
+import SettingsModal from "@/components/Settings/SettingsModal";
 import { ThemedView } from "@/components/ThemedView";
 import { IconSymbol } from "@/components/ui/IconSymbol";
 import { ImportFile } from "@/components/Utility/FilePick";
-import SettingsModal from "@/components/Settings/SettingsModal";
 import { Armor } from "@/constants/Item";
 import { setCharacterLoaded } from "@/store/characterAuthSlice";
 import { RootState } from "@/store/rootReducer";
@@ -131,7 +131,7 @@ export default function WelcomeScreen() {
     };
 
     return (
-        <ThemedView style={{ flex: 1 }}>
+        <ThemedView style={{}}>
             <View style={{ position: "relative", height: "50%" }}>
                 <Image source={AdaptiveEdgeImage} style={{ width: "100%", height: "100%", resizeMode: "contain" }} />
                 <TouchableOpacity
@@ -148,7 +148,7 @@ export default function WelcomeScreen() {
                     <IconSymbol name="gearshape.fill" size={24} color={!settings.isConfigured ? "#ffcc00" : "#fff"} />
                 </TouchableOpacity>
             </View>
-            <ThemedView style={[cssStyle.container, { flex: 1 }]}>
+            <ThemedView style={[cssStyle.container, {}]}>
                 {!showImport && !showTemplates ? (
                     <>
                         <Button title="Create New Character" onPress={handleCreateNewCharacter} />
@@ -168,10 +168,7 @@ export default function WelcomeScreen() {
                     </>
                 )}
             </ThemedView>
-            <SettingsModal 
-                visible={showSettings} 
-                onClose={() => setShowSettings(false)} 
-            />
+            <SettingsModal visible={showSettings} onClose={() => setShowSettings(false)} />
         </ThemedView>
     );
 }

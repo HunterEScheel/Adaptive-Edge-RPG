@@ -2,7 +2,8 @@ import { useResponsiveStyles } from "@/app/contexts/ResponsiveContext";
 import { RootState } from "@/store/rootReducer";
 import { updateMultipleFields } from "@/store/slices/baseSlice";
 import { MagicSchool, addMagicSchool, removeMagicSchool, setMagicSchoolCredit } from "@/store/slices/magicSlice";
-import { FontAwesome } from "@expo/vector-icons";
+import { faBolt, faCloud, faEye, faFlaskVial, faGraduationCap, faHeart, faMagic, faShield, faSkull, faTrash } from "@fortawesome/free-solid-svg-icons";
+import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
 import React, { useState } from "react";
 import { Alert, Modal, Pressable, ScrollView, View } from "react-native";
 import { useDispatch, useSelector } from "react-redux";
@@ -14,56 +15,56 @@ const MAGIC_SCHOOLS = [
     {
         name: "Abjuration",
         description: "Protective magic that creates barriers and wards",
-        icon: "shield",
+        icon: faShield,
         color: "#3498db",
         spellExamples: ["Shield", "Counterspell", "Dispel Magic"],
     },
     {
         name: "Conjuration",
         description: "Summons creatures and objects from elsewhere",
-        icon: "magic",
+        icon: faMagic,
         color: "#9b59b6",
         spellExamples: ["Find Familiar", "Misty Step", "Teleport"],
     },
     {
         name: "Divination",
         description: "Reveals information and glimpses the future",
-        icon: "eye",
+        icon: faEye,
         color: "#f39c12",
         spellExamples: ["Detect Magic", "Identify", "Scrying"],
     },
     {
         name: "Enchantment",
         description: "Affects minds and influences behavior",
-        icon: "heart",
+        icon: faHeart,
         color: "#e91e63",
         spellExamples: ["Charm Person", "Sleep", "Suggestion"],
     },
     {
         name: "Evocation",
         description: "Elemental damage and energy manipulation",
-        icon: "bolt",
+        icon: faBolt,
         color: "#e74c3c",
         spellExamples: ["Fireball", "Lightning Bolt", "Magic Missile"],
     },
     {
         name: "Illusion",
         description: "Deceives senses and creates false impressions",
-        icon: "cloud",
+        icon: faCloud,
         color: "#95a5a6",
         spellExamples: ["Disguise Self", "Invisibility", "Major Image"],
     },
     {
         name: "Necromancy",
         description: "Manipulates life force and death",
-        icon: "skull-outline",
+        icon: faSkull,
         color: "#34495e",
         spellExamples: ["False Life", "Vampiric Touch", "Animate Dead"],
     },
     {
         name: "Transmutation",
         description: "Transforms physical properties",
-        icon: "flask",
+        icon: faFlaskVial,
         color: "#27ae60",
         spellExamples: ["Mage Hand", "Fly", "Polymorph"],
     },
@@ -77,13 +78,13 @@ export function MagicSchoolManagerDesktop() {
     const base = useSelector((state: RootState) => state.character?.base || { buildPointsRemaining: 0, buildPointsSpent: 0, energy: 0 });
     const dispatch = useDispatch();
     const [modalVisible, setModalVisible] = useState(false);
-    const [selectedSchool, setSelectedSchool] = useState<(typeof MAGIC_SCHOOLS)[0] | null>(null);
+    const [selectedSchool, setSelectedSchool] = useState<MagicSchool | null>(null);
 
     const isSchoolKnown = (schoolName: string) => {
         return magic.magicSchools?.some((school) => school.name === schoolName);
     };
 
-    const handleSchoolSelect = (school: (typeof MAGIC_SCHOOLS)[0]) => {
+    const handleSchoolSelect = (school: MagicSchool) => {
         if (isSchoolKnown(school.name)) {
             Alert.alert("Already Known", `You already know ${school.name} magic.`);
             return;
@@ -98,6 +99,9 @@ export function MagicSchoolManagerDesktop() {
         const school: Omit<MagicSchool, "id"> = {
             name: selectedSchool.name,
             description: selectedSchool.description,
+            levels: selectedSchool.levels,
+            color: selectedSchool.color,
+            icon: selectedSchool.icon,
         };
 
         // Check if character has a magic school credit or enough build points
@@ -152,6 +156,7 @@ export function MagicSchoolManagerDesktop() {
 
     const renderSchoolCard = (school: (typeof MAGIC_SCHOOLS)[0]) => {
         const known = isSchoolKnown(school.name);
+        const fullSchool: MagicSchool = magic.magicSchools?.find((s) => s.name === school.name) || { ...school, id: "", levels: 0 };
         const spellCount = magic.spells?.filter((spell) => spell.school === school.name).length || 0;
 
         if (known) {
@@ -181,12 +186,12 @@ export function MagicSchoolManagerDesktop() {
                                 marginRight: 12,
                             }}
                         >
-                            <FontAwesome name={school.icon as any} size={24} color="white" />
+                            <FontAwesomeIcon icon={school.icon} size={24} color="white" />
                         </View>
 
-                        <View style={{ flex: 1 }}>
+                        <View style={{}}>
                             <View style={{ flexDirection: "row", alignItems: "center", justifyContent: "space-between" }}>
-                                <ThemedText style={[cssStyle.subtitle, { color: school.color, flex: 1 }]}>{school.name}</ThemedText>
+                                <ThemedText style={[cssStyle.subtitle, { color: school.color }]}>{school.name}</ThemedText>
                                 <View style={{ flexDirection: "row", alignItems: "center", flexShrink: 0 }}>
                                     <ThemedText style={[cssStyle.label, { marginRight: 8 }]}>
                                         {spellCount} spell{spellCount !== 1 ? "s" : ""}
@@ -204,7 +209,7 @@ export function MagicSchoolManagerDesktop() {
                                             alignItems: "center",
                                         })}
                                     >
-                                        <FontAwesome name="trash" size={16} color="#e74c3c" />
+                                        <FontAwesomeIcon icon={faTrash} size={16} color="#e74c3c" />
                                     </Pressable>
                                 </View>
                             </View>
@@ -226,7 +231,7 @@ export function MagicSchoolManagerDesktop() {
                             backgroundColor: "#f8f8f8",
                         },
                     ]}
-                    onPress={() => handleSchoolSelect(school)}
+                    onPress={() => handleSchoolSelect(fullSchool)}
                 >
                     <View style={{ flexDirection: "row", alignItems: "flex-start" }}>
                         <View
@@ -240,16 +245,15 @@ export function MagicSchoolManagerDesktop() {
                                 marginRight: 12,
                             }}
                         >
-                            <FontAwesome name={school.icon as any} size={24} color="white" />
+                            <FontAwesomeIcon icon={school.icon} size={24} color="white" />
                         </View>
 
-                        <View style={{ flex: 1 }}>
+                        <View style={{}}>
                             <ThemedText style={[cssStyle.subtitle, { color: "#333" }]}>{school.name}</ThemedText>
                             <ThemedText style={[cssStyle.bodyText, { marginTop: 4 }]}>{school.description}</ThemedText>
                             <View style={{ marginTop: 8 }}>
-                                <ThemedText style={[cssStyle.label, { color: "#666" }]}>Example spells: {school.spellExamples.join(", ")}</ThemedText>
                                 <View style={{ flexDirection: "row", alignItems: "center", marginTop: 4 }}>
-                                    <FontAwesome name="graduation-cap" size={14} color="#666" style={{ marginRight: 4 }} />
+                                    <FontAwesomeIcon icon={faGraduationCap} size={14} color="#666" style={{ marginRight: 4 }} />
                                     <ThemedText style={[cssStyle.label, { color: magic.magicSchoolCredit ? "#27ae60" : "#666" }]}>
                                         {magic.magicSchoolCredit ? "Free with credit!" : `${MAGIC_SCHOOL_COST} Build Points`}
                                     </ThemedText>
@@ -293,7 +297,6 @@ export function MagicSchoolManagerDesktop() {
                         Available Schools
                         {base.buildPointsRemaining < MAGIC_SCHOOL_COST && !magic.magicSchoolCredit && (
                             <ThemedText style={[cssStyle.label, { color: "#e74c3c" }]}>
-                                {" "}
                                 (Need {MAGIC_SCHOOL_COST - base.buildPointsRemaining} more BP)
                             </ThemedText>
                         )}
@@ -320,23 +323,14 @@ export function MagicSchoolManagerDesktop() {
                                         alignSelf: "center",
                                     }}
                                 >
-                                    <FontAwesome name={selectedSchool.icon as any} size={40} color="white" />
+                                    <FontAwesomeIcon icon={selectedSchool.icon} size={40} color="white" />
                                 </View>
 
                                 <ThemedText style={cssStyle.title}>Learn {selectedSchool.name}?</ThemedText>
                                 <ThemedText style={[cssStyle.bodyText, { textAlign: "center", marginVertical: 16 }]}>{selectedSchool.description}</ThemedText>
 
-                                <View style={[cssStyle.card, { backgroundColor: "#f0f0f0", marginBottom: 16 }]}>
-                                    <ThemedText style={[cssStyle.label, { marginBottom: 8 }]}>Example Spells:</ThemedText>
-                                    {selectedSchool.spellExamples.map((spell, index) => (
-                                        <ThemedText key={index} style={cssStyle.bodyText}>
-                                            • {spell}
-                                        </ThemedText>
-                                    ))}
-                                </View>
-
                                 <ThemedText style={[cssStyle.subtitle, { textAlign: "center", marginBottom: 20 }]}>
-                                    Cost:{" "}
+                                    Cost:
                                     {magic.magicSchoolCredit ? (
                                         <ThemedText style={{ color: "#27ae60" }}>FREE (using credit)</ThemedText>
                                     ) : (
@@ -345,11 +339,11 @@ export function MagicSchoolManagerDesktop() {
                                 </ThemedText>
 
                                 <View style={{ flexDirection: "row", gap: 12 }}>
-                                    <Pressable style={[cssStyle.defaultButton, cssStyle.secondaryButton, { flex: 1 }]} onPress={() => setModalVisible(false)}>
+                                    <Pressable style={[cssStyle.defaultButton, cssStyle.secondaryButton, {}]} onPress={() => setModalVisible(false)}>
                                         <ThemedText style={cssStyle.buttonText}>Cancel</ThemedText>
                                     </Pressable>
                                     <Pressable
-                                        style={[cssStyle.defaultButton, cssStyle.primaryButton, { flex: 1, backgroundColor: selectedSchool.color }]}
+                                        style={[cssStyle.defaultButton, cssStyle.primaryButton, { backgroundColor: selectedSchool.color }]}
                                         onPress={handleLearnSchool}
                                     >
                                         <ThemedText style={[cssStyle.buttonText, { color: "white" }]}>Learn</ThemedText>

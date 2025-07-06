@@ -1,5 +1,5 @@
 import { useResponsiveStyles } from "@/app/contexts/ResponsiveContext";
-import { Ionicons } from "@expo/vector-icons";
+import { FontAwesome, Ionicons } from "@expo/vector-icons";
 import React, { useState } from "react";
 import { Modal, TouchableOpacity, View } from "react-native";
 import { ThemedText } from "../ThemedText";
@@ -15,7 +15,7 @@ export function PresetManagerButton() {
     return (
         <>
             <TouchableOpacity style={[cssStyle.condensedButton, cssStyle.primaryColors]} onPress={() => setModalVisible(true)}>
-                ?
+                <FontAwesome name="cloud" size={13} color="#fff" />
             </TouchableOpacity>
 
             {/* Full-screen modal for the preset manager */}

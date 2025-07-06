@@ -45,7 +45,7 @@ export function AddEquipment() {
                 </ThemedText>
 
                 <View style={[styles.row, { marginBottom: 12 }]}>
-                    <View style={{ flex: 1 }}>
+                    <View style={{}}>
                         <VersatileInput
                             label="Name"
                             type="string"
@@ -57,7 +57,7 @@ export function AddEquipment() {
                 </View>
 
                 <View style={[styles.row, { marginBottom: 12 }]}>
-                    <View style={{ flex: 1, marginRight: 8 }}>
+                    <View style={{ marginRight: 8 }}>
                         <VersatileInput
                             label="Quantity"
                             type="number"
@@ -66,7 +66,7 @@ export function AddEquipment() {
                             placeholder="1"
                         />
                     </View>
-                    <View style={{ flex: 1 }}>
+                    <View style={{}}>
                         <VersatileInput
                             label="Value (gold)"
                             type="number"
@@ -85,7 +85,7 @@ export function AddEquipment() {
                 </ThemedText>
 
                 <View style={[styles.row, { marginBottom: 12 }]}>
-                    <View style={{ flex: 1, marginRight: 8 }}>
+                    <View style={{ marginRight: 8 }}>
                         <ThemedText style={[styles.label, { marginBottom: 4 }]}>Affects Stat</ThemedText>
                         <View style={styles.inputContainer}>
                             <Dropdown
@@ -105,7 +105,7 @@ export function AddEquipment() {
                             />
                         </View>
                     </View>
-                    <View style={{ flex: 1 }}>
+                    <View style={{}}>
                         <VersatileInput
                             label="Stat Modifier"
                             type="number"
@@ -154,7 +154,7 @@ export function AddEquipment() {
                 </View>
 
                 <View style={[styles.row, { marginBottom: 12 }]}>
-                    <View style={{ flex: 1, marginRight: 8 }}>
+                    <View style={{ marginRight: 8 }}>
                         <VersatileInput
                             label="Charges"
                             type="number"
@@ -163,7 +163,7 @@ export function AddEquipment() {
                             placeholder="0"
                         />
                     </View>
-                    <View style={{ flex: 1 }}>
+                    <View style={{}}>
                         <VersatileInput
                             label="Max Charges"
                             type="number"

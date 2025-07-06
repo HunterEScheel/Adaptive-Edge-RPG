@@ -57,7 +57,7 @@ export function WeaponList({ variant = "full" }: WeaponListProps) {
         return (
             <View style={cssStyle.itemContainer}>
                 <View style={cssStyle.itemHeader}>
-                    <View style={{ flex: 1 }}>
+                    <View style={{}}>
                         <ThemedText style={cssStyle.subtitle} numberOfLines={1}>
                             {item.name} {item.equipped && <ThemedText style={cssStyle.hint}>(Equipped)</ThemedText>}
                         </ThemedText>

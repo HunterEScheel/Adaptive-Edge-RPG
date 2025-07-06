@@ -37,12 +37,12 @@ export function ArmorList({ variant = "full" }: ArmorListProps) {
 
         return (
             <View style={cssStyle.itemContainer}>
-                <View style={{ flex: 1 }}>
+                <View style={{}}>
                     <ThemedText style={cssStyle.subtitle}>{currentArmor.name}</ThemedText>
                     <ThemedText style={cssStyle.description}>{currentArmor.armorClassification} Armor</ThemedText>
                     <View style={[cssStyle.row, { marginTop: 8 }]}>
-                        <ThemedText style={[cssStyle.smallText, cssStyle.defaultBold]}>Damage Reduction: {totalDR}</ThemedText>{" "}
-                    </View>{" "}
+                        <ThemedText style={[cssStyle.smallText, cssStyle.defaultBold]}>Damage Reduction: {totalDR}</ThemedText>
+                    </View>
                     <ThemedText style={[cssStyle.smallText, cssStyle.defaultBold]}>
                         Evasion Reduction: {currentArmor.statUpdates?.evasionReduction ?? 0}
                     </ThemedText>

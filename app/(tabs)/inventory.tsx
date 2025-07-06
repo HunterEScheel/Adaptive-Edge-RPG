@@ -18,7 +18,6 @@ const styles = StyleSheet.create({
         borderBottomColor: "#333",
     },
     tab: {
-        flex: 1,
         paddingVertical: 12,
         paddingHorizontal: 16,
         alignItems: "center",
@@ -81,7 +80,7 @@ export default function InventoryScreen() {
     const renderOtherTab = () => <ConsumableList variant={getListVariant()} />;
 
     return (
-        <ScrollView style={{ backgroundColor: "#1a1a1a", flex: 1 }}>
+        <ScrollView style={{ backgroundColor: "#1a1a1a" }}>
             <ThemedView style={[cssStyle.container, { backgroundColor: "#1a1a1a" }]}>
                 {/* Gold Manager Section */}
                 <GoldManager />
@@ -100,7 +99,7 @@ export default function InventoryScreen() {
                 </View>
 
                 {/* Tab Content */}
-                <ScrollView style={{ flex: 1, backgroundColor: "#1a1a1a" }}>
+                <ScrollView style={{ backgroundColor: "#1a1a1a" }}>
                     {activeTab === "armor-weapons" && renderArmorWeaponsTab()}
                     {activeTab === "equipment" && renderEquipmentTab()}
                     {activeTab === "other" && renderOtherTab()}

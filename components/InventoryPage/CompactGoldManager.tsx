@@ -95,7 +95,7 @@ export function CompactGoldManager() {
 
                         <View style={[cssStyle.row, { marginTop: 16, gap: 8 }]}>
                             <Pressable
-                                style={[cssStyle.defaultButton, cssStyle.secondaryColors, { flex: 1 }]}
+                                style={[cssStyle.defaultButton, cssStyle.secondaryColors, {}]}
                                 onPress={() => handleAdjustGold(false)}
                                 disabled={!adjustmentAmount}
                             >
@@ -114,7 +114,7 @@ export function CompactGoldManager() {
                                 />
                             </View>
                             <Pressable
-                                style={[cssStyle.defaultButton, cssStyle.primaryColors, { flex: 1 }]}
+                                style={[cssStyle.defaultButton, cssStyle.primaryColors, {}]}
                                 onPress={() => handleAdjustGold(true)}
                                 disabled={!adjustmentAmount}
                             >

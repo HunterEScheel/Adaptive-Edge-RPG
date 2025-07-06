@@ -1,5 +1,6 @@
 import { saveCharacter } from "@/components/Utility/FilePick";
 import { RootState } from "@/store/rootReducer";
+import { FontAwesome } from "@expo/vector-icons";
 import React, { useState } from "react";
 import { Modal, Pressable, TextInput, View } from "react-native";
 import { useSelector } from "react-redux";
@@ -26,7 +27,7 @@ export function SaveButton() {
     return (
         <>
             <Pressable style={[styles.condensedButton, styles.primaryColors]} onPress={() => setShowSaveDialog(true)}>
-                !
+                <FontAwesome name="save" size={15} color="#fff" />
             </Pressable>
 
             <Modal visible={showSaveDialog} transparent animationType="fade">

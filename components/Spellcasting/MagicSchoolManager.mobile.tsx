@@ -1,8 +1,9 @@
 import { useResponsiveStyles } from "@/app/contexts/ResponsiveContext";
 import { RootState } from "@/store/rootReducer";
 import { updateMultipleFields } from "@/store/slices/baseSlice";
-import { MagicSchool, addMagicSchool, removeMagicSchool, setMagicSchoolCredit } from "@/store/slices/magicSlice";
-import { FontAwesome } from "@expo/vector-icons";
+import { MagicSchool, addMagicSchool, removeMagicSchool, setMagicSchoolCredit, updateMagicSchool } from "@/store/slices/magicSlice";
+import { faBolt, faCloud, faEye, faFlaskVial, faHeart, faMagic, faShield, faSkull, faTrash } from "@fortawesome/free-solid-svg-icons";
+import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
 import React, { useState } from "react";
 import { Alert, Modal, Pressable, ScrollView, View } from "react-native";
 import { useDispatch, useSelector } from "react-redux";
@@ -12,51 +13,52 @@ import { ThemedView } from "../ThemedView";
 // Magic school data with icons and colors
 const MAGIC_SCHOOLS = [
     {
+        id: "",
         name: "Abjuration",
         description: "Protective barriers",
-        icon: "shield",
+        icon: faShield,
         color: "#3498db",
     },
     {
         name: "Conjuration",
         description: "Summons creatures",
-        icon: "magic",
+        icon: faMagic,
         color: "#9b59b6",
     },
     {
         name: "Divination",
         description: "Reveals information",
-        icon: "eye",
+        icon: faEye,
         color: "#f39c12",
     },
     {
         name: "Enchantment",
         description: "Affects minds",
-        icon: "heart",
+        icon: faHeart,
         color: "#e91e63",
     },
     {
         name: "Evocation",
         description: "Elemental damage",
-        icon: "bolt",
+        icon: faBolt,
         color: "#e74c3c",
     },
     {
         name: "Illusion",
         description: "Deceives senses",
-        icon: "cloud",
+        icon: faCloud,
         color: "#95a5a6",
     },
     {
         name: "Necromancy",
         description: "Life and death",
-        icon: "skull-outline",
+        icon: faSkull,
         color: "#34495e",
     },
     {
         name: "Transmutation",
         description: "Transforms matter",
-        icon: "flask",
+        icon: faFlaskVial,
         color: "#27ae60",
     },
 ];
@@ -69,19 +71,36 @@ export function MagicSchoolManagerMobile() {
     const base = useSelector((state: RootState) => state.character?.base || { buildPointsRemaining: 0, buildPointsSpent: 0, energy: 0 });
     const dispatch = useDispatch();
     const [modalVisible, setModalVisible] = useState(false);
-    const [selectedSchool, setSelectedSchool] = useState<(typeof MAGIC_SCHOOLS)[0] | null>(null);
+    const [selectedSchool, setSelectedSchool] = useState<MagicSchool | null>(null);
 
     const isSchoolKnown = (schoolName: string) => {
         return magic.magicSchools?.some((school) => school.name === schoolName);
     };
 
     const handleSchoolSelect = (school: (typeof MAGIC_SCHOOLS)[0]) => {
-        if (isSchoolKnown(school.name)) {
-            Alert.alert("Already Known", `You already know ${school.name} magic.`);
+        const CharacterSchool: MagicSchool | undefined = magic.magicSchools.find((x) => x.name === school.name);
+        setSelectedSchool({ ...school, levels: CharacterSchool?.levels ?? 0, id: CharacterSchool?.id ?? "" });
+        setModalVisible(true);
+    };
+    const handleSchoolLevelChange = (schoolName: string, addLevels: 1 | -1) => {
+        const school = magic.magicSchools?.find((s) => s.name === schoolName);
+        if (!school) return;
+        const newCost = addLevels === 1 ? (school.levels + 1) * MAGIC_SCHOOL_COST : -school.levels * MAGIC_SCHOOL_COST;
+        const newBuildPoints = base.buildPointsRemaining - newCost;
+        if (newBuildPoints < 0) {
+            Alert.alert(
+                "Not Enough Build Points",
+                `You need ${newCost - base.buildPointsRemaining} more build points to increase ${schoolName} to level ${school.levels + 1}.`
+            );
             return;
         }
-        setSelectedSchool(school);
-        setModalVisible(true);
+        dispatch(
+            updateMultipleFields([
+                { field: "buildPointsRemaining", value: newBuildPoints },
+                { field: "buildPointsSpent", value: base.buildPointsSpent + newCost },
+            ])
+        );
+        dispatch(updateMagicSchool({ name: schoolName, levels: school.levels + addLevels }));
     };
 
     const handleLearnSchool = () => {
@@ -90,6 +109,9 @@ export function MagicSchoolManagerMobile() {
         const school: Omit<MagicSchool, "id"> = {
             name: selectedSchool.name,
             description: selectedSchool.description,
+            levels: 1,
+            color: selectedSchool.color,
+            icon: selectedSchool.icon,
         };
 
         if (magic.magicSchoolCredit) {
@@ -140,7 +162,9 @@ export function MagicSchoolManagerMobile() {
 
     const renderSchoolCard = (school: (typeof MAGIC_SCHOOLS)[0]) => {
         const known = isSchoolKnown(school.name);
+        const knownSchool = magic.magicSchools?.find((s) => s.name === school.name) ?? null;
         const spellCount = magic.spells?.filter((spell) => spell.school === school.name).length || 0;
+        const nextLevelCost = knownSchool ? (knownSchool.levels + 1) * MAGIC_SCHOOL_COST : MAGIC_SCHOOL_COST;
 
         if (known) {
             return (
@@ -170,25 +194,54 @@ export function MagicSchoolManagerMobile() {
                             marginRight: 8,
                         }}
                     >
-                        <FontAwesome name={school.icon as any} size={16} color="white" />
+                        <FontAwesomeIcon icon={school.icon} size={16} color="white" />
                     </View>
-
-                    <View style={{ flex: 1 }}>
+                    <View style={{}}>
                         <View style={{ flexDirection: "row", alignItems: "center" }}>
-                            <ThemedText style={{ fontSize: 13, fontWeight: "600", color: school.color }}>{school.name}</ThemedText>
+                            <ThemedText style={{ fontSize: 13, fontWeight: "600", color: school.color }}>
+                                {school.name} {knownSchool?.levels ?? null}
+                            </ThemedText>
                             <ThemedText style={{ fontSize: 10, color: "#666", marginLeft: 6 }}>
                                 {spellCount} spell{spellCount !== 1 ? "s" : ""}
                             </ThemedText>
-                        </View>
-                        <ThemedText style={{ fontSize: 11, color: "#666", marginTop: 2 }} numberOfLines={1}>{school.description}</ThemedText>
-                    </View>
 
+                            <ThemedText style={{ fontSize: 10, color: "#A00", marginLeft: 6 }}>
+                                {base.buildPointsRemaining < nextLevelCost && "Next Level: " + nextLevelCost + " BP"}
+                            </ThemedText>
+                        </View>
+                        <ThemedText style={{ fontSize: 11, color: "#666", marginTop: 2 }} numberOfLines={1}>
+                            {school.description}
+                        </ThemedText>
+                    </View>
+                    {knownSchool && knownSchool.levels > 1 && (
+                        <Pressable
+                            style={[cssStyle.secondaryColors, { width: 40, height: 40, borderRadius: 8, justifyContent: "center", alignItems: "center" }]}
+                            onPress={() => handleSchoolLevelChange(school.name, -1)}
+                        >
+                            <ThemedText style={cssStyle.bodyText}>-1</ThemedText>
+                        </Pressable>
+                    )}
+                    {base.buildPointsRemaining >= nextLevelCost && (
+                        <Pressable
+                            style={[cssStyle.primaryColors, { width: 40, height: 40, borderRadius: 8, justifyContent: "center", alignItems: "center" }]}
+                            onPress={() => handleSchoolLevelChange(school.name, 1)}
+                        >
+                            <ThemedText style={cssStyle.bodyText}>+1</ThemedText>
+                        </Pressable>
+                    )}
                     <Pressable
                         onPress={() => handleRemoveSchool(school.name)}
-                        hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
-                        style={{ padding: 6 }}
+                        style={{
+                            marginLeft: 5,
+                            width: 30,
+                            height: 40,
+                            justifyContent: "center",
+                            alignItems: "center",
+                            borderRadius: 8,
+                            backgroundColor: "#555",
+                        }}
                     >
-                        <FontAwesome name="trash" size={14} color="#e74c3c" />
+                        <FontAwesomeIcon icon={faTrash} size={14} color="#e74c3c" />
                     </Pressable>
                 </View>
             );
@@ -222,12 +275,14 @@ export function MagicSchoolManagerMobile() {
                             marginRight: 8,
                         }}
                     >
-                        <FontAwesome name={school.icon as any} size={16} color="white" />
+                        <FontAwesomeIcon icon={school.icon} size={16} color="white" />
                     </View>
 
-                    <View style={{ flex: 1, paddingRight: 50 }}>
+                    <View style={{ paddingRight: 50 }}>
                         <ThemedText style={{ fontSize: 13, fontWeight: "600", color: "#333" }}>{school.name}</ThemedText>
-                        <ThemedText style={{ fontSize: 11, color: "#666", marginTop: 2 }} numberOfLines={1}>{school.description}</ThemedText>
+                        <ThemedText style={{ fontSize: 11, color: "#666", marginTop: 2 }} numberOfLines={1}>
+                            {school.description}
+                        </ThemedText>
                     </View>
 
                     <View
@@ -307,18 +362,16 @@ export function MagicSchoolManagerMobile() {
                                         alignSelf: "center",
                                     }}
                                 >
-                                    <FontAwesome name={selectedSchool.icon as any} size={24} color="white" />
+                                    <FontAwesomeIcon icon={selectedSchool.icon} size={24} color="white" />
                                 </View>
 
-                                <ThemedText style={{ fontSize: 16, fontWeight: "600", textAlign: "center" }}>
-                                    Learn {selectedSchool.name}?
-                                </ThemedText>
+                                <ThemedText style={{ fontSize: 16, fontWeight: "600", textAlign: "center" }}>Learn {selectedSchool.name}?</ThemedText>
                                 <ThemedText style={{ fontSize: 12, color: "#666", textAlign: "center", marginVertical: 8 }}>
                                     {selectedSchool.description}
                                 </ThemedText>
 
                                 <ThemedText style={{ fontSize: 14, textAlign: "center", marginBottom: 16 }}>
-                                    Cost:{" "}
+                                    Cost:
                                     {magic.magicSchoolCredit ? (
                                         <ThemedText style={{ color: "#27ae60", fontWeight: "600" }}>FREE (using credit)</ThemedText>
                                     ) : (
@@ -327,14 +380,14 @@ export function MagicSchoolManagerMobile() {
                                 </ThemedText>
 
                                 <View style={{ flexDirection: "row", gap: 8 }}>
-                                    <Pressable 
-                                        style={[cssStyle.condensedButton, cssStyle.secondaryColors, { flex: 1, paddingVertical: 8 }]} 
+                                    <Pressable
+                                        style={[cssStyle.condensedButton, cssStyle.secondaryColors, { paddingVertical: 8 }]}
                                         onPress={() => setModalVisible(false)}
                                     >
                                         <ThemedText style={{ fontSize: 12, color: "#666" }}>Cancel</ThemedText>
                                     </Pressable>
                                     <Pressable
-                                        style={[cssStyle.condensedButton, { flex: 1, backgroundColor: selectedSchool.color, paddingVertical: 8 }]}
+                                        style={[cssStyle.condensedButton, { backgroundColor: selectedSchool.color, paddingVertical: 8 }]}
                                         onPress={handleLearnSchool}
                                     >
                                         <ThemedText style={{ fontSize: 12, color: "white" }}>Learn</ThemedText>

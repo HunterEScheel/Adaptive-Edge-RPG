@@ -81,7 +81,7 @@ export function EvasionBreakdownModal({ visible, onClose, character }: EvasionBr
 
                                 <View style={cssStyle.row}>
                                     <ThemedText style={cssStyle.label}>
-                                        Reduction({character.inventory.armor?.name}): -{dodgeReduction}{" "}
+                                        Reduction({character.inventory.armor?.name}): -{dodgeReduction}
                                     </ThemedText>
                                 </View>
                                 {character.inventory.armor && (

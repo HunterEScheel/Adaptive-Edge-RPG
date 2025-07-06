@@ -80,7 +80,7 @@ export function TetherManagerDesktop() {
         return (
             <View style={[cssStyle.card, { marginBottom: 16, maxWidth: 800, alignSelf: "center", width: "100%" }]}>
                 <View style={{ flexDirection: "row", alignItems: "flex-start", justifyContent: "space-between" }}>
-                    <View style={{ flex: 1, marginRight: 16 }}>
+                    <View style={{ marginRight: 16 }}>
                         <View style={{ flexDirection: "row", alignItems: "center", marginBottom: 8 }}>
                             <ThemedText style={[cssStyle.subtitle, { fontSize: 20 }]}>{item.name}</ThemedText>
                             <View style={[cssStyle.badge, { backgroundColor: "#2196F3", marginLeft: 12 }]}>
@@ -190,69 +190,69 @@ export function TetherManagerDesktop() {
                             {editingTether ? "Edit Tether" : "Add New Tether"}
                         </ThemedText>
 
-                            <View style={[cssStyle.formGroup, { marginBottom: 20 }]}>
-                                <ThemedText style={[cssStyle.inputLabel, { fontSize: 16 }]}>Name</ThemedText>
-                                <TextInput
-                                    style={[cssStyle.input, { fontSize: 16, padding: 16 }]}
-                                    value={formData.name}
-                                    onChangeText={(text) => setFormData({ ...formData, name: text })}
-                                    placeholder="e.g., family Debt, missing friend"
-                                    placeholderTextColor="#999"
+                        <View style={[cssStyle.formGroup, { marginBottom: 20 }]}>
+                            <ThemedText style={[cssStyle.inputLabel, { fontSize: 16 }]}>Name</ThemedText>
+                            <TextInput
+                                style={[cssStyle.input, { fontSize: 16, padding: 16 }]}
+                                value={formData.name}
+                                onChangeText={(text) => setFormData({ ...formData, name: text })}
+                                placeholder="e.g., family Debt, missing friend"
+                                placeholderTextColor="#999"
+                            />
+                        </View>
+
+                        <View style={[cssStyle.formGroup, { marginBottom: 20 }]}>
+                            <ThemedText style={[cssStyle.inputLabel, { fontSize: 16 }]}>Obligation Level ({formData.obligationLevel})</ThemedText>
+                            <ThemedText style={[cssStyle.label, { marginBottom: 12, fontSize: 14 }]}>
+                                How strongly does this tether motivate your actions?
+                            </ThemedText>
+                            <View style={{ flexDirection: "row", justifyContent: "space-between", marginBottom: 12 }}>
+                                <FlatList
+                                    data={[1, 2, 3, 4, 5]}
+                                    renderItem={({ item }) => (
+                                        <Pressable
+                                            onPress={() => setFormData({ ...formData, obligationLevel: item })}
+                                            style={[
+                                                {
+                                                    padding: 16,
+                                                    margin: 4,
+                                                    borderRadius: 8,
+                                                    backgroundColor: formData.obligationLevel === item ? "#2196F3" : "#f0f0f0",
+                                                    alignItems: "center",
+                                                },
+                                            ]}
+                                        >
+                                            <ThemedText style={[cssStyle.smallText, { fontSize: 16 }]}>{item}</ThemedText>
+                                        </Pressable>
+                                    )}
+                                    keyExtractor={(item) => item.toString()}
+                                    horizontal
+                                    showsHorizontalScrollIndicator={false}
                                 />
                             </View>
-
-                            <View style={[cssStyle.formGroup, { marginBottom: 20 }]}>
-                                <ThemedText style={[cssStyle.inputLabel, { fontSize: 16 }]}>Obligation Level ({formData.obligationLevel})</ThemedText>
-                                <ThemedText style={[cssStyle.label, { marginBottom: 12, fontSize: 14 }]}>
-                                    How strongly does this tether motivate your actions?
-                                </ThemedText>
-                                <View style={{ flexDirection: "row", justifyContent: "space-between", marginBottom: 12 }}>
-                                    <FlatList
-                                        data={[1, 2, 3, 4, 5]}
-                                        renderItem={({ item }) => (
-                                            <Pressable
-                                                onPress={() => setFormData({ ...formData, obligationLevel: item })}
-                                                style={[
-                                                    {
-                                                        flex: 1,
-                                                        padding: 16,
-                                                        margin: 4,
-                                                        borderRadius: 8,
-                                                        backgroundColor: formData.obligationLevel === item ? "#2196F3" : "#f0f0f0",
-                                                        alignItems: "center",
-                                                    }
-                                                ]}>
-                                                <ThemedText style={[cssStyle.smallText, { fontSize: 16 }]}>{item}</ThemedText>
-                                                </Pressable>
-                                        )}
-                                        keyExtractor={(item) => item.toString()}
-                                        horizontal
-                                        showsHorizontalScrollIndicator={false}
-                                    />
-                                </View>
-                                <View style={{ flexDirection: "row", justifyContent: "space-between" }}>
-                                    <ThemedText style={[cssStyle.smallText, { flex: 1, textAlign: "center" }]}>Minor</ThemedText>
-                                    <ThemedText style={[cssStyle.smallText, { flex: 1, textAlign: "center" }]}>Moderate</ThemedText>
-                                    <ThemedText style={[cssStyle.smallText, { flex: 1, textAlign: "center" }]}>Major</ThemedText>
-                                </View>
+                            <View style={{ flexDirection: "row", justifyContent: "space-between" }}>
+                                <ThemedText style={[cssStyle.smallText, { textAlign: "center" }]}>Minor</ThemedText>
+                                <ThemedText style={[cssStyle.smallText, { textAlign: "center" }]}>Moderate</ThemedText>
+                                <ThemedText style={[cssStyle.smallText, { textAlign: "center" }]}>Major</ThemedText>
                             </View>
+                        </View>
 
-                            <View style={[cssStyle.formGroup, { marginBottom: 20 }]}>
-                                <ThemedText style={[cssStyle.inputLabel, { fontSize: 16 }]}>Description</ThemedText>
-                                <TextInput
-                                    style={[cssStyle.textArea, { height: 120, fontSize: 16, padding: 16 }]}
-                                    value={formData.description}
-                                    onChangeText={(text) => setFormData({ ...formData, description: text })}
-                                    placeholder="Describe this connection and why it matters to your character..."
-                                    placeholderTextColor="#999"
-                                    multiline
-                                    numberOfLines={5}
-                                />
-                            </View>
+                        <View style={[cssStyle.formGroup, { marginBottom: 20 }]}>
+                            <ThemedText style={[cssStyle.inputLabel, { fontSize: 16 }]}>Description</ThemedText>
+                            <TextInput
+                                style={[cssStyle.textArea, { height: 120, fontSize: 16, padding: 16 }]}
+                                value={formData.description}
+                                onChangeText={(text) => setFormData({ ...formData, description: text })}
+                                placeholder="Describe this connection and why it matters to your character..."
+                                placeholderTextColor="#999"
+                                multiline
+                                numberOfLines={5}
+                            />
+                        </View>
 
                         <View style={{ flexDirection: "row", gap: 16, marginTop: 24 }}>
                             <Pressable
-                                style={[cssStyle.secondaryButton, { flex: 1, paddingVertical: 14 }]}
+                                style={[cssStyle.secondaryButton, { paddingVertical: 14 }]}
                                 onPress={() => {
                                     setModalVisible(false);
                                     setEditingTether(null);
@@ -260,7 +260,7 @@ export function TetherManagerDesktop() {
                             >
                                 <ThemedText style={[cssStyle.buttonText, { fontSize: 16 }]}>Cancel</ThemedText>
                             </Pressable>
-                            <Pressable style={[cssStyle.primaryButton, { flex: 1, paddingVertical: 14 }]} onPress={handleSave}>
+                            <Pressable style={[cssStyle.primaryButton, { paddingVertical: 14 }]} onPress={handleSave}>
                                 <ThemedText style={[cssStyle.buttonText, { color: "white", fontSize: 16 }]}>{editingTether ? "Update" : "Add"}</ThemedText>
                             </Pressable>
                         </View>
@@ -291,11 +291,11 @@ export function TetherManagerDesktop() {
                         </View>
 
                         <View style={{ flexDirection: "row", gap: 16, marginTop: 24 }}>
-                            <Pressable style={[cssStyle.secondaryButton, { flex: 1, paddingVertical: 14 }]} onPress={() => setEditingMinimum(false)}>
+                            <Pressable style={[cssStyle.secondaryButton, { paddingVertical: 14 }]} onPress={() => setEditingMinimum(false)}>
                                 <ThemedText style={[cssStyle.buttonText, { fontSize: 16 }]}>Cancel</ThemedText>
                             </Pressable>
                             <Pressable
-                                style={[cssStyle.primaryButton, { flex: 1, paddingVertical: 14 }]}
+                                style={[cssStyle.primaryButton, { paddingVertical: 14 }]}
                                 onPress={() => {
                                     const value = parseInt(tempMinimum) || 10;
                                     dispatch(setMinimumTotalObligation(Math.max(0, value)));

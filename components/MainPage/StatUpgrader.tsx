@@ -111,7 +111,7 @@ export function StatUpgrader({ statType, compact = false, visible, onClose }: St
                     <View style={cssStyle.modalView} onStartShouldSetResponder={() => true}>
                         {/* Header */}
                         <View style={cssStyle.modalHeader}>
-                            <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+                            <View style={{ flexDirection: "row", alignItems: "center" }}>
                                 <IconSymbol name={icon} size={24} color={statColor} style={{ marginRight: 8 }} />
                                 <ThemedText style={cssStyle.modalTitle}>Upgrade Max {statName}</ThemedText>
                             </View>
@@ -122,42 +122,35 @@ export function StatUpgrader({ statType, compact = false, visible, onClose }: St
 
                         {/* Current Stats Display */}
                         <View style={[cssStyle.card, { backgroundColor: statColor + "15", borderColor: statColor, borderWidth: 1, marginBottom: 16 }]}>
-                            <View style={{ alignItems: 'center' }}>
+                            <View style={{ alignItems: "center" }}>
                                 <ThemedText style={[cssStyle.label, { marginBottom: 4 }]}>Current Maximum</ThemedText>
                                 <ThemedText style={[cssStyle.largeValue, { color: statColor, fontSize: 48 }]}>{currentValue}</ThemedText>
-                                <ThemedText style={[cssStyle.label, { marginTop: 4 }]}>
-                                    {statType === "hp" ? "Hit Points" : "Energy Points"}
-                                </ThemedText>
+                                <ThemedText style={[cssStyle.label, { marginTop: 4 }]}>{statType === "hp" ? "Hit Points" : "Energy Points"}</ThemedText>
                             </View>
                         </View>
 
                         {/* Build Points Info */}
-                        <View style={[cssStyle.sectionContainer, { backgroundColor: '#f0f0f0', padding: 12, marginBottom: 16 }]}>
-                            <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+                        <View style={[cssStyle.sectionContainer, { backgroundColor: "#f0f0f0", padding: 12, marginBottom: 16 }]}>
+                            <View style={{ flexDirection: "row", justifyContent: "space-between", alignItems: "center" }}>
                                 <View>
                                     <ThemedText style={cssStyle.label}>Available Build Points</ThemedText>
-                                    <ThemedText style={[cssStyle.subtitle, { color: '#2196F3' }]}>{character.base.buildPointsRemaining} BP</ThemedText>
+                                    <ThemedText style={[cssStyle.subtitle, { color: "#2196F3" }]}>{character.base.buildPointsRemaining} BP</ThemedText>
                                 </View>
-                                <View style={{ alignItems: 'flex-end' }}>
+                                <View style={{ alignItems: "flex-end" }}>
                                     <ThemedText style={cssStyle.label}>Cost Rate</ThemedText>
-                                    <ThemedText style={cssStyle.subtitle}>
-                                        {statType === "hp" ? `${HP_COST} BP per HP` : "2 BP per 3 EP"}
-                                    </ThemedText>
+                                    <ThemedText style={cssStyle.subtitle}>{statType === "hp" ? `${HP_COST} BP per HP` : "2 BP per 3 EP"}</ThemedText>
                                 </View>
                             </View>
                         </View>
 
                         {/* Adjustment Buttons */}
                         <View>
-                            <ThemedText style={[cssStyle.label, { textAlign: 'center', marginBottom: 12 }]}>Adjust Value</ThemedText>
-                            <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', gap: 8 }}>
+                            <ThemedText style={[cssStyle.label, { textAlign: "center", marginBottom: 12 }]}>Adjust Value</ThemedText>
+                            <View style={{ flexDirection: "row", justifyContent: "space-between", alignItems: "center", gap: 8 }}>
                                 {/* Decrease Buttons */}
-                                <View style={{ flexDirection: 'row', gap: 8 }}>
+                                <View style={{ flexDirection: "row", gap: 8 }}>
                                     <Pressable
-                                        style={[
-                                            cssStyle.secondaryButton,
-                                            { minWidth: 60, opacity: currentValue <= (statType === "hp" ? 14 : 24) ? 0.5 : 1 }
-                                        ]}
+                                        style={[cssStyle.secondaryButton, { minWidth: 60, opacity: currentValue <= (statType === "hp" ? 14 : 24) ? 0.5 : 1 }]}
                                         onPress={() => handleAdjust(-largeIncrement)}
                                         disabled={currentValue <= (statType === "hp" ? 14 : 24)}
                                     >
@@ -165,10 +158,7 @@ export function StatUpgrader({ statType, compact = false, visible, onClose }: St
                                         <ThemedText style={[cssStyle.smallText, { fontSize: 10 }]}>+{largeCost} BP</ThemedText>
                                     </Pressable>
                                     <Pressable
-                                        style={[
-                                            cssStyle.secondaryButton,
-                                            { minWidth: 60, opacity: currentValue <= (statType === "hp" ? 10 : 12) ? 0.5 : 1 }
-                                        ]}
+                                        style={[cssStyle.secondaryButton, { minWidth: 60, opacity: currentValue <= (statType === "hp" ? 10 : 12) ? 0.5 : 1 }]}
                                         onPress={() => handleAdjust(-smallIncrement)}
                                         disabled={currentValue <= (statType === "hp" ? 10 : 12)}
                                     >
@@ -178,47 +168,44 @@ export function StatUpgrader({ statType, compact = false, visible, onClose }: St
                                 </View>
 
                                 {/* Increase Buttons */}
-                                <View style={{ flexDirection: 'row', gap: 8 }}>
+                                <View style={{ flexDirection: "row", gap: 8 }}>
                                     <Pressable
                                         style={[
                                             cssStyle.primaryButton,
-                                            { 
-                                                minWidth: 60, 
-                                                backgroundColor: character.base.buildPointsRemaining < smallCost ? '#ccc' : statColor,
-                                                opacity: character.base.buildPointsRemaining < smallCost ? 0.5 : 1
-                                            }
+                                            {
+                                                minWidth: 60,
+                                                backgroundColor: character.base.buildPointsRemaining < smallCost ? "#ccc" : statColor,
+                                                opacity: character.base.buildPointsRemaining < smallCost ? 0.5 : 1,
+                                            },
                                         ]}
                                         onPress={() => handleAdjust(smallIncrement)}
                                         disabled={character.base.buildPointsRemaining < smallCost}
                                     >
-                                        <ThemedText style={[cssStyle.buttonText, { color: 'white' }]}>+{smallIncrement}</ThemedText>
-                                        <ThemedText style={[cssStyle.smallText, { fontSize: 10, color: 'white' }]}>-{smallCost} BP</ThemedText>
+                                        <ThemedText style={[cssStyle.buttonText, { color: "white" }]}>+{smallIncrement}</ThemedText>
+                                        <ThemedText style={[cssStyle.smallText, { fontSize: 10, color: "white" }]}>-{smallCost} BP</ThemedText>
                                     </Pressable>
                                     <Pressable
                                         style={[
                                             cssStyle.primaryButton,
-                                            { 
-                                                minWidth: 60, 
-                                                backgroundColor: character.base.buildPointsRemaining < largeCost ? '#ccc' : statColor,
-                                                opacity: character.base.buildPointsRemaining < largeCost ? 0.5 : 1
-                                            }
+                                            {
+                                                minWidth: 60,
+                                                backgroundColor: character.base.buildPointsRemaining < largeCost ? "#ccc" : statColor,
+                                                opacity: character.base.buildPointsRemaining < largeCost ? 0.5 : 1,
+                                            },
                                         ]}
                                         onPress={() => handleAdjust(largeIncrement)}
                                         disabled={character.base.buildPointsRemaining < largeCost}
                                     >
-                                        <ThemedText style={[cssStyle.buttonText, { color: 'white' }]}>+{largeIncrement}</ThemedText>
-                                        <ThemedText style={[cssStyle.smallText, { fontSize: 10, color: 'white' }]}>-{largeCost} BP</ThemedText>
+                                        <ThemedText style={[cssStyle.buttonText, { color: "white" }]}>+{largeIncrement}</ThemedText>
+                                        <ThemedText style={[cssStyle.smallText, { fontSize: 10, color: "white" }]}>-{largeCost} BP</ThemedText>
                                     </Pressable>
                                 </View>
                             </View>
                         </View>
 
                         {/* Action Buttons */}
-                        <View style={{ flexDirection: 'row', gap: 12, marginTop: 24 }}>
-                            <Pressable 
-                                style={[cssStyle.secondaryButton, { flex: 1 }]} 
-                                onPress={handleClose}
-                            >
+                        <View style={{ flexDirection: "row", gap: 12, marginTop: 24 }}>
+                            <Pressable style={[cssStyle.secondaryButton, {}]} onPress={handleClose}>
                                 <ThemedText style={cssStyle.buttonText}>Done</ThemedText>
                             </Pressable>
                         </View>

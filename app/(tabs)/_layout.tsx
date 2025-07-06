@@ -19,7 +19,7 @@ function TabBarLabel({ label, focused, color }: { label: string; focused: boolea
 export default function TabLayout() {
     return (
         <ProtectedRoute>
-            <View style={{ flex: 1, overflowY: "scroll", backgroundColor: '#1a1a1a' }}>
+            <View style={{ overflowY: "scroll", backgroundColor: "#1a1a1a", height: "100%" }}>
                 <CharacterHeader />
                 <Tabs
                     screenOptions={{
@@ -33,8 +33,8 @@ export default function TabLayout() {
                                 position: "absolute",
                             },
                             default: {
-                                backgroundColor: '#1a1a1a',
-                                borderTopColor: '#444',
+                                backgroundColor: "#1a1a1a",
+                                borderTopColor: "#444",
                             },
                         }),
                         tabBarLabelPosition: "below-icon",

@@ -34,7 +34,7 @@ export function ListManagerDesktop<T>({
         <View style={[cssStyle.container, { padding: 24, marginVertical: 16 }]}>
             {/* Header with title and description */}
             <View style={[cssStyle.sectionContainer, cssStyle.row, { justifyContent: "space-between", marginBottom: 20 }]}>
-                <View style={{ flex: 1 }}>
+                <View style={{}}>
                     <ThemedText style={[cssStyle.sectionTitle, { fontSize: 24, marginBottom: 4 }]}>{title}</ThemedText>
                     {description && <ThemedText style={[cssStyle.hint, { fontSize: 16 }]}>{description}</ThemedText>}
                 </View>
@@ -56,9 +56,7 @@ export function ListManagerDesktop<T>({
             ) : (
                 <View style={cssStyle.list}>
                     {data.map((item) => (
-                        <View key={keyExtractor(item)}>
-                            {renderItem({ item })}
-                        </View>
+                        <View key={keyExtractor(item)}>{renderItem({ item })}</View>
                     ))}
                 </View>
             )}

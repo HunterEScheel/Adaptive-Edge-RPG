@@ -3,8 +3,9 @@ import { RootState } from "@/store/rootReducer";
 import { addNote, Note, removeNote, updateNote } from "@/store/slices/notesSlice";
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 import React, { useState } from "react";
-import { Alert, FlatList, Pressable, TextInput, View } from "react-native";
+import { Alert, Modal, Pressable, TextInput, View } from "react-native";
 import { useDispatch, useSelector } from "react-redux";
+import { ListManager } from "../Common/ListManager";
 import { ThemedText } from "../ThemedText";
 import { ThemedView } from "../ThemedView";
 
@@ -127,21 +128,18 @@ export const GeneralNotes: React.FC = () => {
 
     return (
         <ThemedView style={cssStyle.container}>
-            <ThemedView style={cssStyle.noteCard}>
-                {notes.length === 0 && !isAddingNote ? (
-                    <ThemedText style={cssStyle.emptyText}>No notes yet. Add your first note!</ThemedText>
-                ) : (
-                    <FlatList
-                        data={notes}
-                        keyExtractor={(item) => item.id}
-                        renderItem={renderNote}
-                        contentContainerStyle={cssStyle.list}
-                        scrollEnabled={false} // Let parent scroll view handle scrolling
-                    />
-                )}
-
-                {isAddingNote ? (
-                    <ThemedView style={cssStyle.formContentContainer}>
+            <ListManager
+                data={notes}
+                title="General Notes"
+                renderItem={renderNote}
+                keyExtractor={(item: Note) => item.id}
+                onAddPress={() => setIsAddingNote(true)}
+                emptyStateText="No notes available."
+                showAddButton={!isAddingNote}
+            />
+            <Modal animationType="fade" transparent={true} visible={isAddingNote} onRequestClose={() => setIsAddingNote(false)}>
+                <ThemedView style={[cssStyle.modalOverlay]}>
+                    <ThemedView style={cssStyle.modalContent}>
                         <TextInput
                             style={cssStyle.input}
                             value={newNoteTitle}
@@ -166,13 +164,8 @@ export const GeneralNotes: React.FC = () => {
                             </Pressable>
                         </View>
                     </ThemedView>
-                ) : (
-                    <Pressable style={cssStyle.primaryButton} onPress={() => setIsAddingNote(true)}>
-                        <MaterialIcons name="add" size={24} color="#fff" />
-                        <ThemedText style={cssStyle.buttonText}>Add Note</ThemedText>
-                    </Pressable>
-                )}
-            </ThemedView>
+                </ThemedView>
+            </Modal>
         </ThemedView>
     );
 };

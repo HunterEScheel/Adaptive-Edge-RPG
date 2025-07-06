@@ -71,7 +71,7 @@ const CharacterPresetManager = () => {
     const renderPresetItem = ({ item }: { item: BaseState }) => (
         <View style={cssStyle.card}>
             <TouchableOpacity
-                style={{ flex: 1, padding: 12 }}
+                style={{ padding: 12 }}
                 onPress={() => {
                     setSelectedPreset(item);
                     setShowLoadModal(true);

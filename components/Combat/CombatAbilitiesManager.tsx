@@ -278,7 +278,7 @@ export function CombatAbilitiesManager() {
                         </View>
 
                         <View style={cssStyle.formRow}>
-                            <View style={[cssStyle.formGroup, { flex: 1, marginRight: 10 }]}>
+                            <View style={[cssStyle.formGroup, { marginRight: 10 }]}>
                                 <ThemedText style={cssStyle.label}>Build Points *</ThemedText>
                                 <TextInput
                                     style={cssStyle.input}
@@ -289,7 +289,7 @@ export function CombatAbilitiesManager() {
                                     keyboardType="numeric"
                                 />
                             </View>
-                            <View style={[cssStyle.formGroup, { flex: 1, marginLeft: 10 }]}>
+                            <View style={[cssStyle.formGroup, { marginLeft: 10 }]}>
                                 <ThemedText style={cssStyle.label}>Energy Cost</ThemedText>
                                 <TextInput
                                     style={cssStyle.input}

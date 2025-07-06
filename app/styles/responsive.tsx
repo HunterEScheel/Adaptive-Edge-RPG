@@ -11,7 +11,7 @@ import { cssStyle as phoneStyles } from "./phone";
 import { ConsistentStyles, ResponsiveStyles } from "./theme";
 
 // Device breakpoint
-const MOBILE_MAX_WIDTH = 768;
+const MOBILE_MAX_WIDTH = 1000;
 
 /**
  * Get the appropriate stylesheet based on current device dimensions

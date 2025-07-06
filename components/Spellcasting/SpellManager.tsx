@@ -151,9 +151,9 @@ export function SpellManager() {
         return (
             <View style={[cardStyle, { overflow: "visible" }]}>
                 <View style={cssStyle.headerRow}>
-                    <Pressable onPress={() => toggleSpellExpanded(spell.id)} style={{ flex: 1, flexDirection: "row", alignItems: "center", paddingRight: 8 }}>
+                    <Pressable onPress={() => toggleSpellExpanded(spell.id)} style={{ flexDirection: "row", alignItems: "center", paddingRight: 8 }}>
                         <FontAwesome name={isExpanded ? "chevron-down" : "chevron-right"} size={chevronSize} color="#666" style={{ marginRight: 4 }} />
-                        <View style={{ flex: 1 }}>
+                        <View style={{}}>
                             <View style={{ flexDirection: "row", alignItems: "center", flexWrap: "wrap" }}>
                                 <ThemedText style={[cssStyle.subtitle, textSize && { fontSize: textSize }]}>{spell.name}</ThemedText>
                                 <ThemedText style={[cssStyle.label, { marginLeft: 4, color: "#4CAF50" }, labelSize && { fontSize: labelSize }]}>

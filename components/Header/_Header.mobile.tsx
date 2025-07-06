@@ -84,12 +84,15 @@ export function CharacterHeaderMobile() {
 
     return (
         <ThemedView>
-            <View style={[styles.row, { flexDirection: "column", alignItems: "stretch" }]}>
+            <View style={[styles.row, { flexDirection: "column", alignItems: "stretch", marginTop: 30 }]}>
                 {/* Character Name (Editable) */}
                 <View style={[styles.sectionContainer, styles.row]}>
                     {isEditingName ? (
-                        <View style={styles.inputContainer}>
+                        <View style={[styles.inputContainer, styles.row]}>
                             <TextInput style={styles.input} value={nameValue} onChangeText={setNameValue} autoFocus onBlur={handleNameEdit} />
+                            <Pressable onPress={handleNameEdit} style={styles.primaryButton}>
+                                <ThemedText style={styles.primaryText}>Save</ThemedText>
+                            </Pressable>
                         </View>
                     ) : (
                         <View style={{ display: "flex", flexDirection: "row", alignContent: "center", justifyContent: "space-between", width: "100%" }}>
@@ -128,25 +131,21 @@ export function CharacterHeaderMobile() {
                 <ThemedView style={styles.sectionHeaderContainer}>
                     {/* Compact Stats Row - HP, EP, AC, Speed */}
                     <View style={styles.statRow}>
-                        <View style={[styles.sectionContainer, { flex: 1, width: 60, margin: 4 }]}>
+                        <View style={[styles.sectionContainer, { width: 60, margin: 4 }]}>
                             <View style={[styles.row, { justifyContent: "center" }]}>
                                 <Pressable
-                                    style={[styles.condensedButton, styles.secondaryColors, { width: 20, height: 20, padding: 2, marginHorizontal: 2 }]}
+                                    style={[styles.condensedButton, styles.secondaryColors, { width: 30, height: 30, padding: 2, marginHorizontal: 2 }]}
                                     onPress={() => handleDamage("hp")}
                                     disabled={base.hitPoints <= 0}
                                 >
-                                    <ThemedText style={[styles.description, styles.secondaryText, { fontSize: 12 }]}>
-                                        −
-                                    </ThemedText>
+                                    <ThemedText style={[styles.description, styles.secondaryText, { fontSize: 12 }]}>−</ThemedText>
                                 </Pressable>
                                 <Pressable
-                                    style={[styles.condensedButton, styles.primaryColors, { width: 20, height: 20, padding: 2, marginHorizontal: 2 }]}
+                                    style={[styles.condensedButton, styles.primaryColors, { width: 30, height: 30, padding: 2, marginHorizontal: 2 }]}
                                     onPress={() => handleHeal("hp")}
                                     disabled={base.hitPoints >= totalMaxHP}
                                 >
-                                    <ThemedText style={[styles.description, styles.primaryText, { fontSize: 12 }]}>
-                                        +
-                                    </ThemedText>
+                                    <ThemedText style={[styles.description, styles.primaryText, { fontSize: 12 }]}>+</ThemedText>
                                 </Pressable>
                             </View>
                             <Pressable style={[styles.sectionHeaderContainer, { paddingHorizontal: 4 }]} onPress={() => setHpModalVisible(true)}>
@@ -157,25 +156,21 @@ export function CharacterHeaderMobile() {
                             </Pressable>
                             <StatUpgrader statType="hp" visible={hpModalVisible} onClose={() => setHpModalVisible(false)} />
                         </View>
-                        <View style={[styles.sectionContainer, { flex: 1, width: 60, margin: 4 }]}>
+                        <View style={[styles.sectionContainer, { width: 60, margin: 4 }]}>
                             <View style={[styles.row, { justifyContent: "center" }]}>
                                 <Pressable
-                                    style={[styles.condensedButton, styles.secondaryColors, { width: 20, height: 20, padding: 2, marginHorizontal: 2 }]}
+                                    style={[styles.condensedButton, styles.secondaryColors, { width: 30, height: 30, padding: 2, marginHorizontal: 2 }]}
                                     onPress={() => handleDamage("energy")}
                                     disabled={base.hitPoints <= 0}
                                 >
-                                    <ThemedText style={[styles.description, styles.secondaryText, { fontSize: 12 }]}>
-                                        −
-                                    </ThemedText>
+                                    <ThemedText style={[styles.description, styles.secondaryText, { fontSize: 12 }]}>−</ThemedText>
                                 </Pressable>
                                 <Pressable
-                                    style={[styles.condensedButton, styles.primaryColors, { width: 20, height: 20, padding: 2, marginHorizontal: 2 }]}
+                                    style={[styles.condensedButton, styles.primaryColors, { width: 30, height: 30, padding: 2, marginHorizontal: 2 }]}
                                     onPress={() => handleHeal("energy")}
                                     disabled={base.energy >= base.maxEnergy}
                                 >
-                                    <ThemedText style={[styles.description, styles.primaryText, { fontSize: 12 }]}>
-                                        +
-                                    </ThemedText>
+                                    <ThemedText style={[styles.description, styles.primaryText, { fontSize: 12 }]}>+</ThemedText>
                                 </Pressable>
                             </View>
                             <View>
@@ -189,14 +184,14 @@ export function CharacterHeaderMobile() {
                             <StatUpgrader statType="energy" visible={energyModalVisible} onClose={() => setEnergyModalVisible(false)} />
                         </View>
                         {/* Energy with current/max display */}
-                        <View style={[styles.sectionContainer, { flex: 1, width: 80, margin: 2 }]}>
+                        <View style={[styles.sectionContainer, { width: 80, margin: 2 }]}>
                             {/* AC */}
                             <Pressable onPress={() => setEvasionBreakdownModalVisible(true)} style={{ alignItems: "center" }}>
                                 <ThemedText style={{ fontSize: 12, fontWeight: "bold" }}>Evade: {calculateTotalEvasion(character)}</ThemedText>
                                 <ThemedText style={{ fontSize: 12 }}>DR: {calculateTotalDamageReduction(character)}</ThemedText>
                             </Pressable>
                         </View>
-                        <View style={[styles.sectionContainer, { flex: 1, width: 80, margin: 2 }]}>
+                        <View style={[styles.sectionContainer, { width: 80, margin: 2 }]}>
                             <EvasionBreakdownModal
                                 visible={evasionBreakdownModalVisible}
                                 onClose={() => setEvasionBreakdownModalVisible(false)}

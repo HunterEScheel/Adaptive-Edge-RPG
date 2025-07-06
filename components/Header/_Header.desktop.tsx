@@ -111,7 +111,7 @@ export function CharacterHeaderDesktop() {
             </View>
             <ThemedView style={[styles.sectionHeaderContainer, { flexDirection: "row", alignItems: "center", justifyContent: "space-between" }]}>
                 {/* Attributes Section */}
-                <ThemedView style={[styles.attributeSectionContainer, { flex: 1 }]}>
+                <ThemedView style={[styles.attributeSectionContainer, {}]}>
                     <ThemedView style={styles.attributeRowContainer}>
                         <StatAdjuster statName="STR" fieldName="str" minValue={-4} maxValue={5} compact={true} isAttribute />
                         <StatAdjuster statName="DEX" fieldName="dex" minValue={-4} maxValue={5} compact={true} isAttribute />
@@ -125,9 +125,9 @@ export function CharacterHeaderDesktop() {
                 </ThemedView>
 
                 {/* Stats Section */}
-                <ThemedView style={{ flex: 1 }}>
+                <ThemedView style={{}}>
                     <View style={styles.statRow}>
-                        <View style={[styles.sectionContainer, { flex: 1, width: isTablet ? 100 : 120, margin: 4 }]}>
+                        <View style={[styles.sectionContainer, { width: isTablet ? 100 : 120, margin: 4 }]}>
                             <View style={[styles.row, { justifyContent: "center" }]}>
                                 <Pressable
                                     style={[styles.condensedButton, styles.secondaryColors, { width: 30, height: 30, padding: 4, marginHorizontal: 8 }]}
@@ -152,7 +152,7 @@ export function CharacterHeaderDesktop() {
                             </Pressable>
                             <StatUpgrader statType="hp" visible={hpModalVisible} onClose={() => setHpModalVisible(false)} />
                         </View>
-                        <View style={[styles.sectionContainer, { flex: 1, width: isTablet ? 100 : 120, margin: 4 }]}>
+                        <View style={[styles.sectionContainer, { width: isTablet ? 100 : 120, margin: 4 }]}>
                             <View style={[styles.row, { justifyContent: "center" }]}>
                                 <Pressable
                                     style={[styles.condensedButton, styles.secondaryColors, { width: 30, height: 30, padding: 4, marginHorizontal: 8 }]}
@@ -179,7 +179,7 @@ export function CharacterHeaderDesktop() {
                             </View>
                             <StatUpgrader statType="energy" visible={energyModalVisible} onClose={() => setEnergyModalVisible(false)} />
                         </View>
-                        <View style={[styles.sectionContainer, { flex: 1, width: isTablet ? 90 : 100, margin: 4 }]}>
+                        <View style={[styles.sectionContainer, { width: isTablet ? 90 : 100, margin: 4 }]}>
                             <Pressable onPress={() => setEvasionBreakdownModalVisible(true)} style={{ alignItems: "center" }}>
                                 <ThemedText style={{ fontSize: 16, fontWeight: "bold" }}>Evasion: {calculateTotalEvasion(character)}</ThemedText>
                                 <ThemedText style={{ fontSize: 14 }}>DR: {calculateTotalDamageReduction(character)}</ThemedText>
@@ -188,7 +188,7 @@ export function CharacterHeaderDesktop() {
                                 {character.inventory.armor?.armorClassification ? character.inventory.armor.armorClassification : "No Armor"}
                             </ThemedText>
                         </View>
-                        <View style={[styles.sectionContainer, { flex: 1, width: isTablet ? 90 : 100, margin: 4 }]}>
+                        <View style={[styles.sectionContainer, { width: isTablet ? 90 : 100, margin: 4 }]}>
                             <EvasionBreakdownModal
                                 visible={evasionBreakdownModalVisible}
                                 onClose={() => setEvasionBreakdownModalVisible(false)}

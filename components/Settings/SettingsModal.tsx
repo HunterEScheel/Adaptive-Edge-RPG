@@ -91,7 +91,7 @@ export default function SettingsModal({ visible, onClose }: SettingsModalProps) 
             <View style={styles.modalOverlay}>
                 <View style={[styles.modalView, { maxHeight: "80%" }]}>
                     {isLoading ? (
-                        <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
+                        <View style={{ justifyContent: "center", alignItems: "center" }}>
                             <ActivityIndicator size="large" />
                         </View>
                     ) : (

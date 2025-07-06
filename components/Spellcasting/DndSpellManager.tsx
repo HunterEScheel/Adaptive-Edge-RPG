@@ -105,7 +105,7 @@ export function DndSpellManager() {
     const renderSpellItem = ({ item }: { item: DndSpell }) => (
         <Pressable style={cssStyle.card} onPress={() => handleSpellPress(item)}>
             <View style={cssStyle.headerRow}>
-                <View style={{ flex: 1 }}>
+                <View style={{}}>
                     <ThemedText style={cssStyle.subtitle}>{item.name}</ThemedText>
                     <View style={cssStyle.row}>
                         <ThemedText style={[cssStyle.label, { marginRight: 8 }]}>{getLevelText(item.level)}</ThemedText>
@@ -248,7 +248,7 @@ export function DndSpellManager() {
                 showsHorizontalScrollIndicator={false}
                 style={{ marginBottom: 12 }}
                 data={[null, ...spellLevels]}
-                keyExtractor={(item) => item === null ? 'all' : item.toString()}
+                keyExtractor={(item) => (item === null ? "all" : item.toString())}
                 renderItem={({ item: level }) => (
                     <Pressable
                         style={[
@@ -257,9 +257,7 @@ export function DndSpellManager() {
                         ]}
                         onPress={() => setSelectedLevel(level)}
                     >
-                        <ThemedText style={selectedLevel === level ? { color: "white" } : {}}>
-                            {level === null ? "All" : getLevelText(level)}
-                        </ThemedText>
+                        <ThemedText style={selectedLevel === level ? { color: "white" } : {}}>{level === null ? "All" : getLevelText(level)}</ThemedText>
                     </Pressable>
                 )}
             />
@@ -269,7 +267,7 @@ export function DndSpellManager() {
                 horizontal
                 showsHorizontalScrollIndicator={false}
                 data={[null, ...spellSchools]}
-                keyExtractor={(item) => item === null ? 'all' : item}
+                keyExtractor={(item) => (item === null ? "all" : item)}
                 renderItem={({ item: school }) => (
                     <Pressable
                         style={[
@@ -278,9 +276,7 @@ export function DndSpellManager() {
                         ]}
                         onPress={() => setSelectedSchool(school)}
                     >
-                        <ThemedText style={selectedSchool === school ? { color: "white" } : {}}>
-                            {school === null ? "All" : school}
-                        </ThemedText>
+                        <ThemedText style={selectedSchool === school ? { color: "white" } : {}}>{school === null ? "All" : school}</ThemedText>
                     </Pressable>
                 )}
             />
@@ -297,7 +293,7 @@ export function DndSpellManager() {
             <View style={[cssStyle.inputContainer, { marginBottom: 8 }]}>
                 <FontAwesome name="search" size={16} color="#666" style={{ marginRight: 8 }} />
                 <TextInput
-                    style={[cssStyle.input, { flex: 1 }]}
+                    style={[cssStyle.input, {}]}
                     placeholder="Search spells..."
                     value={searchQuery}
                     onChangeText={setSearchQuery}

@@ -43,7 +43,7 @@ export function GoldManager() {
             <View style={[cssStyle.row, cssStyle.card, { backgroundColor: "rgba(255, 215, 0, 0.1)" }]}>
                 <Gp size={50} />
 
-                <Pressable onPress={() => setShowAdjustment(true)} style={{ flex: 1, marginLeft: 10 }}>
+                <Pressable onPress={() => setShowAdjustment(true)} style={{ marginLeft: 10 }}>
                     <ThemedText style={cssStyle.largeValue}>{formattedGold}</ThemedText>
                     <ThemedText style={cssStyle.smallText}>Tap to adjust</ThemedText>
                 </Pressable>

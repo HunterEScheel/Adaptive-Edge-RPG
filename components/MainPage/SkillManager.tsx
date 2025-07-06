@@ -350,7 +350,7 @@ export function SkillManager() {
         const nextLevelCost = item.level < 10 ? calculateSkillCost(item.level + 1) : null;
 
         return (
-            <View style={[cssStyle.compactCard, { marginBottom: 8, padding: 12 }]}>
+            <View style={[, { backgroundColor: "#333", padding: 3 }]}>
                 <View style={{ flexDirection: "row", justifyContent: "space-between", alignItems: "center" }}>
                     {/* Skill info */}
                     <View style={{ marginRight: 8 }}>

@@ -1,3 +1,4 @@
+import { IconDefinition } from "@fortawesome/free-solid-svg-icons";
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 
 // Simple ID generator function
@@ -7,6 +8,9 @@ export type MagicSchool = {
     id: string;
     name: string;
     description: string;
+    levels: number;
+    color: string;
+    icon: IconDefinition; // FontAwesome icon for the magic school
 };
 
 export type Spell = {
@@ -54,9 +58,9 @@ const magicSlice = createSlice({
             state.magicSchools = state.magicSchools.filter((school) => school.id !== action.payload);
             return state;
         },
-        updateMagicSchool: (state, action: PayloadAction<{ id: string; name?: string; description?: string }>) => {
-            const { id, ...updates } = action.payload;
-            const schoolIndex = state.magicSchools.findIndex((school) => school.id === id);
+        updateMagicSchool: (state, action: PayloadAction<{ name?: string; levels?: number }>) => {
+            const { ...updates } = action.payload;
+            const schoolIndex = state.magicSchools.findIndex((school) => school.name === updates.name);
 
             if (schoolIndex >= 0) {
                 state.magicSchools[schoolIndex] = { ...state.magicSchools[schoolIndex], ...updates };

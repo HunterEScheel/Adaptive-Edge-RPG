@@ -23,7 +23,6 @@ const styles = StyleSheet.create({
         borderBottomColor: "#333",
     },
     tab: {
-        flex: 1,
         paddingVertical: 12,
         paddingHorizontal: 16,
         alignItems: "center",
@@ -235,7 +234,7 @@ export default function CombatScreen() {
     );
 
     return (
-        <ScrollView style={{ backgroundColor: "#1a1a1a", flex: 1 }}>
+        <ScrollView style={{ backgroundColor: "#1a1a1a" }}>
             <ThemedView style={[!isMobile && { marginTop: 100 }, { backgroundColor: "#1a1a1a" }]}>
                 {/* Tab Navigation */}
                 <View style={styles.tabContainer}>
@@ -251,7 +250,7 @@ export default function CombatScreen() {
                 </View>
 
                 {/* Tab Content */}
-                <View style={{ flex: 1 }}>
+                <View style={{}}>
                     {activeTab === "weapons" && renderWeaponsTab()}
                     {activeTab === "defensive" && renderDefensiveTab()}
                     {activeTab === "special" && renderSpecialTab()}

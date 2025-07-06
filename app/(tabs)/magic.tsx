@@ -13,12 +13,12 @@ export default function MagicScreen() {
 
     return (
         <ScrollView>
-            <ThemedView style={{ backgroundColor: "#1a1a1a", flex: 1 }}>
+            <ThemedView style={{ backgroundColor: "#1a1a1a" }}>
                 {/* Tab selector */}
                 <View style={[cssStyle.row, { marginBottom: 16, borderBottomWidth: 1, borderBottomColor: "#333", backgroundColor: "#222" }]}>
                     <Pressable
                         style={[
-                            { flex: 1, paddingVertical: 12, alignItems: "center" },
+                            { paddingVertical: 12, alignItems: "center" },
                             activeTab === "schools" && { borderBottomWidth: 2, borderBottomColor: "#2196F3" },
                         ]}
                         onPress={() => setActiveTab("schools")}
@@ -27,7 +27,7 @@ export default function MagicScreen() {
                     </Pressable>
                     <Pressable
                         style={[
-                            { flex: 1, paddingVertical: 12, alignItems: "center" },
+                            { paddingVertical: 12, alignItems: "center" },
                             activeTab === "character" && { borderBottomWidth: 2, borderBottomColor: "#2196F3" },
                         ]}
                         onPress={() => setActiveTab("character")}
@@ -35,10 +35,7 @@ export default function MagicScreen() {
                         <ThemedText style={[cssStyle.subtitle, activeTab === "character" && { color: "#2196F3" }]}>My Spells</ThemedText>
                     </Pressable>
                     <Pressable
-                        style={[
-                            { flex: 1, paddingVertical: 12, alignItems: "center" },
-                            activeTab === "dnd" && { borderBottomWidth: 2, borderBottomColor: "#2196F3" },
-                        ]}
+                        style={[{ paddingVertical: 12, alignItems: "center" }, activeTab === "dnd" && { borderBottomWidth: 2, borderBottomColor: "#2196F3" }]}
                         onPress={() => setActiveTab("dnd")}
                     >
                         <ThemedText style={[cssStyle.subtitle, activeTab === "dnd" && { color: "#2196F3" }]}>Spell Library</ThemedText>

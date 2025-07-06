@@ -121,7 +121,6 @@ export function BuildPointManagerMobile() {
                                         style={[
                                             cssStyle.centered,
                                             {
-                                                flex: 1,
                                                 backgroundColor: "#dc3545",
                                                 borderRadius: 8,
                                                 paddingVertical: 14,
@@ -135,7 +134,6 @@ export function BuildPointManagerMobile() {
                                         style={[
                                             cssStyle.centered,
                                             {
-                                                flex: 1,
                                                 backgroundColor: "#fd7e14",
                                                 borderRadius: 8,
                                                 paddingVertical: 14,
@@ -149,7 +147,6 @@ export function BuildPointManagerMobile() {
                                         style={[
                                             cssStyle.centered,
                                             {
-                                                flex: 1,
                                                 backgroundColor: "#20c997",
                                                 borderRadius: 8,
                                                 paddingVertical: 14,
@@ -163,7 +160,6 @@ export function BuildPointManagerMobile() {
                                         style={[
                                             cssStyle.centered,
                                             {
-                                                flex: 1,
                                                 backgroundColor: "#28a745",
                                                 borderRadius: 8,
                                                 paddingVertical: 14,
@@ -182,7 +178,6 @@ export function BuildPointManagerMobile() {
                                     style={[
                                         cssStyle.centered,
                                         {
-                                            flex: 1,
                                             backgroundColor: "#f8f9fa",
                                             borderRadius: 8,
                                             paddingVertical: 14,

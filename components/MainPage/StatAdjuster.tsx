@@ -18,7 +18,16 @@ interface StatAdjusterProps {
     isAttribute?: boolean;
 }
 
-export function StatAdjuster({ statName, fieldName, icon, minValue = 0, maxValue = 999, showBy5 = false, compact = false, isAttribute = false }: StatAdjusterProps) {
+export function StatAdjuster({
+    statName,
+    fieldName,
+    icon,
+    minValue = 0,
+    maxValue = 999,
+    showBy5 = false,
+    compact = false,
+    isAttribute = false,
+}: StatAdjusterProps) {
     // Check if there are any equipped items affecting this stat
     const cssStyle = useResponsiveStyles();
     const base = useSelector((state: RootState) => state.character.base);
@@ -76,7 +85,7 @@ export function StatAdjuster({ statName, fieldName, icon, minValue = 0, maxValue
             fieldName === "dex" ||
             fieldName === "con" ||
             fieldName === "int" ||
-            fieldName === "wis" ||
+            fieldName === "foc" ||
             fieldName === "cha"
         ) {
             const actualChange = newVal - oldValue;
@@ -89,7 +98,7 @@ export function StatAdjuster({ statName, fieldName, icon, minValue = 0, maxValue
             } else if (fieldName === "hitPoints") {
                 // 2 BP per 3 HP (rounded up)
                 buildPointCost = Math.ceil((actualChange * 2) / 3);
-            } else if (["str", "dex", "con", "int", "wis", "cha"].includes(fieldName)) {
+            } else if (["str", "dex", "con", "int", "foc", "cha"].includes(fieldName)) {
                 // 50 BP per ability score point
                 buildPointCost = actualChange * 50;
             }
@@ -131,9 +140,13 @@ export function StatAdjuster({ statName, fieldName, icon, minValue = 0, maxValue
     if (compact) {
         return (
             <>
-                <Pressable style={[isAttribute ? cssStyle.attribute : cssStyle.clickableStat, { margin: 2 }]} onPress={() => setModalVisible(true)} accessibilityLabel={`Adjust ${statName}`}>
+                <Pressable
+                    style={[isAttribute ? cssStyle.attribute : cssStyle.clickableStat, { margin: 2 }]}
+                    onPress={() => setModalVisible(true)}
+                    accessibilityLabel={`Adjust ${statName}`}
+                >
                     {icon && <FontAwesome name={icon as any} style={{ fontSize: 14, marginBottom: 2 }} />}
-                    <ThemedText style={[cssStyle.primaryText, { fontSize: 16, fontWeight: 'bold' }]}>{currentValue}</ThemedText>
+                    <ThemedText style={[cssStyle.primaryText, { fontSize: 16, fontWeight: "bold" }]}>{currentValue}</ThemedText>
                     {hasEquipmentBonus && (
                         <View style={[cssStyle.bonusIndicator, { marginLeft: 4, paddingHorizontal: 4, paddingVertical: 1 }]}>
                             <FontAwesome name="plus" size={4} color="#4CAF50" />
@@ -175,7 +188,6 @@ export function StatAdjuster({ statName, fieldName, icon, minValue = 0, maxValue
                             <ThemedText style={cssStyle.modalTitle}>Adjust {statName}</ThemedText>
                         </View>
                         <View style={cssStyle.modalContent}>
-
                             <View style={cssStyle.adjustmentRow}>
                                 {showBy5 && (
                                     <>

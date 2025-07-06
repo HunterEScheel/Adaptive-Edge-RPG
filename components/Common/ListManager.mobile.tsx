@@ -17,42 +17,36 @@ interface ListManagerProps<T> {
     showAddButton?: boolean;
 }
 
-export function ListManagerMobile<T>({ 
-    title, 
-    description, 
-    data, 
-    renderItem, 
-    keyExtractor, 
-    onAddPress, 
-    addButtonText = "Add", 
+export function ListManagerMobile<T>({
+    title,
+    description,
+    data,
+    renderItem,
+    keyExtractor,
+    onAddPress,
+    addButtonText = "Add",
     emptyStateText,
-    showAddButton = true 
+    showAddButton = true,
 }: ListManagerProps<T>) {
     const cssStyle = useResponsiveStyles();
-    
+
     // Format title to include count for mobile
-    const mobileTitle = description && description.includes('spell') 
-        ? `${title} (${data.length})`
-        : title;
-    
+    const mobileTitle = description && description.includes("spell") ? `${title} (${data.length})` : title;
+
     return (
         <View style={[cssStyle.container, { padding: 8, marginVertical: 4 }]}>
             {/* Compact header with title and add button */}
             <View style={[cssStyle.row, { justifyContent: "space-between", alignItems: "center", marginBottom: 8 }]}>
                 <ThemedText style={[cssStyle.sectionHeader, { fontSize: 16, marginBottom: 0 }]}>{mobileTitle}</ThemedText>
                 {showAddButton && (
-                    <TouchableOpacity 
-                        style={[
-                            cssStyle.condensedButton, 
-                            cssStyle.primaryColors,
-                            { paddingHorizontal: 12, paddingVertical: 6, minWidth: 60 }
-                        ]} 
+                    <TouchableOpacity
+                        style={[cssStyle.condensedButton, cssStyle.primaryColors, { paddingHorizontal: 12, paddingVertical: 6, minWidth: 60 }]}
                         onPress={onAddPress}
                     >
                         <View style={{ flexDirection: "row", alignItems: "center" }}>
                             <FontAwesome name="plus" size={12} color="white" />
                             <ThemedText style={[cssStyle.primaryText, { fontSize: 12, marginLeft: 4 }]}>
-                                {addButtonText.replace(/^(Add|Learn)\s+/, '')}
+                                {addButtonText.replace(/^(Add|Learn)\s+/, "")}
                             </ThemedText>
                         </View>
                     </TouchableOpacity>
@@ -65,11 +59,9 @@ export function ListManagerMobile<T>({
                     <ThemedText style={[cssStyle.emptyStateText, { fontSize: 14 }]}>{emptyStateText}</ThemedText>
                 </ThemedView>
             ) : (
-                <View style={[cssStyle.list, { maxHeight: 300 }]}>
+                <View>
                     {data.map((item) => (
-                        <View key={keyExtractor(item)}>
-                            {renderItem({ item })}
-                        </View>
+                        <View key={keyExtractor(item)}>{renderItem({ item })}</View>
                     ))}
                 </View>
             )}

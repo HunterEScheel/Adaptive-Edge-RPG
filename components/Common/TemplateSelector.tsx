@@ -103,7 +103,6 @@ export const TemplateSelector: React.FC<TemplateSelectorProps> = ({ onSelectTemp
             <Modal animationType="fade" transparent={true} visible={showConfirmModal} onRequestClose={() => setShowConfirmModal(false)}>
                 <View
                     style={{
-                        flex: 1,
                         justifyContent: "center",
                         alignItems: "center",
                         backgroundColor: "rgba(0,0,0,0.5)",

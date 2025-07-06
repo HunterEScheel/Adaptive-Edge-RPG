@@ -93,7 +93,7 @@ export function ConsumableList({ variant = "full" }: ConsumableListProps) {
         return (
             <View style={cssStyle.itemContainer}>
                 <View style={cssStyle.itemHeader}>
-                    <View style={{ flex: 1 }}>
+                    <View style={{}}>
                         <ThemedText style={cssStyle.subtitle} numberOfLines={1}>
                             {item.name} {item.qty && item.qty > 1 && <ThemedText style={cssStyle.hint}>x{item.qty}</ThemedText>}
                         </ThemedText>

@@ -5,6 +5,7 @@ import { FontAwesome } from "@expo/vector-icons";
 import React, { useState } from "react";
 import { Alert, FlatList, Modal, Pressable, TextInput, View } from "react-native";
 import { useDispatch, useSelector } from "react-redux";
+import { ListManagerMobile } from "../Common/ListManager.mobile";
 import { ThemedText } from "../ThemedText";
 import { ThemedView } from "../ThemedView";
 
@@ -80,7 +81,7 @@ export function TetherManagerMobile() {
         return (
             <View style={[cssStyle.compactCard]}>
                 <View style={{ flexDirection: "row", alignItems: "center", justifyContent: "space-between", marginBottom: 4 }}>
-                    <ThemedText style={[cssStyle.subtitle, { flex: 1, fontSize: 14 }]}>{item.name}</ThemedText>
+                    <ThemedText style={[cssStyle.subtitle, { fontSize: 14 }]}>{item.name}</ThemedText>
                     <View style={{ flexDirection: "row", alignItems: "center" }}>
                         <View style={[cssStyle.badge, { backgroundColor: "#2196F3", marginRight: 4, paddingHorizontal: 8, paddingVertical: 2 }]}>
                             <ThemedText style={{ color: "white", fontSize: 12, fontWeight: "bold" }}>{item.obligationLevel}</ThemedText>
@@ -109,20 +110,21 @@ export function TetherManagerMobile() {
             {/* Header with obligation tracking */}
             <View style={[cssStyle.card, { marginBottom: 16, backgroundColor: isMinimumMet ? "#27ae6020" : "#e74c3c20", padding: 16 }]}>
                 <View style={[cssStyle.headerRow, { marginBottom: 12 }]}>
-                    <View style={{ flex: 1 }}>
+                    <View style={{}}>
                         <ThemedText style={[cssStyle.title, { fontSize: 20 }]}>Tethers</ThemedText>
                         <ThemedText style={[cssStyle.label, { fontSize: 12 }]}>Connections to the world</ThemedText>
                     </View>
-                    <Pressable
-                        style={[cssStyle.primaryButton, { paddingHorizontal: 16, paddingVertical: 8 }]}
-                        onPress={() => {
-                            setEditingTether(null);
-                            handleAddEdit();
-                        }}
-                    >
-                        <ThemedText style={[cssStyle.buttonText, { fontSize: 14 }]}>Add</ThemedText>
-                    </Pressable>
                 </View>
+                <ListManagerMobile
+                    data={tethers}
+                    onAddPress={() => setModalVisible(true)}
+                    title="Tether Management"
+                    description="Connections to the world"
+                    showAddButton
+                    emptyStateText="No Tethers yet"
+                    keyExtractor={(item) => item.id}
+                    renderItem={renderTetherItem}
+                />
 
                 <View style={[cssStyle.divider, { marginVertical: 12 }]} />
 
@@ -153,22 +155,6 @@ export function TetherManagerMobile() {
                 </View>
             </View>
 
-            {/* Tethers List */}
-            <FlatList
-                data={tethers}
-                keyExtractor={(item) => item.id}
-                renderItem={renderTetherItem}
-                contentContainerStyle={{ paddingBottom: 16 }}
-                ListEmptyComponent={
-                    <View style={[cssStyle.emptyState, { padding: 32 }]}>
-                        <FontAwesome name="chain-broken" size={48} color="#ccc" style={{ marginBottom: 16 }} />
-                        <ThemedText style={[cssStyle.emptyStateText, { fontSize: 14, textAlign: "center" }]}>
-                            No tethers yet. Add connections to people, places, ideals, or organizations that motivate your character.
-                        </ThemedText>
-                    </View>
-                }
-            />
-
             {/* Add/Edit Modal */}
             <Modal animationType="slide" transparent={true} visible={modalVisible} onRequestClose={() => setModalVisible(false)}>
                 <Pressable style={cssStyle.modalOverlay} onPress={() => setModalVisible(false)}>
@@ -177,74 +163,73 @@ export function TetherManagerMobile() {
                             {editingTether ? "Edit Tether" : "Add New Tether"}
                         </ThemedText>
 
-                            <View style={[cssStyle.formGroup, { marginBottom: 16 }]}>
-                                <ThemedText style={[cssStyle.inputLabel, { fontSize: 14 }]}>Name</ThemedText>
-                                <TextInput
-                                    style={[cssStyle.input, { fontSize: 14, padding: 12 }]}
-                                    value={formData.name}
-                                    onChangeText={(text) => setFormData({ ...formData, name: text })}
-                                    placeholder="e.g. family debt"
-                                    placeholderTextColor="#999"
-                                />
-                            </View>
+                        <View style={[cssStyle.formGroup, { marginBottom: 16 }]}>
+                            <ThemedText style={[cssStyle.inputLabel, { fontSize: 14 }]}>Name</ThemedText>
+                            <TextInput
+                                style={[cssStyle.input, { fontSize: 14, padding: 12 }]}
+                                value={formData.name}
+                                onChangeText={(text) => setFormData({ ...formData, name: text })}
+                                placeholder="e.g. family debt"
+                                placeholderTextColor="#999"
+                            />
+                        </View>
 
-                            <View style={[cssStyle.formGroup, { marginBottom: 16 }]}>
-                                <ThemedText style={[cssStyle.inputLabel, { fontSize: 14 }]}>Obligation Level ({formData.obligationLevel})</ThemedText>
-                                <ThemedText style={[cssStyle.label, { marginBottom: 8, fontSize: 12 }]}>How strongly does this motivate you?</ThemedText>
-                                <View style={{ flexDirection: "row", justifyContent: "space-between", marginBottom: 8 }}>
-                                    <FlatList
-                                        data={[1, 2, 3, 4, 5]}
-                                        renderItem={(level) => (
-                                            <Pressable
-                                                key={level.item}
-                                                style={[
-                                                    {
-                                                        flex: 1,
-                                                        padding: 10,
-                                                        margin: 2,
-                                                        borderRadius: 6,
-                                                        backgroundColor: formData.obligationLevel === level.item ? "#2196F3" : "#f0f0f0",
-                                                        alignItems: "center",
-                                                    },
-                                                ]}
-                                                onPress={() => setFormData({ ...formData, obligationLevel: level.item })}
+                        <View style={[cssStyle.formGroup, { marginBottom: 16 }]}>
+                            <ThemedText style={[cssStyle.inputLabel, { fontSize: 14 }]}>Obligation Level ({formData.obligationLevel})</ThemedText>
+                            <ThemedText style={[cssStyle.label, { marginBottom: 8, fontSize: 12 }]}>How strongly does this motivate you?</ThemedText>
+                            <View style={{ flexDirection: "row", justifyContent: "space-between", marginBottom: 8 }}>
+                                <FlatList
+                                    data={[1, 2, 3, 4, 5]}
+                                    renderItem={(level) => (
+                                        <Pressable
+                                            key={level.item}
+                                            style={[
+                                                {
+                                                    padding: 10,
+                                                    margin: 2,
+                                                    borderRadius: 6,
+                                                    backgroundColor: formData.obligationLevel === level.item ? "#2196F3" : "#f0f0f0",
+                                                    alignItems: "center",
+                                                },
+                                            ]}
+                                            onPress={() => setFormData({ ...formData, obligationLevel: level.item })}
+                                        >
+                                            <ThemedText
+                                                style={{
+                                                    color: formData.obligationLevel === level.item ? "white" : "#333",
+                                                    fontWeight: "bold",
+                                                    fontSize: 14,
+                                                }}
                                             >
-                                                <ThemedText
-                                                    style={{
-                                                        color: formData.obligationLevel === level.item ? "white" : "#333",
-                                                        fontWeight: "bold",
-                                                        fontSize: 14,
-                                                    }}
-                                                >
-                                                    {level.item}
-                                                </ThemedText>
-                                            </Pressable>
-                                        )}
-                                    />
-                                </View>
-                                <View style={{ flexDirection: "row", justifyContent: "space-between" }}>
-                                    <ThemedText style={[cssStyle.smallText, { flex: 1, textAlign: "center", fontSize: 10 }]}>Minor</ThemedText>
-                                    <ThemedText style={[cssStyle.smallText, { flex: 1, textAlign: "center", fontSize: 10 }]}>Moderate</ThemedText>
-                                    <ThemedText style={[cssStyle.smallText, { flex: 1, textAlign: "center", fontSize: 10 }]}>Major</ThemedText>
-                                </View>
-                            </View>
-
-                            <View style={[cssStyle.formGroup, { marginBottom: 16 }]}>
-                                <ThemedText style={[cssStyle.inputLabel, { fontSize: 14 }]}>Description</ThemedText>
-                                <TextInput
-                                    style={[cssStyle.textArea, { height: 80, fontSize: 14, padding: 12 }]}
-                                    value={formData.description}
-                                    onChangeText={(text) => setFormData({ ...formData, description: text })}
-                                    placeholder="Describe this connection..."
-                                    placeholderTextColor="#999"
-                                    multiline
-                                    numberOfLines={3}
+                                                {level.item}
+                                            </ThemedText>
+                                        </Pressable>
+                                    )}
                                 />
                             </View>
+                            <View style={{ flexDirection: "row", justifyContent: "space-between" }}>
+                                <ThemedText style={[cssStyle.smallText, { textAlign: "center", fontSize: 10 }]}>Minor</ThemedText>
+                                <ThemedText style={[cssStyle.smallText, { textAlign: "center", fontSize: 10 }]}>Moderate</ThemedText>
+                                <ThemedText style={[cssStyle.smallText, { textAlign: "center", fontSize: 10 }]}>Major</ThemedText>
+                            </View>
+                        </View>
+
+                        <View style={[cssStyle.formGroup, { marginBottom: 16 }]}>
+                            <ThemedText style={[cssStyle.inputLabel, { fontSize: 14 }]}>Description</ThemedText>
+                            <TextInput
+                                style={[cssStyle.textArea, { height: 80, fontSize: 14, padding: 12 }]}
+                                value={formData.description}
+                                onChangeText={(text) => setFormData({ ...formData, description: text })}
+                                placeholder="Describe this connection..."
+                                placeholderTextColor="#999"
+                                multiline
+                                numberOfLines={3}
+                            />
+                        </View>
 
                         <View style={{ flexDirection: "row", gap: 12, marginTop: 16 }}>
                             <Pressable
-                                style={[cssStyle.secondaryButton, { flex: 1, paddingVertical: 10 }]}
+                                style={[cssStyle.secondaryButton, { paddingVertical: 10 }]}
                                 onPress={() => {
                                     setModalVisible(false);
                                     setEditingTether(null);
@@ -252,7 +237,7 @@ export function TetherManagerMobile() {
                             >
                                 <ThemedText style={[cssStyle.buttonText, { fontSize: 14 }]}>Cancel</ThemedText>
                             </Pressable>
-                            <Pressable style={[cssStyle.primaryButton, { flex: 1, paddingVertical: 10 }]} onPress={handleSave}>
+                            <Pressable style={[cssStyle.primaryButton, { paddingVertical: 10 }]} onPress={handleSave}>
                                 <ThemedText style={[cssStyle.buttonText, { color: "white", fontSize: 14 }]}>{editingTether ? "Update" : "Add"}</ThemedText>
                             </Pressable>
                         </View>
@@ -283,11 +268,11 @@ export function TetherManagerMobile() {
                         </View>
 
                         <View style={{ flexDirection: "row", gap: 12, marginTop: 16 }}>
-                            <Pressable style={[cssStyle.secondaryButton, { flex: 1, paddingVertical: 10 }]} onPress={() => setEditingMinimum(false)}>
+                            <Pressable style={[cssStyle.secondaryButton, { paddingVertical: 10 }]} onPress={() => setEditingMinimum(false)}>
                                 <ThemedText style={[cssStyle.buttonText, { fontSize: 14 }]}>Cancel</ThemedText>
                             </Pressable>
                             <Pressable
-                                style={[cssStyle.primaryButton, { flex: 1, paddingVertical: 10 }]}
+                                style={[cssStyle.primaryButton, { paddingVertical: 10 }]}
                                 onPress={() => {
                                     const value = parseInt(tempMinimum) || 10;
                                     dispatch(setMinimumTotalObligation(Math.max(0, value)));
