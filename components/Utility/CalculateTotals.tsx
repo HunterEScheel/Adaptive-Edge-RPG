@@ -24,5 +24,5 @@ export const calculateTotalMaxHP = (character: Character) => {
 export const calculateTotalDamageReduction = (character: Character) => {
   const armorDR = character.inventory?.armor?.statUpdates?.damageReduction || 0;
   const enchantmentBonus = character.inventory?.armor?.enchantmentBonus || 0;
-  return "1" + armorDR + "+" + enchantmentBonus;
+  return "1" + armorDR + (enchantmentBonus ? "+" + enchantmentBonus : "");
 };

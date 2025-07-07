@@ -11,100 +11,100 @@ import React, { useState } from "react";
 import { Pressable, ScrollView, StyleSheet, View } from "react-native";
 
 const styles = StyleSheet.create({
-    tabContainer: {
-        flexDirection: "row",
-        marginBottom: 16,
-        borderBottomWidth: 1,
-        borderBottomColor: "#333",
-    },
-    tab: {
-        paddingVertical: 12,
-        paddingHorizontal: 16,
-        alignItems: "center",
-        borderBottomWidth: 2,
-        borderBottomColor: "transparent",
-    },
-    activeTab: {
-        borderBottomColor: app_theme.primary_component_bg,
-    },
-    tabText: {
-        fontSize: 16,
-        color: "#999",
-    },
-    activeTabText: {
-        color: app_theme.primary_component_text,
-        fontWeight: "bold",
-    },
-    addButton: {
-        position: "absolute",
-        bottom: 20,
-        right: 20,
-        width: 56,
-        height: 56,
-        borderRadius: 28,
-        backgroundColor: app_theme.primary_component_bg,
-        justifyContent: "center",
-        alignItems: "center",
-        elevation: 8,
-        shadowColor: "#000",
-        shadowOffset: { width: 0, height: 2 },
-        shadowOpacity: 0.25,
-        shadowRadius: 3.84,
-    },
+  tabContainer: {
+    flexDirection: "row",
+    marginBottom: 16,
+    borderBottomWidth: 1,
+    borderBottomColor: "#333",
+  },
+  tab: {
+    paddingVertical: 12,
+    paddingHorizontal: 16,
+    alignItems: "center",
+    borderBottomWidth: 2,
+    borderBottomColor: "transparent",
+  },
+  activeTab: {
+    borderBottomColor: app_theme.primary_component_bg,
+  },
+  tabText: {
+    fontSize: 16,
+    color: "#999",
+  },
+  activeTabText: {
+    color: app_theme.primary_component_text,
+    fontWeight: "bold",
+  },
+  addButton: {
+    position: "absolute",
+    bottom: 20,
+    right: 20,
+    width: 56,
+    height: 56,
+    borderRadius: 28,
+    backgroundColor: app_theme.primary_component_bg,
+    justifyContent: "center",
+    alignItems: "center",
+    elevation: 8,
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.25,
+    shadowRadius: 3.84,
+  },
 });
 
 type TabType = "armor-weapons" | "equipment" | "other";
 
 export default function InventoryScreen() {
-    const cssStyle = useResponsiveStyles();
-    const { isMobile } = useResponsive();
-    const [activeTab, setActiveTab] = useState<TabType>("armor-weapons");
+  const cssStyle = useResponsiveStyles();
+  const { isMobile } = useResponsive();
+  const [activeTab, setActiveTab] = useState<TabType>("armor-weapons");
 
-    // Determine which variant to use based on device type
-    const getListVariant = (): "full" | "compact" | "mini" => {
-        if (isMobile) return "compact";
-        return "full";
-    };
+  // Determine which variant to use based on device type
+  const getListVariant = (): "full" | "compact" | "mini" => {
+    if (isMobile) return "compact";
+    return "full";
+  };
 
-    const renderArmorWeaponsTab = () => (
-        <View>
-            <ArmorList variant={getListVariant()} />
-            <View style={{ marginTop: 16 }}>
-                <WeaponList variant={getListVariant()} />
-            </View>
+  const renderArmorWeaponsTab = () => (
+    <View>
+      <ArmorList variant={getListVariant()} />
+      <View style={{ marginTop: 16 }}>
+        <WeaponList variant={getListVariant()} />
+      </View>
+    </View>
+  );
+
+  const renderEquipmentTab = () => <EquipmentList variant={getListVariant()} />;
+
+  const renderOtherTab = () => <ConsumableList variant={getListVariant()} />;
+
+  return (
+    <ScrollView style={{ backgroundColor: "#1a1a1a" }}>
+      <ThemedView style={[cssStyle.container, { backgroundColor: "#1a1a1a" }]}>
+        {/* Gold Manager Section */}
+        <GoldManager />
+
+        {/* Tab Navigation */}
+        <View style={styles.tabContainer}>
+          <Pressable style={[styles.tab, activeTab === "armor-weapons" && styles.activeTab]} onPress={() => setActiveTab("armor-weapons")}>
+            <ThemedText style={[styles.tabText, activeTab === "armor-weapons" && styles.activeTabText]}>Armor & Weapons</ThemedText>
+          </Pressable>
+          <Pressable style={[styles.tab, activeTab === "equipment" && styles.activeTab]} onPress={() => setActiveTab("equipment")}>
+            <ThemedText style={[styles.tabText, activeTab === "equipment" && styles.activeTabText]}>Equipment</ThemedText>
+          </Pressable>
+          <Pressable style={[styles.tab, activeTab === "other" && styles.activeTab]} onPress={() => setActiveTab("other")}>
+            <ThemedText style={[styles.tabText, activeTab === "other" && styles.activeTabText]}>Other</ThemedText>
+          </Pressable>
         </View>
-    );
 
-    const renderEquipmentTab = () => <EquipmentList variant={getListVariant()} />;
-
-    const renderOtherTab = () => <ConsumableList variant={getListVariant()} />;
-
-    return (
+        {/* Tab Content */}
         <ScrollView style={{ backgroundColor: "#1a1a1a" }}>
-            <ThemedView style={[cssStyle.container, { backgroundColor: "#1a1a1a" }]}>
-                {/* Gold Manager Section */}
-                <GoldManager />
-
-                {/* Tab Navigation */}
-                <View style={styles.tabContainer}>
-                    <Pressable style={[styles.tab, activeTab === "armor-weapons" && styles.activeTab]} onPress={() => setActiveTab("armor-weapons")}>
-                        <ThemedText style={[styles.tabText, activeTab === "armor-weapons" && styles.activeTabText]}>Armor & Weapons</ThemedText>
-                    </Pressable>
-                    <Pressable style={[styles.tab, activeTab === "equipment" && styles.activeTab]} onPress={() => setActiveTab("equipment")}>
-                        <ThemedText style={[styles.tabText, activeTab === "equipment" && styles.activeTabText]}>Equipment</ThemedText>
-                    </Pressable>
-                    <Pressable style={[styles.tab, activeTab === "other" && styles.activeTab]} onPress={() => setActiveTab("other")}>
-                        <ThemedText style={[styles.tabText, activeTab === "other" && styles.activeTabText]}>Other</ThemedText>
-                    </Pressable>
-                </View>
-
-                {/* Tab Content */}
-                <ScrollView style={{ backgroundColor: "#1a1a1a" }}>
-                    {activeTab === "armor-weapons" && renderArmorWeaponsTab()}
-                    {activeTab === "equipment" && renderEquipmentTab()}
-                    {activeTab === "other" && renderOtherTab()}
-                </ScrollView>
-            </ThemedView>
+          {activeTab === "armor-weapons" && renderArmorWeaponsTab()}
+          {activeTab === "equipment" && renderEquipmentTab()}
+          {activeTab === "other" && renderOtherTab()}
         </ScrollView>
-    );
+      </ThemedView>
+    </ScrollView>
+  );
 }

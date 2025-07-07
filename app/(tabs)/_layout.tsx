@@ -1,5 +1,5 @@
 import { Tabs } from "expo-router";
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { Platform, Text, View } from "react-native";
 
 import { HapticTab } from "@/components/HapticTab";
@@ -8,6 +8,7 @@ import ProtectedRoute from "@/components/ProtectedRoute";
 import { IconSymbol } from "@/components/ui/IconSymbol";
 import TabBarBackground from "@/components/ui/TabBarBackground";
 import { Colors } from "@/constants/Colors";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 // Removed error boundary to simplify the code
 
@@ -16,7 +17,26 @@ function TabBarLabel({ label, focused, color }: { label: string; focused: boolea
   return <Text style={{ color, fontSize: 12, marginTop: 2 }}>{label}</Text>;
 }
 
-export default function TabLayout() {
+function TabLayout() {
+  const [isFirstLaunch, setIsFirstLaunch] = useState(false);
+
+  // Check if this is the first launch
+  useEffect(() => {
+    const checkFirstLaunch = async () => {
+      try {
+        const hasLaunched = await AsyncStorage.getItem("app_first_launch");
+        if (hasLaunched === null) {
+          // This is the first launch
+          setIsFirstLaunch(true);
+          await AsyncStorage.setItem("app_first_launch", "false");
+        }
+      } catch (error) {
+        console.error("Error checking first launch status:", error);
+      }
+    };
+
+    checkFirstLaunch();
+  }, []);
   return (
     <ProtectedRoute>
       <View style={{ overflowY: "scroll", backgroundColor: "#1a1a1a", height: "100%" }}>
@@ -29,7 +49,6 @@ export default function TabLayout() {
             tabBarBackground: TabBarBackground,
             tabBarStyle: Platform.select({
               ios: {
-                // Use a transparent background on iOS to show the blur effect
                 position: "absolute",
               },
               default: {
@@ -85,3 +104,5 @@ export default function TabLayout() {
     </ProtectedRoute>
   );
 }
+
+export default TabLayout;

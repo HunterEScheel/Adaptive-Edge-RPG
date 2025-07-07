@@ -5,7 +5,10 @@ import { useResponsive, useResponsiveStyles } from "@/app/contexts/ResponsiveCon
 import { calculateSkillCost } from "@/constants/Skills";
 import { RootState } from "@/store/rootReducer";
 import { updateMultipleFields } from "@/store/slices/baseSlice";
+import { damageArmor, repairArmor } from "@/store/slices/inventorySlice";
 import { updateDodge, updateParry } from "@/store/slices/skillsSlice";
+import { faMinus, faPlus } from "@fortawesome/free-solid-svg-icons";
+import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
 import { useDispatch, useSelector } from "react-redux";
 import { ThemedText } from "../ThemedText";
 import { ThemedView } from "../ThemedView";
@@ -87,7 +90,17 @@ export function CombatDefense() {
           </ThemedView>
           <ThemedView style={[cssStyle.sectionItem, cssStyle.row]}>
             <ThemedText style={[cssStyle.description, { marginHorizontal: 16 }]}>Damage Reduction: {calculateTotalDamageReduction(character)}</ThemedText>
-            <ThemedText style={[cssStyle.description, { marginHorizontal: 16 }]}>threshold: {character.inventory.armor.statUpdates?.threshold}</ThemedText>
+            <ThemedText style={[cssStyle.description, { marginHorizontal: 16 }]}>Threshold: {character.inventory.armor.statUpdates?.threshold}</ThemedText>
+          </ThemedView>
+          <ThemedText style={[cssStyle.description, { justifyContent: "center", textAlign: "center" }]}>Durability</ThemedText>
+          <ThemedView style={[cssStyle.sectionItem, cssStyle.row, { justifyContent: "center" }]}>
+            <Pressable style={[cssStyle.defaultButton, cssStyle.secondaryColors]} onPress={() => dispatch(damageArmor())}>
+              <FontAwesomeIcon icon={faMinus} />
+            </Pressable>
+            <ThemedText style={[cssStyle.description, { marginHorizontal: 16 }]}>{character.inventory.armor.statUpdates?.durability}</ThemedText>
+            <Pressable style={[cssStyle.defaultButton, cssStyle.primaryColors]} onPress={() => dispatch(repairArmor())}>
+              <FontAwesomeIcon icon={faPlus} />
+            </Pressable>
           </ThemedView>
         </ThemedView>
       </ThemedView>

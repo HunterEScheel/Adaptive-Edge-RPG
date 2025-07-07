@@ -3,7 +3,6 @@ import { TemplateSelector } from "@/components/Common/TemplateSelector";
 import SettingsModal from "@/components/Settings/SettingsModal";
 import { ThemedText } from "@/components/ThemedText";
 import { ThemedView } from "@/components/ThemedView";
-import { IconSymbol } from "@/components/ui/IconSymbol";
 import { ImportFile } from "@/components/Utility/FilePick";
 import { Armor } from "@/constants/Item";
 import { setCharacterLoaded } from "@/store/characterAuthSlice";
@@ -14,9 +13,12 @@ import { InventoryState, setInventoryState } from "@/store/slices/inventorySlice
 import { MagicState, setMagicState } from "@/store/slices/magicSlice";
 import { NotesState, setNotesState } from "@/store/slices/notesSlice";
 import { SkillsState, setSkillsState } from "@/store/slices/skillsSlice";
+import { startTutorial } from "@/store/slices/tutorialSlice";
+import { faGears, faQuestionCircle } from "@fortawesome/free-solid-svg-icons";
+import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
 import { useRouter } from "expo-router";
 import React, { useState } from "react";
-import { Button, Image, Pressable, TouchableOpacity, View } from "react-native";
+import { Button, Image, Pressable, View } from "react-native";
 import { useDispatch, useSelector } from "react-redux";
 import AdaptiveEdgeImage from "./AdaptiveEdge.png";
 
@@ -135,7 +137,7 @@ export default function WelcomeScreen() {
     <ThemedView style={{ height: "100%" }}>
       <View style={{ position: "relative", height: "50%" }}>
         <Image source={AdaptiveEdgeImage} style={{ width: "100%", height: "100%", resizeMode: "contain" }} />
-        <TouchableOpacity
+        <Pressable
           style={{
             position: "absolute",
             top: 40,
@@ -146,8 +148,8 @@ export default function WelcomeScreen() {
           }}
           onPress={() => setShowSettings(true)}
         >
-          <IconSymbol name="gearshape.fill" size={24} color={!settings.isConfigured ? "#ffcc00" : "#fff"} />
-        </TouchableOpacity>
+          <FontAwesomeIcon icon={faGears} size={24} color={!settings.isConfigured ? "#ffcc00" : "#fff"} />
+        </Pressable>
       </View>
       <ThemedView style={[cssStyle.container, {}]}>
         {!showImport && !showTemplates ? (
@@ -176,6 +178,21 @@ export default function WelcomeScreen() {
         )}
       </ThemedView>
       <SettingsModal visible={showSettings} onClose={() => setShowSettings(false)} />
+
+      {/* Help button in top-right corner */}
+      <Pressable
+        style={{
+          position: "absolute",
+          top: 40,
+          right: 60,
+          padding: 10,
+          backgroundColor: "rgba(255, 255, 255, 0.1)",
+          borderRadius: 20,
+        }}
+        onPress={() => dispatch(startTutorial())}
+      >
+        <FontAwesomeIcon icon={faQuestionCircle} size={24} color={!settings.isConfigured ? "#ffcc00" : "#fff"} />
+      </Pressable>
     </ThemedView>
   );
 }

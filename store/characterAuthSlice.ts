@@ -1,4 +1,4 @@
-import { createSlice, PayloadAction } from '@reduxjs/toolkit';
+import { createSlice } from "@reduxjs/toolkit";
 
 // Define the authentication state type
 interface CharacterAuthState {
@@ -7,12 +7,12 @@ interface CharacterAuthState {
 
 // Initial state
 const initialState: CharacterAuthState = {
-  isCharacterLoaded: false
+  isCharacterLoaded: false,
 };
 
 // Create the slice
 const characterAuthSlice = createSlice({
-  name: 'characterAuth',
+  name: "characterAuth",
   initialState,
   reducers: {
     setCharacterLoaded: (state) => {
@@ -20,8 +20,8 @@ const characterAuthSlice = createSlice({
     },
     resetCharacterLoaded: (state) => {
       state.isCharacterLoaded = false;
-    }
-  }
+    },
+  },
 });
 
 // Export actions and reducer
