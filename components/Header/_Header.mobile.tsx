@@ -89,9 +89,6 @@ export function CharacterHeaderMobile() {
       <View style={[styles.row]}>
         {/* Character Name (Editable) */}
         <View style={[styles.row]}>
-          <Pressable style={[styles.defaultButton, styles.primaryColors]} onPress={() => dispatch(resetCharacterLoaded())}>
-            <FontAwesomeIcon icon={faArrowLeft} />
-          </Pressable>
           {isEditingName ? (
             <View style={[styles.inputContainer, styles.row]}>
               <TextInput style={styles.input} value={nameValue} onChangeText={setNameValue} autoFocus onBlur={handleNameEdit} />
@@ -101,6 +98,9 @@ export function CharacterHeaderMobile() {
             </View>
           ) : (
             <View style={{ display: "flex", flexDirection: "row", alignContent: "center", justifyContent: "space-between", width: "100%" }}>
+              <Pressable style={[styles.defaultButton, styles.primaryColors]} onPress={() => dispatch(resetCharacterLoaded())}>
+                <FontAwesomeIcon icon={faArrowLeft} />
+              </Pressable>
               <Pressable onPress={handleNameClick}>
                 <ThemedText type="subtitle" style={styles.input}>
                   {base.name || "Unnamed Character"}
