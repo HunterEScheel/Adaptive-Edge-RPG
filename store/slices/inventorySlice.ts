@@ -1,4 +1,4 @@
-import { Armor, Consumable, Equipment, Weapon } from "@/constants/Item";
+import { Armor, Consumable, Equipment, Shield, Weapon } from "@/constants/Item";
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 
 // Simple ID generator function
@@ -9,6 +9,7 @@ export interface InventoryState {
   equipment: Equipment[];
   consumables: Consumable[];
   armor: Armor;
+  shield: Shield | null;
   gold: number;
 }
 
@@ -16,6 +17,7 @@ const initialState: InventoryState = {
   weapons: [],
   equipment: [],
   armor: {} as Armor,
+  shield: null,
   consumables: [],
   gold: 0,
 };
@@ -134,6 +136,27 @@ const inventorySlice = createSlice({
       state.armor.statUpdates!.durability += 1;
       return state;
     },
+    // Shield actions
+    addShield: (state, action: PayloadAction<Shield>) => {
+      state.shield = action.payload;
+      return state;
+    },
+    removeShield: (state) => {
+      state.shield = null;
+      return state;
+    },
+    damageShield: (state) => {
+      if (state.shield && state.shield.durability > 0) {
+        state.shield.durability -= 1;
+      }
+      return state;
+    },
+    repairShield: (state) => {
+      if (state.shield && state.shield.durability < state.shield.maxDurability) {
+        state.shield.durability += 1;
+      }
+      return state;
+    },
   },
 });
 
@@ -156,6 +179,10 @@ export const {
   removeArmor,
   damageArmor,
   repairArmor,
+  addShield,
+  removeShield,
+  damageShield,
+  repairShield,
 } = inventorySlice.actions;
 
 export default inventorySlice.reducer;

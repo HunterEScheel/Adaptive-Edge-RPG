@@ -15,6 +15,14 @@ export interface Armor {
   statUpdates?: ArmorStatUpdates;
 }
 
+export interface Shield {
+  name: string;
+  parryBonus: number;
+  durability: number;
+  maxDurability: number;
+  value: number;
+}
+
 export interface iItem {
   id: string;
   name: string;

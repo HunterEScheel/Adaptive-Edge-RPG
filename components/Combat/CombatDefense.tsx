@@ -5,7 +5,7 @@ import { useResponsive, useResponsiveStyles } from "@/app/contexts/ResponsiveCon
 import { calculateSkillCost } from "@/constants/Skills";
 import { RootState } from "@/store/rootReducer";
 import { updateMultipleFields } from "@/store/slices/baseSlice";
-import { damageArmor, repairArmor } from "@/store/slices/inventorySlice";
+import { damageArmor, repairArmor, damageShield, repairShield } from "@/store/slices/inventorySlice";
 import { updateDodge, updateParry } from "@/store/slices/skillsSlice";
 import { faMinus, faPlus } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
@@ -19,6 +19,7 @@ export function CombatDefense() {
   const character = useSelector((state: RootState) => state.character);
   const { isMobile, responsiveStyle } = useResponsive();
   const dispatch = useDispatch();
+  const currentShield = character.inventory?.shield;
   // Handle skill level changes
   const handleSkillChange = (skillName: "dodge" | "parry", delta: number) => {
     const currentLevel = character.skills[skillName] || 0;
@@ -71,13 +72,17 @@ export function CombatDefense() {
           {/* Parry Skill */}
           <ThemedView style={[cssStyle.sectionContainer, { paddingVertical: 8 }]}>
             <ThemedView style={[cssStyle.containerColors, { padding: 8 }]}>
-              <ThemedText style={[cssStyle.skillName, { textAlign: "center" }]}>Parry</ThemedText>
+              <ThemedText style={[cssStyle.skillName, { textAlign: "center" }]}>
+                Parry {currentShield && `(+${currentShield.parryBonus} shield)`}
+              </ThemedText>
             </ThemedView>
             <ThemedView style={[cssStyle.containerColors, { flexDirection: "row", alignItems: "center" }]}>
               <Pressable style={[cssStyle.defaultButton, cssStyle.secondaryColors]} onPress={() => handleSkillChange("parry", -1)}>
                 <ThemedText style={cssStyle.secondaryText}>-</ThemedText>
               </Pressable>
-              <ThemedText style={[cssStyle.description, { marginHorizontal: 16 }]}>{character.skills.parry || 0}</ThemedText>
+              <ThemedText style={[cssStyle.description, { marginHorizontal: 16 }]}>
+                {(character.skills.parry || 0) + (currentShield?.parryBonus || 0)}
+              </ThemedText>
               <Pressable style={[cssStyle.defaultButton, cssStyle.primaryColors]} onPress={() => handleSkillChange("parry", 1)}>
                 <ThemedText style={cssStyle.primaryText}>+</ThemedText>
               </Pressable>
@@ -103,6 +108,28 @@ export function CombatDefense() {
             </Pressable>
           </ThemedView>
         </ThemedView>
+        
+        {/* Shield Section */}
+        {currentShield && (
+          <ThemedView style={[cssStyle.sectionContainer, { paddingVertical: 8 }]}>
+            <ThemedView style={[cssStyle.containerColors, { padding: 8 }]}>
+              <ThemedText style={[cssStyle.skillName, { textAlign: "center" }]}>Shield: {currentShield.name}</ThemedText>
+            </ThemedView>
+            <ThemedView style={[cssStyle.sectionItem, cssStyle.row]}>
+              <ThemedText style={[cssStyle.description, { marginHorizontal: 16 }]}>Parry Bonus: +{currentShield.parryBonus}</ThemedText>
+            </ThemedView>
+            <ThemedText style={[cssStyle.description, { justifyContent: "center", textAlign: "center" }]}>Durability</ThemedText>
+            <ThemedView style={[cssStyle.sectionItem, cssStyle.row, { justifyContent: "center" }]}>
+              <Pressable style={[cssStyle.defaultButton, cssStyle.secondaryColors]} onPress={() => dispatch(damageShield())}>
+                <FontAwesomeIcon icon={faMinus} />
+              </Pressable>
+              <ThemedText style={[cssStyle.description, { marginHorizontal: 16 }]}>{currentShield.durability} / {currentShield.maxDurability}</ThemedText>
+              <Pressable style={[cssStyle.defaultButton, cssStyle.primaryColors]} onPress={() => dispatch(repairShield())}>
+                <FontAwesomeIcon icon={faPlus} />
+              </Pressable>
+            </ThemedView>
+          </ThemedView>
+        )}
       </ThemedView>
     </View>
   );
