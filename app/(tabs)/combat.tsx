@@ -159,7 +159,7 @@ export default function CombatScreen() {
     <ScrollView style={{ backgroundColor: "#1a1a1a" }}>
       <ThemedView style={[!isMobile && { marginTop: 100 }, { backgroundColor: "#1a1a1a" }]}>
         {/* Tab Navigation */}
-        <View style={styles.tabContainer}>
+        <View style={[cssStyle.row, { borderBottomWidth: 1, borderBottomColor: "#333", backgroundColor: "#222" }]}>
           <Pressable
             style={[{ flex: 1, paddingVertical: 12, alignItems: "center" }, activeTab === "weapons" && { borderBottomWidth: 2, borderBottomColor: "#2196F3" }]}
             onPress={() => setActiveTab("weapons")}
