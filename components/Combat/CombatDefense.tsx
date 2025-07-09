@@ -72,59 +72,35 @@ export function CombatDefense() {
           {/* Parry Skill */}
           <ThemedView style={[cssStyle.sectionContainer, { paddingVertical: 8 }]}>
             <ThemedView style={[cssStyle.containerColors, { padding: 8 }]}>
-              <ThemedText style={[cssStyle.skillName, { textAlign: "center" }]}>
-                Parry {currentShield && `(+${currentShield.parryBonus} shield)`}
-              </ThemedText>
+              <ThemedText style={[cssStyle.skillName, { textAlign: "center" }]}>Parry {currentShield && `(+${currentShield.parryBonus} shield)`}</ThemedText>
             </ThemedView>
             <ThemedView style={[cssStyle.containerColors, { flexDirection: "row", alignItems: "center" }]}>
               <Pressable style={[cssStyle.defaultButton, cssStyle.secondaryColors]} onPress={() => handleSkillChange("parry", -1)}>
                 <ThemedText style={cssStyle.secondaryText}>-</ThemedText>
               </Pressable>
-              <ThemedText style={[cssStyle.description, { marginHorizontal: 16 }]}>
-                {(character.skills.parry || 0) + (currentShield?.parryBonus || 0)}
-              </ThemedText>
+              <ThemedText style={[cssStyle.description, { marginHorizontal: 16 }]}>{(character.skills.parry || 0) + (currentShield?.parryBonus || 0)}</ThemedText>
               <Pressable style={[cssStyle.defaultButton, cssStyle.primaryColors]} onPress={() => handleSkillChange("parry", 1)}>
                 <ThemedText style={cssStyle.primaryText}>+</ThemedText>
               </Pressable>
             </ThemedView>
           </ThemedView>
         </ThemedView>
-        <ThemedView style={[cssStyle.sectionContainer, { paddingVertical: 8 }]}>
-          <ThemedView style={[cssStyle.containerColors, { padding: 8 }]}>
-            <ThemedText style={[cssStyle.skillName, { textAlign: "center" }]}>Armor: {character.inventory.armor.name}</ThemedText>
-          </ThemedView>
-          <ThemedView style={[cssStyle.sectionItem, cssStyle.row]}>
-            <ThemedText style={[cssStyle.description, { marginHorizontal: 16 }]}>Damage Reduction: {calculateTotalDamageReduction(character)}</ThemedText>
-            <ThemedText style={[cssStyle.description, { marginHorizontal: 16 }]}>Threshold: {character.inventory.armor.statUpdates?.threshold}</ThemedText>
-          </ThemedView>
-          <ThemedText style={[cssStyle.description, { justifyContent: "center", textAlign: "center" }]}>Durability</ThemedText>
-          <ThemedView style={[cssStyle.sectionItem, cssStyle.row, { justifyContent: "center" }]}>
-            <Pressable style={[cssStyle.defaultButton, cssStyle.secondaryColors]} onPress={() => dispatch(damageArmor())}>
-              <FontAwesomeIcon icon={faMinus} />
-            </Pressable>
-            <ThemedText style={[cssStyle.description, { marginHorizontal: 16 }]}>{character.inventory.armor.statUpdates?.durability}</ThemedText>
-            <Pressable style={[cssStyle.defaultButton, cssStyle.primaryColors]} onPress={() => dispatch(repairArmor())}>
-              <FontAwesomeIcon icon={faPlus} />
-            </Pressable>
-          </ThemedView>
-        </ThemedView>
-        
-        {/* Shield Section */}
-        {currentShield && (
+        {character.inventory.armor.statUpdates && (
           <ThemedView style={[cssStyle.sectionContainer, { paddingVertical: 8 }]}>
             <ThemedView style={[cssStyle.containerColors, { padding: 8 }]}>
-              <ThemedText style={[cssStyle.skillName, { textAlign: "center" }]}>Shield: {currentShield.name}</ThemedText>
+              <ThemedText style={[cssStyle.skillName, { textAlign: "center" }]}>Armor: {character.inventory.armor.name}</ThemedText>
             </ThemedView>
             <ThemedView style={[cssStyle.sectionItem, cssStyle.row]}>
-              <ThemedText style={[cssStyle.description, { marginHorizontal: 16 }]}>Parry Bonus: +{currentShield.parryBonus}</ThemedText>
+              <ThemedText style={[cssStyle.description, { marginHorizontal: 16 }]}>Damage Reduction: {calculateTotalDamageReduction(character)}</ThemedText>
+              <ThemedText style={[cssStyle.description, { marginHorizontal: 16 }]}>Threshold: {character.inventory.armor.statUpdates?.threshold}</ThemedText>
             </ThemedView>
             <ThemedText style={[cssStyle.description, { justifyContent: "center", textAlign: "center" }]}>Durability</ThemedText>
             <ThemedView style={[cssStyle.sectionItem, cssStyle.row, { justifyContent: "center" }]}>
-              <Pressable style={[cssStyle.defaultButton, cssStyle.secondaryColors]} onPress={() => dispatch(damageShield())}>
+              <Pressable style={[cssStyle.defaultButton, cssStyle.secondaryColors]} onPress={() => dispatch(damageArmor())}>
                 <FontAwesomeIcon icon={faMinus} />
               </Pressable>
-              <ThemedText style={[cssStyle.description, { marginHorizontal: 16 }]}>{currentShield.durability} / {currentShield.maxDurability}</ThemedText>
-              <Pressable style={[cssStyle.defaultButton, cssStyle.primaryColors]} onPress={() => dispatch(repairShield())}>
+              <ThemedText style={[cssStyle.description, { marginHorizontal: 16 }]}>{character.inventory.armor.statUpdates?.durability}</ThemedText>
+              <Pressable style={[cssStyle.defaultButton, cssStyle.primaryColors]} onPress={() => dispatch(repairArmor())}>
                 <FontAwesomeIcon icon={faPlus} />
               </Pressable>
             </ThemedView>

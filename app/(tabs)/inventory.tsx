@@ -81,30 +81,42 @@ export default function InventoryScreen() {
 
   return (
     <ScrollView style={{ backgroundColor: "#1a1a1a" }}>
-      <ThemedView style={[cssStyle.container, { backgroundColor: "#1a1a1a" }]}>
-        {/* Gold Manager Section */}
-        <GoldManager />
+      {/* Tab Navigation */}
+      <ThemedView style={{ backgroundColor: "#1a1a1a", flex: 1 }}>
+        {/* Tab selector */}
+        <View style={[cssStyle.row, { borderBottomWidth: 1, borderBottomColor: "#333", backgroundColor: "#222" }]}>
+          <Pressable
+            style={[{ flex: 1, paddingVertical: 12, alignItems: "center" }, activeTab === "armor-weapons" && { borderBottomWidth: 2, borderBottomColor: "#2196F3" }]}
+            onPress={() => setActiveTab("armor-weapons")}
+          >
+            <ThemedText style={[cssStyle.subtitle, activeTab === "armor-weapons" && { color: "#2196F3" }, { textAlign: "center" }]}>Armor & Weapons</ThemedText>
+          </Pressable>
 
-        {/* Tab Navigation */}
-        <View style={styles.tabContainer}>
-          <Pressable style={[styles.tab, activeTab === "armor-weapons" && styles.activeTab]} onPress={() => setActiveTab("armor-weapons")}>
-            <ThemedText style={[styles.tabText, activeTab === "armor-weapons" && styles.activeTabText]}>Armor & Weapons</ThemedText>
+          <Pressable
+            style={[{ flex: 1, paddingVertical: 12, alignItems: "center" }, activeTab === "equipment" && { borderBottomWidth: 2, borderBottomColor: "#2196F3" }]}
+            onPress={() => setActiveTab("equipment")}
+          >
+            <ThemedText style={[cssStyle.subtitle, activeTab === "equipment" && { color: "#2196F3" }]}>Equipment</ThemedText>
           </Pressable>
-          <Pressable style={[styles.tab, activeTab === "equipment" && styles.activeTab]} onPress={() => setActiveTab("equipment")}>
-            <ThemedText style={[styles.tabText, activeTab === "equipment" && styles.activeTabText]}>Equipment</ThemedText>
-          </Pressable>
-          <Pressable style={[styles.tab, activeTab === "other" && styles.activeTab]} onPress={() => setActiveTab("other")}>
-            <ThemedText style={[styles.tabText, activeTab === "other" && styles.activeTabText]}>Other</ThemedText>
+
+          <Pressable
+            style={[{ flex: 1, paddingVertical: 12, alignItems: "center" }, activeTab === "other" && { borderBottomWidth: 2, borderBottomColor: "#2196F3" }]}
+            onPress={() => setActiveTab("other")}
+          >
+            <ThemedText style={[cssStyle.subtitle, activeTab === "other" && { color: "#2196F3" }]}>Other</ThemedText>
           </Pressable>
         </View>
-
-        {/* Tab Content */}
-        <ScrollView style={{ backgroundColor: "#1a1a1a" }}>
-          {activeTab === "armor-weapons" && renderArmorWeaponsTab()}
-          {activeTab === "equipment" && renderEquipmentTab()}
-          {activeTab === "other" && renderOtherTab()}
-        </ScrollView>
       </ThemedView>
+
+      {/* Tab Content */}
+      <ScrollView style={{ backgroundColor: "#1a1a1a" }}>
+        {activeTab === "armor-weapons" && renderArmorWeaponsTab()}
+        {activeTab === "equipment" && renderEquipmentTab()}
+        {activeTab === "other" && renderOtherTab()}
+
+        {/* Gold Manager Section */}
+        <GoldManager />
+      </ScrollView>
     </ScrollView>
   );
 }
