@@ -9,6 +9,7 @@ import { spendEnergy } from "@/store/slices/baseSlice";
 import { ListManagerDesktop } from "../Common/ListManager.desktop";
 import { ListManagerMobile } from "../Common/ListManager.mobile";
 import { ThemedText } from "../ThemedText";
+import { ThemedView } from "../ThemedView";
 
 export function CombatAttacks() {
     const cssStyle = useResponsiveStyles();
@@ -48,14 +49,7 @@ export function CombatAttacks() {
     };
 
     const handleRemoveAttack = (attackId: string) => {
-        Alert.alert("Remove Attack", "Are you sure you want to remove this attack?", [
-            { text: "Cancel", style: "cancel" },
-            {
-                text: "Remove",
-                style: "destructive",
-                onPress: () => dispatch(removeAttack(attackId)),
-            },
-        ]);
+        dispatch(removeAttack(attackId));
     };
 
     const handleUseAttack = (attack: Attack) => {
@@ -76,8 +70,8 @@ export function CombatAttacks() {
         ]);
     };
 
-    // Render an attack item
-    const renderAttackItem = ({ item }: { item: Attack }) => {
+    // Component for rendering individual attack items
+    const AttackItem = ({ item }: { item: Attack }) => {
         const [isExpanded, setIsExpanded] = useState(false);
         return isExpanded ? (
             <Pressable style={cssStyle.abilityItem} onPress={() => setIsExpanded(!isExpanded)}>
@@ -87,11 +81,12 @@ export function CombatAttacks() {
                         <ThemedText style={cssStyle.hint}>{item.energyCost}EP</ThemedText>
                     </Pressable>
                 </Pressable>
-
-                <ThemedText style={cssStyle.abilityDescription}>{item.description}</ThemedText>
-                <Pressable style={[cssStyle.defaultButton, cssStyle.secondaryButton]} onPress={() => handleRemoveAttack(item.id)}>
-                    <ThemedText style={cssStyle.smallButtonText}>X</ThemedText>
-                </Pressable>
+                <ThemedView style={cssStyle.row}>
+                    <ThemedText style={cssStyle.abilityDescription}>{item.description}</ThemedText>
+                    <Pressable style={[cssStyle.defaultButton, cssStyle.secondaryButton]} onPress={() => handleRemoveAttack(item.id)}>
+                        <ThemedText style={cssStyle.smallButtonText}>X</ThemedText>
+                    </Pressable>
+                </ThemedView>
             </Pressable>
         ) : (
             <Pressable style={[cssStyle.abilityItem, cssStyle.row, { justifyContent: "space-between" }]} onPress={() => setIsExpanded(!isExpanded)}>
@@ -102,6 +97,9 @@ export function CombatAttacks() {
             </Pressable>
         );
     };
+
+    // Render function for attack items
+    const renderAttackItem = ({ item }: { item: Attack }) => <AttackItem item={item} />;
 
     return (
         <>

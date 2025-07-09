@@ -1,14 +1,12 @@
 import { useResponsive, useResponsiveStyles } from "@/app/contexts/ResponsiveContext";
 import { calculateTotalDamageReduction } from "@/components/Utility/CalculateTotals";
 import { RootState } from "@/store/rootReducer";
-import { removeArmor, removeShield, damageShield, repairShield } from "@/store/slices/inventorySlice";
+import { removeArmor, removeShield } from "@/store/slices/inventorySlice";
 import React, { useState } from "react";
 import { Pressable, View } from "react-native";
 import { useDispatch, useSelector } from "react-redux";
 import { ThemedText } from "../ThemedText";
 import { ArmorModal } from "./ArmorModal";
-import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
-import { faMinus, faPlus } from "@fortawesome/free-solid-svg-icons";
 
 interface ArmorListProps {
     variant?: "full" | "compact" | "mini";
@@ -32,15 +30,6 @@ export function ArmorList({ variant = "full" }: ArmorListProps) {
     const handleRemoveShield = () => {
         dispatch(removeShield());
     };
-
-    const handleDamageShield = () => {
-        dispatch(damageShield());
-    };
-
-    const handleRepairShield = () => {
-        dispatch(repairShield());
-    };
-
     const renderArmorDisplay = () => {
         if (!currentArmor || !currentArmor.name) {
             return (
@@ -117,32 +106,20 @@ export function ArmorList({ variant = "full" }: ArmorListProps) {
                     </Pressable>
                 </View>
                 {renderArmorDisplay()}
-                
+
                 {/* Shield Section for Compact View */}
-                {currentShield && (
+                {currentShield?.parryBonus && (
                     <View style={[cssStyle.itemContainer, { marginTop: 8 }]}>
                         <View style={{ flex: 1 }}>
                             <ThemedText style={[cssStyle.subtitle, { fontSize: 14 }]}>Shield: {currentShield.name}</ThemedText>
                             <ThemedText style={[cssStyle.description, { fontSize: 12 }]}>Parry +{currentShield.parryBonus}</ThemedText>
-                            <View style={[cssStyle.row, { marginTop: 4, alignItems: "center" }]}>
-                                <ThemedText style={[cssStyle.smallText, { fontSize: 11 }]}>Durability: </ThemedText>
-                                <Pressable style={[cssStyle.condensedButton, cssStyle.secondaryColors, { padding: 2 }]} onPress={handleDamageShield}>
-                                    <FontAwesomeIcon icon={faMinus} size={10} />
-                                </Pressable>
-                                <ThemedText style={[cssStyle.description, { marginHorizontal: 6, fontSize: 11 }]}>
-                                    {currentShield.durability} / {currentShield.maxDurability}
-                                </ThemedText>
-                                <Pressable style={[cssStyle.condensedButton, cssStyle.primaryColors, { padding: 2 }]} onPress={handleRepairShield}>
-                                    <FontAwesomeIcon icon={faPlus} size={10} />
-                                </Pressable>
-                            </View>
                         </View>
                         <Pressable style={[cssStyle.condensedButton, cssStyle.secondaryButton, { padding: 4 }]} onPress={handleRemoveShield}>
                             <ThemedText style={[cssStyle.secondaryText, { fontSize: 11 }]}>Remove</ThemedText>
                         </Pressable>
                     </View>
                 )}
-                
+
                 <ArmorModal visible={armorModalOpen} onClose={() => setArmorModalOpen(false)} />
             </View>
         );
@@ -158,7 +135,7 @@ export function ArmorList({ variant = "full" }: ArmorListProps) {
                 </Pressable>
             </View>
             {renderArmorDisplay()}
-            
+
             {/* Shield Section */}
             <View style={[cssStyle.sectionContainer, { marginTop: 16 }]}>
                 <ThemedText style={[cssStyle.subtitle, { marginBottom: 8 }]}>Shield</ThemedText>
@@ -167,18 +144,6 @@ export function ArmorList({ variant = "full" }: ArmorListProps) {
                         <View style={{ flex: 1 }}>
                             <ThemedText style={cssStyle.subtitle}>{currentShield.name}</ThemedText>
                             <ThemedText style={cssStyle.description}>Parry Bonus: +{currentShield.parryBonus}</ThemedText>
-                            <View style={[cssStyle.row, { marginTop: 8, alignItems: "center" }]}>
-                                <ThemedText style={[cssStyle.smallText, cssStyle.defaultBold]}>Durability: </ThemedText>
-                                <Pressable style={[cssStyle.condensedButton, cssStyle.secondaryColors]} onPress={handleDamageShield}>
-                                    <FontAwesomeIcon icon={faMinus} size={12} />
-                                </Pressable>
-                                <ThemedText style={[cssStyle.description, { marginHorizontal: 8 }]}>
-                                    {currentShield.durability} / {currentShield.maxDurability}
-                                </ThemedText>
-                                <Pressable style={[cssStyle.condensedButton, cssStyle.primaryColors]} onPress={handleRepairShield}>
-                                    <FontAwesomeIcon icon={faPlus} size={12} />
-                                </Pressable>
-                            </View>
                         </View>
                         <Pressable style={[cssStyle.condensedButton, cssStyle.secondaryButton]} onPress={handleRemoveShield}>
                             <ThemedText style={cssStyle.secondaryText}>Remove</ThemedText>
@@ -190,7 +155,7 @@ export function ArmorList({ variant = "full" }: ArmorListProps) {
                     </View>
                 )}
             </View>
-            
+
             <ArmorModal visible={armorModalOpen} onClose={() => setArmorModalOpen(false)} />
         </View>
     );

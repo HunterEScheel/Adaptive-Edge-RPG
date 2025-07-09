@@ -375,6 +375,7 @@ export async function getPresetById(presetId: string) {
                 equipment: [],
                 consumables: [],
                 armor: {} as Armor,
+                shield: null,
                 gold: 0,
             },
 

@@ -141,7 +141,7 @@ export function StatAdjuster({
         return (
             <>
                 <Pressable
-                    style={[isAttribute ? cssStyle.attribute : cssStyle.clickableStat, { margin: 2 }]}
+                    style={[isAttribute && cssStyle.attribute, cssStyle.sectionContainer, { margin: 2 }, cssStyle.centered]}
                     onPress={() => setModalVisible(true)}
                     accessibilityLabel={`Adjust ${statName}`}
                 >
