@@ -4,9 +4,9 @@ import { updateMultipleFields } from "@/store/slices/baseSlice";
 import React, { useState } from "react";
 import { Alert, Modal, Pressable, TextInput, View } from "react-native";
 import { useDispatch, useSelector } from "react-redux";
-import { ThemedText } from "../ThemedText";
-import { ThemedView } from "../ThemedView";
-import { IconSymbol } from "../ui/IconSymbol";
+import { ThemedText } from "../../ThemedText";
+import { ThemedView } from "../../ThemedView";
+import { IconSymbol } from "../../ui/IconSymbol";
 
 export function BuildPointManagerDesktop() {
     const cssStyle = useResponsiveStyles();
@@ -60,12 +60,12 @@ export function BuildPointManagerDesktop() {
                 <Pressable
                     style={[
                         cssStyle.centered,
-                        { 
-                            backgroundColor: "rgba(0, 122, 255, 0.1)", 
-                            borderWidth: 1, 
-                            borderColor: "rgba(0, 122, 255, 0.3)", 
-                            borderRadius: 5, 
-                            padding: 5 
+                        {
+                            backgroundColor: "rgba(0, 122, 255, 0.1)",
+                            borderWidth: 1,
+                            borderColor: "rgba(0, 122, 255, 0.3)",
+                            borderRadius: 5,
+                            padding: 5,
                         },
                     ]}
                     onPress={openModal}
@@ -96,14 +96,14 @@ export function BuildPointManagerDesktop() {
 
                                     <TextInput
                                         style={[
-                                            cssStyle.largeValue, 
-                                            { 
-                                                color: "#007AFF", 
-                                                padding: 30, 
+                                            cssStyle.largeValue,
+                                            {
+                                                color: "#007AFF",
+                                                padding: 30,
                                                 textAlign: "center",
                                                 backgroundColor: "transparent",
-                                                borderWidth: 0
-                                            }
+                                                borderWidth: 0,
+                                            },
                                         ]}
                                         value={pointsInput}
                                         onChangeText={setPointsInput}

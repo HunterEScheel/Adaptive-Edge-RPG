@@ -4,8 +4,8 @@ import { updateMultipleFields } from "@/store/slices/baseSlice";
 import React, { useState } from "react";
 import { Alert, Modal, Pressable, TextInput, View } from "react-native";
 import { useDispatch, useSelector } from "react-redux";
-import { ThemedText } from "../ThemedText";
-import { ThemedView } from "../ThemedView";
+import { ThemedText } from "../../ThemedText";
+import { ThemedView } from "../../ThemedView";
 
 export function BuildPointManagerMobile() {
     const cssStyle = useResponsiveStyles();

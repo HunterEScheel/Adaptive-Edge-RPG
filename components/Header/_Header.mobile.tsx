@@ -12,16 +12,18 @@ import { StatUpgrader } from "../MainPage/StatUpgrader";
 import { ThemedText } from "../ThemedText";
 import { ThemedView } from "../ThemedView";
 import { calculateTotalDamageReduction, calculateTotalEvasion, calculateTotalMaxHP } from "../Utility/CalculateTotals";
-import { BuildPointManager } from "./BuildPointManager";
 import { EvasionBreakdownModal } from "./EvasionBreakdownModal";
 import { LongRestButton } from "./LongRestButton";
 import { SaveButton } from "./SaveButton";
+import { BuildPointManager } from "./StatAdjustments/BuildPointManager";
+import { HitpointAdjuster } from "./StatAdjustments/HitpointAdjuster";
 
 export function CharacterHeaderMobile() {
     const styles = useResponsiveStyles();
     const character = useSelector((state: RootState) => state.character);
     const base = useSelector((state: RootState) => state.character.base);
     const dispatch = useDispatch();
+    const [hpMaxModalVisible, setHpMaxModalVisible] = useState(false);
     const [hpModalVisible, setHpModalVisible] = useState(false);
     const [energyModalVisible, setEnergyModalVisible] = useState(false);
     const [evasionBreakdownModalVisible, setEvasionBreakdownModalVisible] = useState(false);
@@ -35,25 +37,6 @@ export function CharacterHeaderMobile() {
     }, [base?.name]);
 
     const totalMaxHP = calculateTotalMaxHP(character);
-
-    const handleHeal = (statType: "hp" | "energy") => {
-        const currentValue = statType === "hp" ? base.hitPoints : base.energy;
-        const maxValue = statType === "hp" ? totalMaxHP : base.maxEnergy;
-        const fieldName = statType === "hp" ? "hitPoints" : "energy";
-
-        if (currentValue < maxValue) {
-            dispatch(updateMultipleFields([{ field: fieldName, value: Math.min(currentValue + 1, maxValue) }]));
-        }
-    };
-
-    const handleDamage = (statType: "hp" | "energy") => {
-        const currentValue = statType === "hp" ? base.hitPoints : base.energy;
-        const fieldName = statType === "hp" ? "hitPoints" : "energy";
-
-        if (currentValue > 0) {
-            dispatch(updateMultipleFields([{ field: fieldName, value: currentValue - 1 }]));
-        }
-    };
 
     const handleNameEdit = () => {
         dispatch(updateMultipleFields([{ field: "name", value: nameValue }]));
@@ -128,7 +111,15 @@ export function CharacterHeaderMobile() {
                             <ThemedText style={[styles.description, { fontSize: 12 }]}>
                                 {base.hitPoints}/{totalMaxHP}
                             </ThemedText>
-                            <StatUpgrader statType="hp" visible={hpModalVisible} onClose={() => setHpModalVisible(false)} />
+                            <HitpointAdjuster
+                                setMax={() => {
+                                    setHpMaxModalVisible(true);
+                                    setHpModalVisible(false);
+                                }}
+                                open={hpModalVisible}
+                                onClose={() => setHpModalVisible(false)}
+                            />
+                            <StatUpgrader statType="hp" visible={hpMaxModalVisible} onClose={() => setHpMaxModalVisible(false)} />
                         </Pressable>
                         <Pressable style={[styles.sectionContainer, styles.centered, { width: 60, margin: 4 }]} onPress={() => setEnergyModalVisible(true)}>
                             <ThemedText style={[styles.tabText, styles.defaultBold]}>EP</ThemedText>
