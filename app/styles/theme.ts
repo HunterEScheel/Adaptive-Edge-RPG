@@ -1,8 +1,8 @@
 import { TextStyle, ViewStyle } from "react-native";
 
 export const app_theme = {
-    primary_component_bg: "#3a7a3a",
-    secondary_component_bg: "#7a3a3a",
+    primary_component_bg: "#138",
+    secondary_component_bg: "#811",
     primary_component_text: "#e0e0ff",
     secondary_component_text: "#e0e0ff",
 };

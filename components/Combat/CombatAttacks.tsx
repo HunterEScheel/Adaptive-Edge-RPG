@@ -57,17 +57,7 @@ export function CombatAttacks() {
             Alert.alert("Insufficient Energy", `You need ${attack.energyCost} energy to use this attack.`);
             return;
         }
-
-        Alert.alert("Use Attack", `Use ${attack.name}?`, [
-            { text: "Cancel", style: "cancel" },
-            {
-                text: "Use",
-                onPress: () => {
-                    dispatch(spendEnergy(attack.energyCost));
-                    Alert.alert("Attack Used", `${attack.name} has been used!`);
-                },
-            },
-        ]);
+        dispatch(spendEnergy(attack.energyCost));
     };
 
     // Component for rendering individual attack items

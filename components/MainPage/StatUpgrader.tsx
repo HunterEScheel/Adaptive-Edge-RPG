@@ -18,6 +18,8 @@ type StatUpgraderProps = {
     onClose?: () => void;
 };
 
+const EnergyColor = "#CC7700";
+const HpColor = "#CC0088";
 export function StatUpgrader({ statType, compact = false, visible, onClose }: StatUpgraderProps) {
     const cssStyle = useResponsiveStyles();
     const dispatch = useDispatch();
@@ -37,7 +39,7 @@ export function StatUpgrader({ statType, compact = false, visible, onClose }: St
 
     const fieldName = statType === "hp" ? "maxHitPoints" : "maxEnergy";
     const statName = statType === "hp" ? "HP" : "Energy";
-    const statColor = statType === "hp" ? "#e74c3c" : "#3498db";
+    const statColor = statType === "hp" ? HpColor : EnergyColor;
     const icon = statType === "hp" ? "heart.fill" : "bolt.fill";
 
     const handleAdjust = (amount: number) => {

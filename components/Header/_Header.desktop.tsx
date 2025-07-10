@@ -101,7 +101,7 @@ export function CharacterHeaderDesktop() {
                         </Pressable>
                     </View>
                 ) : (
-                    <View style={{ display: "flex", flexDirection: "row", alignContent: "center", width: "100%" }}>
+                    <View style={{ display: "flex", flexDirection: "row", width: "100%", justifyContent: "space-between" }}>
                         <Pressable onPress={handleNameClick}>
                             <ThemedText type="subtitle" style={styles.input}>
                                 {base.name || "Unnamed Character"}

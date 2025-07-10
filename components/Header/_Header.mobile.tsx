@@ -16,6 +16,7 @@ import { EvasionBreakdownModal } from "./EvasionBreakdownModal";
 import { LongRestButton } from "./LongRestButton";
 import { SaveButton } from "./SaveButton";
 import { BuildPointManager } from "./StatAdjustments/BuildPointManager";
+import { EnergyAdjuster } from "./StatAdjustments/EnergyAdjuster";
 import { HitpointAdjuster } from "./StatAdjustments/HitpointAdjuster";
 
 export function CharacterHeaderMobile() {
@@ -25,6 +26,7 @@ export function CharacterHeaderMobile() {
     const dispatch = useDispatch();
     const [hpMaxModalVisible, setHpMaxModalVisible] = useState(false);
     const [hpModalVisible, setHpModalVisible] = useState(false);
+    const [energyMaxModalVisible, setEnergyMaxModalVisible] = useState(false);
     const [energyModalVisible, setEnergyModalVisible] = useState(false);
     const [evasionBreakdownModalVisible, setEvasionBreakdownModalVisible] = useState(false);
     const [isEditingName, setIsEditingName] = useState(false);
@@ -57,33 +59,35 @@ export function CharacterHeaderMobile() {
 
     return (
         <ThemedView style={{ marginTop: 30 }}>
+            {/* Character Name (Editable) */}
             <View style={[styles.row]}>
-                {/* Character Name (Editable) */}
-                <View style={[styles.row]}>
-                    {isEditingName ? (
-                        <View style={[styles.inputContainer, styles.row]}>
-                            <TextInput style={styles.input} value={nameValue} onChangeText={setNameValue} autoFocus onBlur={handleNameEdit} />
-                            <Pressable onPress={handleNameEdit} style={styles.primaryButton}>
-                                <ThemedText style={styles.primaryText}>Save</ThemedText>
-                            </Pressable>
-                        </View>
-                    ) : (
-                        <View style={{ display: "flex", flexDirection: "row", alignContent: "center", justifyContent: "space-between", width: "100%" }}>
+                {isEditingName ? (
+                    <View style={[styles.inputContainer, styles.row]}>
+                        <TextInput style={styles.input} value={nameValue} onChangeText={setNameValue} autoFocus onBlur={handleNameEdit} />
+                        <Pressable onPress={handleNameEdit} style={styles.primaryButton}>
+                            <ThemedText style={styles.primaryText}>Save</ThemedText>
+                        </Pressable>
+                    </View>
+                ) : (
+                    <View style={{ display: "flex", flexDirection: "row", justifyContent: "space-between", width: "100%" }}>
+                        <View style={styles.row}>
                             <Pressable style={[styles.defaultButton, styles.primaryColors]} onPress={() => dispatch(resetCharacterLoaded())}>
                                 <FontAwesomeIcon icon={faArrowLeft} />
                             </Pressable>
                             <Pressable onPress={handleNameClick}>
-                                <ThemedText type="subtitle" style={styles.input}>
+                                <ThemedText type="subtitle" style={[styles.input, { paddingVertical: 10 }]}>
                                     {base.name || "Unnamed Character"}
                                     <ThemedText style={styles.primaryText}> ✎</ThemedText>
                                 </ThemedText>
                             </Pressable>
+                        </View>
+                        <View style={styles.row}>
                             <LongRestButton />
                             <SaveButton />
                             <BuildPointManager />
                         </View>
-                    )}
-                </View>
+                    </View>
+                )}
             </View>
             <ThemedView style={styles.sectionHeaderContainer}>
                 {/* Attributes Section */}
@@ -126,7 +130,15 @@ export function CharacterHeaderMobile() {
                             <ThemedText style={[styles.description, { fontSize: 12 }]}>
                                 {base.energy}/{base.maxEnergy}
                             </ThemedText>
-                            <StatUpgrader statType="energy" visible={energyModalVisible} onClose={() => setEnergyModalVisible(false)} />
+                            <EnergyAdjuster
+                                setMax={() => {
+                                    setEnergyMaxModalVisible(true);
+                                    setEnergyModalVisible(false);
+                                }}
+                                open={energyModalVisible}
+                                onClose={() => setEnergyModalVisible(false)}
+                            />
+                            <StatUpgrader statType="energy" visible={energyMaxModalVisible} onClose={() => setEnergyMaxModalVisible(false)} />
                         </Pressable>
                         {/* Energy with current/max display */}
                         <View style={[styles.sectionContainer, { width: 80, margin: 2 }]}>

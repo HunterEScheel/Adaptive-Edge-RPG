@@ -46,7 +46,7 @@ export const cssStyle = StyleSheet.create<ConsistentStyles>({
 
     // Text for buttons
     buttonText: {
-        color: "#AAA",
+        color: "#DDD",
         fontSize: 16,
         fontWeight: "600",
     },

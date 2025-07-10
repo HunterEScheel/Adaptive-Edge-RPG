@@ -42,7 +42,6 @@ export function CombatDefense() {
 
     return (
         <View>
-            <ThemedText style={[cssStyle.subtitle, { textAlign: "center" }]}>Defensive Skills</ThemedText>
             <ThemedView
                 style={[
                     cssStyle.container,
@@ -55,15 +54,21 @@ export function CombatDefense() {
                 {/* Dodge Skill */}
                 <ThemedView style={[cssStyle.row, { justifyContent: "space-around" }]}>
                     <ThemedView style={[cssStyle.sectionContainer]}>
-                        <ThemedView style={[cssStyle.containerColors, { padding: 8 }]}>
+                        <ThemedView style={[cssStyle.containerColors, { padding: 8, backgroundColor: "transparent" }]}>
                             <ThemedText style={[cssStyle.skillName, { textAlign: "center" }]}>Dodge</ThemedText>
                         </ThemedView>
-                        <ThemedView style={[cssStyle.containerColors, { flexDirection: "row", alignItems: "center" }]}>
-                            <Pressable style={[cssStyle.defaultButton, cssStyle.secondaryColors]} onPress={() => handleSkillChange("dodge", -1)}>
+                        <ThemedView style={[cssStyle.containerColors, { flexDirection: "row", alignItems: "center", backgroundColor: "transparent" }]}>
+                            <Pressable
+                                style={[cssStyle.defaultButton, cssStyle.secondaryColors, { paddingVertical: 5 }]}
+                                onPress={() => handleSkillChange("dodge", -1)}
+                            >
                                 <ThemedText style={cssStyle.secondaryText}>-</ThemedText>
                             </Pressable>
                             <ThemedText style={[cssStyle.description, { marginHorizontal: 16 }]}>{character.skills.dodge || 0}</ThemedText>
-                            <Pressable style={[cssStyle.defaultButton, cssStyle.primaryColors]} onPress={() => handleSkillChange("dodge", 1)}>
+                            <Pressable
+                                style={[cssStyle.defaultButton, cssStyle.primaryColors, { paddingVertical: 5 }]}
+                                onPress={() => handleSkillChange("dodge", 1)}
+                            >
                                 <ThemedText style={cssStyle.primaryText}>+</ThemedText>
                             </Pressable>
                         </ThemedView>
@@ -71,46 +76,58 @@ export function CombatDefense() {
 
                     {/* Parry Skill */}
                     <ThemedView style={[cssStyle.sectionContainer, { paddingVertical: 8 }]}>
-                        <ThemedView style={[cssStyle.containerColors, { padding: 8 }]}>
+                        <ThemedView style={[{ padding: 8, backgroundColor: "transparent" }]}>
                             <ThemedText style={[cssStyle.skillName, { textAlign: "center" }]}>
                                 Parry {currentShield && `(+${currentShield.parryBonus} shield)`}
                             </ThemedText>
                         </ThemedView>
-                        <ThemedView style={[cssStyle.containerColors, { flexDirection: "row", alignItems: "center" }]}>
-                            <Pressable style={[cssStyle.defaultButton, cssStyle.secondaryColors]} onPress={() => handleSkillChange("parry", -1)}>
+                        <ThemedView
+                            style={[
+                                cssStyle.containerColors,
+                                { flexDirection: "row", justifyContent: "center", alignItems: "center", backgroundColor: "transparent" },
+                            ]}
+                        >
+                            <Pressable
+                                style={[cssStyle.defaultButton, cssStyle.secondaryColors, { paddingVertical: 5 }]}
+                                onPress={() => handleSkillChange("parry", -1)}
+                            >
                                 <ThemedText style={cssStyle.secondaryText}>-</ThemedText>
                             </Pressable>
                             <ThemedText style={[cssStyle.description, { marginHorizontal: 16 }]}>
                                 {(character.skills.parry || 0) + (currentShield?.parryBonus || 0)}
                             </ThemedText>
-                            <Pressable style={[cssStyle.defaultButton, cssStyle.primaryColors]} onPress={() => handleSkillChange("parry", 1)}>
+                            <Pressable
+                                style={[cssStyle.defaultButton, cssStyle.primaryColors, { paddingVertical: 5 }]}
+                                onPress={() => handleSkillChange("parry", 1)}
+                            >
                                 <ThemedText style={cssStyle.primaryText}>+</ThemedText>
                             </Pressable>
                         </ThemedView>
                     </ThemedView>
                 </ThemedView>
                 {character.inventory.armor.statUpdates && (
-                    <ThemedView style={[cssStyle.sectionContainer, { paddingVertical: 8 }]}>
-                        <ThemedView style={[cssStyle.containerColors, { padding: 8 }]}>
+                    <ThemedView style={[cssStyle.sectionContainer, { paddingVertical: 8, justifyContent: "center", alignItems: "center" }]}>
+                        <ThemedView style={[{ padding: 4, borderRadius: 4 }]}>
                             <ThemedText style={[cssStyle.skillName, { textAlign: "center" }]}>Armor: {character.inventory.armor.name}</ThemedText>
                         </ThemedView>
-                        <ThemedView style={[cssStyle.sectionItem, cssStyle.row]}>
-                            <ThemedText style={[cssStyle.description, { marginHorizontal: 16 }]}>
-                                Damage Reduction: {calculateTotalDamageReduction(character)}
-                            </ThemedText>
-                            <ThemedText style={[cssStyle.description, { marginHorizontal: 16 }]}>
-                                Threshold: {character.inventory.armor.statUpdates?.threshold}
-                            </ThemedText>
-                        </ThemedView>
-                        <ThemedText style={[cssStyle.description, { justifyContent: "center", textAlign: "center" }]}>Durability</ThemedText>
-                        <ThemedView style={[cssStyle.sectionItem, cssStyle.row, { justifyContent: "center" }]}>
-                            <Pressable style={[cssStyle.defaultButton, cssStyle.secondaryColors]} onPress={() => dispatch(damageArmor())}>
+                        <ThemedText style={[cssStyle.description, { marginHorizontal: 16 }]}>
+                            Damage Reduction: {calculateTotalDamageReduction(character)}
+                        </ThemedText>
+                        <ThemedText style={[cssStyle.description, { marginHorizontal: 16, marginBottom: 8 }]}>
+                            Threshold: {character.inventory.armor.statUpdates?.threshold}
+                        </ThemedText>
+                        <ThemedText style={[cssStyle.skillName, { justifyContent: "center", textAlign: "center" }]}>Durability</ThemedText>
+                        <ThemedView style={[cssStyle.row, { justifyContent: "center", backgroundColor: "transparent" }]}>
+                            <Pressable
+                                style={[cssStyle.defaultButton, cssStyle.secondaryColors, { paddingVertical: 5 }]}
+                                onPress={() => dispatch(damageArmor())}
+                            >
                                 <FontAwesomeIcon icon={faMinus} />
                             </Pressable>
                             <ThemedText style={[cssStyle.description, { marginHorizontal: 16 }]}>
                                 {character.inventory.armor.statUpdates?.durability}
                             </ThemedText>
-                            <Pressable style={[cssStyle.defaultButton, cssStyle.primaryColors]} onPress={() => dispatch(repairArmor())}>
+                            <Pressable style={[cssStyle.defaultButton, cssStyle.primaryColors, { paddingVertical: 5 }]} onPress={() => dispatch(repairArmor())}>
                                 <FontAwesomeIcon icon={faPlus} />
                             </Pressable>
                         </ThemedView>

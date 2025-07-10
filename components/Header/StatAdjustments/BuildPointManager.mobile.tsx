@@ -45,7 +45,7 @@ export function BuildPointManagerMobile() {
     };
 
     return (
-        <ThemedView style={[cssStyle.container, { marginVertical: 0 }]}>
+        <ThemedView style={[cssStyle.container, { marginVertical: 0, height: 40 }]}>
             <>
                 <Pressable
                     style={[
