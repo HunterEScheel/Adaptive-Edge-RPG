@@ -3,7 +3,7 @@ import { RootState } from "@/store/rootReducer";
 import { updateField, updateMultipleFields } from "@/store/slices/baseSlice";
 import FontAwesome from "@expo/vector-icons/FontAwesome";
 import React, { useState } from "react";
-import { Modal, Pressable, TextInput, View } from "react-native";
+import { Modal, Pressable, View } from "react-native";
 import { useDispatch, useSelector } from "react-redux";
 import { ThemedText } from "../ThemedText";
 
@@ -211,18 +211,7 @@ export function StatAdjuster({
                                 )}
                             </View>
 
-                            <View style={cssStyle.formRow}>
-                                <ThemedText style={cssStyle.valueText}>Current: {currentValue}</ThemedText>
-                                <TextInput
-                                    style={cssStyle.input}
-                                    onChangeText={setNewValue}
-                                    value={newValue}
-                                    placeholder="New value"
-                                    keyboardType="numeric"
-                                    placeholderTextColor="#999"
-                                    accessibilityLabel="Enter new value"
-                                />
-                            </View>
+                            <ThemedText style={cssStyle.title}>Current: {currentValue}</ThemedText>
                         </View>
 
                         <View style={cssStyle.modalButtons}>
