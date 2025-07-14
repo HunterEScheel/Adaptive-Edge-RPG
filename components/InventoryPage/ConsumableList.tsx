@@ -67,18 +67,16 @@ export function ConsumableList({ variant = "full" }: ConsumableListProps) {
         return "BP";
       case ePlayerStat.evasion:
         return "Evasion";
-      case ePlayerStat.str:
-        return "STR";
-      case ePlayerStat.dex:
-        return "DEX";
-      case ePlayerStat.con:
-        return "CON";
-      case ePlayerStat.foc:
-        return "FOC";
-      case ePlayerStat.int:
-        return "INT";
-      case ePlayerStat.cha:
-        return "CHA";
+      case ePlayerStat.pow:
+        return "POW";
+      case ePlayerStat.agi:
+        return "AGI";
+      case ePlayerStat.lor:
+        return "LOR";
+      case ePlayerStat.ins:
+        return "INS";
+      case ePlayerStat.inf:
+        return "INF";
       case ePlayerStat.movement:
         return "Speed";
       default:

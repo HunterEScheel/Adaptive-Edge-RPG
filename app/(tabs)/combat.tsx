@@ -55,14 +55,14 @@ export default function CombatScreen() {
 
   // Calculate attack bonus based on weapon's attribute (str or dex) and weapon skill
   const getAttackBonus = (weapon: Weapon) => {
-    const strBonus = character.base.str || 0;
-    const dexBonus = character.base.dex || 0;
+    const strBonus = character.base.pow || 0;
+    const dexBonus = character.base.agi || 0;
 
     // Use the specified attribute, or fallback to the higher of STR/DEX if not specified
     let attributeBonus = 0;
-    if (weapon.attribute === "str") {
+    if (weapon.attribute === "pow") {
       attributeBonus = Math.max(strBonus, 0); // minimum 0
-    } else if (weapon.attribute === "dex") {
+    } else if (weapon.attribute === "agi") {
       attributeBonus = Math.max(dexBonus, 0); // minimum 0
     } else {
       attributeBonus = Math.max(strBonus, dexBonus, 0); // fallback to higher stat, minimum 0
@@ -83,7 +83,7 @@ export default function CombatScreen() {
 
   // Calculate damage bonus based on STR, weapon skill, and weapon's damage modifier
   const getDamageBonus = (weapon: Weapon) => {
-    const strBonus = character.base.str || 0;
+    const strBonus = character.base.pow || 0;
 
     // Use damageBonus property instead of attackBonus for damage calculation
     const weaponDamageBonus = (weapon as any).damageBonus || 0;

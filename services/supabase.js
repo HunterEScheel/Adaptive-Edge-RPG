@@ -80,17 +80,33 @@ export const initializeSupabase = (supabaseUrl, supabaseServiceKey) => {
 export const getSupabase = () => {
   if (!supabaseClient) {
     console.warn('Supabase not initialized. Please configure API settings.');
+    
+    // Auto-initialize with environment variables if available
+    const url = process.env.EXPO_PUBLIC_SUPABASE_URL || process.env.REACT_APP_SUPABASE_URL;
+    const key = process.env.EXPO_PUBLIC_SUPABASE_ANON_KEY || process.env.REACT_APP_SUPABASE_ANON_KEY;
+    
+    if (url && key) {
+      console.log('Auto-initializing Supabase client with environment variables');
+      return initializeSupabase(url, key);
+    }
   }
   return supabaseClient;
 };
 
-// For backward compatibility, export supabase as a getter
-export const supabase = new Proxy({}, {
-  get: (target, prop) => {
+// Direct export of supabase client for easier access
+export const supabase = {
+  from: function(table) {
     const client = getSupabase();
-    if (client && prop in client) {
-      return client[prop];
+    return client ? client.from(table) : { select: () => ({ data: null, error: new Error('Supabase not initialized') }) };
+  },
+  auth: {
+    getSession: function() {
+      const client = getSupabase();
+      return client ? client.auth.getSession() : { data: null, error: new Error('Supabase not initialized') };
+    },
+    signInAnonymously: function() {
+      const client = getSupabase();
+      return client ? client.auth.signInAnonymously() : { data: null, error: new Error('Supabase not initialized') };
     }
-    return undefined;
   }
-});
+};

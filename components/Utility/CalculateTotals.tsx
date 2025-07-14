@@ -2,7 +2,7 @@ import { ePlayerStat } from "@/constants/Stats";
 import { Character } from "@/store/slices/characterSlice";
 
 export const calculateTotalEvasion = (character: Character) => {
-  const base_evasion = 10 + character.base.dex;
+  const base_evasion = 10 + character.base.agi;
   const evasion_equipment =
     character.inventory?.equipment
       ?.filter((x) => x.statEffected === ePlayerStat.evasion && (!x.requiresAttunement || x.attunement) && x.equipped)
@@ -13,12 +13,6 @@ export const calculateTotalEvasion = (character: Character) => {
   const reductionFromArmor = character.inventory?.armor?.statUpdates?.evasionReduction || 0;
 
   return base_evasion + evasion_equipment + evasion - reductionFromArmor;
-};
-
-export const calculateTotalMaxHP = (character: Character) => {
-  const base_hp = character.base.maxHitPoints;
-  const con_hp = character.base.con * 5;
-  return base_hp + con_hp;
 };
 
 export const calculateTotalDamageReduction = (character: Character) => {

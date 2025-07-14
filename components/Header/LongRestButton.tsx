@@ -7,7 +7,6 @@ import { Alert, Modal, Pressable, TextInput, View } from "react-native";
 import { useDispatch, useSelector } from "react-redux";
 import { ThemedText } from "../ThemedText";
 import { ThemedView } from "../ThemedView";
-import { calculateTotalMaxHP } from "../Utility/CalculateTotals";
 
 export function LongRestButton() {
   const cssStyle = useResponsiveStyles();
@@ -38,7 +37,7 @@ export function LongRestButton() {
     const energyRecovered = hours * ENERGY_PER_HOUR;
 
     // Apply recovery (don't exceed character maximums)
-    const totalMaxHP = calculateTotalMaxHP(character);
+    const totalMaxHP = character.base.maxHitPoints;
     const newHP = Math.min(totalMaxHP, base.hitPoints + hpRecovered);
     const newEnergy = Math.min(base.maxEnergy, base.energy + energyRecovered);
 
