@@ -71,7 +71,7 @@ const weaponOptions: WeaponSkill[] = [
         id: 9,
         level: 1,
         weaponHeft: "Unarmed",
-        weaponType: "Swing",
+        weaponType: "Stab",
     },
     {
         id: 13,
