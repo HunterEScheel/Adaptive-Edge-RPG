@@ -145,12 +145,12 @@ export function SpellManager() {
         const isExpanded = expandedSpells.has(spell.id);
         const cardStyle = isDesktop ? cssStyle.card : cssStyle.compactCard;
         const chevronSize = isDesktop ? 12 : 10;
-        const textSize = isDesktop ? undefined : 12;
+        const textSize = isDesktop ? undefined : 10;
         const labelSize = isDesktop ? undefined : 10;
 
         return (
-            <View style={[cardStyle, { overflow: "visible" }]}>
-                <View style={cssStyle.headerRow}>
+            <View style={[{ overflow: "visible" }]}>
+                <View style={[cssStyle.statRow, { paddingVertical: 2 }]}>
                     <Pressable onPress={() => toggleSpellExpanded(spell.id)} style={{ flexDirection: "row", alignItems: "center", paddingRight: 8 }}>
                         <FontAwesome name={isExpanded ? "chevron-down" : "chevron-right"} size={chevronSize} color="#666" style={{ marginRight: 4 }} />
                         <View style={{}}>
@@ -166,7 +166,7 @@ export function SpellManager() {
                     <View style={{ flexDirection: "row", alignItems: "center", flexShrink: 0 }}>
                         {(base.energy || 0) >= spell.energyCost ? (
                             <Pressable
-                                style={[cssStyle.primaryButton, { marginRight: 4, paddingHorizontal: isDesktop ? 12 : 8, paddingVertical: isDesktop ? 10 : 6 }]}
+                                style={[cssStyle.primaryButton, { marginRight: 4, paddingHorizontal: isDesktop ? 12 : 8, paddingVertical: isDesktop ? 10 : 3 }]}
                                 onPress={() => handleUseSpell(spell)}
                                 disabled={(base.energy || 0) < spell.energyCost}
                             >
@@ -239,7 +239,7 @@ export function SpellManager() {
             <ListManagerDesktop<Spell>
                 title="Spells"
                 description={`${magic.spells?.length || 0} spell${(magic.spells?.length || 0) !== 1 ? "s" : ""} learned`}
-                data={magic.spells || []}
+                data={[...magic.spells].sort((a, b) => (a.energyCost === b.energyCost ? a.name.localeCompare(b.name) : a.energyCost - b.energyCost)) || []}
                 renderItem={renderSpellItem}
                 keyExtractor={(item) => item.id}
                 onAddPress={() => setModalVisible(true)}
