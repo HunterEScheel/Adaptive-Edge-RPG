@@ -6,6 +6,8 @@ import { useResponsive, useResponsiveStyles } from "@/app/contexts/ResponsiveCon
 import { RootState } from "@/store/rootReducer";
 import { Attack, addAttack, removeAttack } from "@/store/slices/abilitiesSlice";
 import { spendEnergy } from "@/store/slices/baseSlice";
+import { faTrashAlt } from "@fortawesome/free-solid-svg-icons";
+import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
 import { ListManagerDesktop } from "../Common/ListManager.desktop";
 import { ListManagerMobile } from "../Common/ListManager.mobile";
 import { ThemedText } from "../ThemedText";
@@ -71,10 +73,10 @@ export function CombatAttacks() {
                         <ThemedText style={cssStyle.hint}>{item.energyCost}EP</ThemedText>
                     </Pressable>
                 </Pressable>
-                <ThemedView style={cssStyle.row}>
-                    <ThemedText style={cssStyle.abilityDescription}>{item.description}</ThemedText>
-                    <Pressable style={[cssStyle.defaultButton, cssStyle.secondaryButton]} onPress={() => handleRemoveAttack(item.id)}>
-                        <ThemedText style={cssStyle.smallButtonText}>X</ThemedText>
+                <ThemedView style={[cssStyle.row, { backgroundColor: "transparent" }]}>
+                    <ThemedText style={[cssStyle.hint, { width: "90%" }]}>{item.description}</ThemedText>
+                    <Pressable style={[cssStyle.defaultButton, cssStyle.secondaryColors, { padding: 6 }]} onPress={() => handleRemoveAttack(item.id)}>
+                        <FontAwesomeIcon icon={faTrashAlt} color="white" />
                     </Pressable>
                 </ThemedView>
             </Pressable>
