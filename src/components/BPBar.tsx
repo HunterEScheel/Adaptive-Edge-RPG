@@ -37,6 +37,7 @@ export function BPBar({ breakdown }: Props) {
       <div className="flex flex-wrap gap-x-4 gap-y-1 text-xs text-zinc-500 font-mono">
         <span>HP {breakdown.hp}</span>
         <span>EP {breakdown.ep}</span>
+        <span>Spd {breakdown.speed}</span>
         <span>Attr {breakdown.attributes}</span>
         <span>Schools {breakdown.magicSchools}</span>
         <span>Mediums {breakdown.magicMediums}</span>

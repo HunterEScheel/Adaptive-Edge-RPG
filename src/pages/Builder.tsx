@@ -9,16 +9,13 @@ import {
 } from '../system/character'
 import { POWER_TIERS } from '../system/powerTiers'
 import {
-  ATTRIBUTE_BP_PER_LEVEL,
   BP_PER_1_EP,
   BP_PER_3_HP,
-  MAGIC_MEDIUM_BP_PER_LEVEL,
-  MAGIC_SCHOOL_BP_PER_LEVEL,
-  attributesCost,
+  DEFAULT_SPEED,
+  SPEED_STEP,
   epCost,
   hpCost,
-  magicMediumCost,
-  magicSchoolCost,
+  speedCost,
 } from '../system/costs'
 import { TierSelector } from '../components/TierSelector'
 import { NumberStepper } from '../components/NumberStepper'
@@ -39,7 +36,7 @@ import { supabaseConfigured } from '../lib/supabase'
 const STEPS = [
   { key: 'name', label: 'Name' },
   { key: 'bp', label: 'BP Management' },
-  { key: 'pools', label: 'HP & EP' },
+  { key: 'pools', label: 'HP, EP & Speed' },
   { key: 'tethers', label: 'Tethers & Flaws' },
   { key: 'attributes', label: 'Attributes' },
   { key: 'skills', label: 'Skills' },
@@ -74,18 +71,6 @@ export function Builder() {
   }, [id])
 
   const breakdown = useMemo(() => bpBreakdown(character), [character])
-  const attrTotal = useMemo(
-    () => Object.values(character.attributes).reduce((a, b) => a + b, 0),
-    [character.attributes],
-  )
-  const schoolTotal = useMemo(
-    () => Object.values(character.magicSchools).reduce((a, b) => a + b, 0),
-    [character.magicSchools],
-  )
-  const mediumTotal = useMemo(
-    () => Object.values(character.magicMediums).reduce((a, b) => a + b, 0),
-    [character.magicMediums],
-  )
 
   const patch = (p: Partial<Character>) =>
     setCharacter((c) => ({ ...c, ...p }))
@@ -163,18 +148,34 @@ export function Builder() {
                   </div>
                 </div>
                 <div>
-                  <label className="text-xs text-zinc-500">Bonus BP</label>
+                  <label className="text-xs text-zinc-500">Remaining BP</label>
                   <p className="text-xs text-zinc-500 mb-2">
-                    Earned BP added during play. Cumulative — set the new
-                    total here.
+                    Adjust unspent BP directly. Increases or decreases bonus
+                    BP earned in play.
                   </p>
-                  <NumberStepper
-                    value={character.bonusBp ?? 0}
-                    onChange={(bonusBp) => patch({ bonusBp })}
-                    min={0}
-                    max={10000}
-                    step={25}
-                  />
+                  {(() => {
+                    const remaining =
+                      breakdown.effectiveBudget - breakdown.total
+                    return (
+                      <NumberStepper
+                        value={remaining}
+                        onChange={(newRemaining) => {
+                          const delta = newRemaining - remaining
+                          const nextBonus = Math.max(
+                            0,
+                            (character.bonusBp ?? 0) + delta,
+                          )
+                          patch({ bonusBp: nextBonus })
+                        }}
+                        min={0}
+                        max={10000}
+                        step={25}
+                      />
+                    )
+                  })()}
+                  <div className="text-xs text-zinc-500 mt-1 font-mono">
+                    Bonus BP earned: +{character.bonusBp ?? 0}
+                  </div>
                 </div>
               </div>
             ) : (
@@ -190,8 +191,8 @@ export function Builder() {
 
         {currentStep.key === 'pools' && (
           <StepBlock
-            title="HP & EP"
-            subtitle="Your two resource pools. HP keeps you alive; EP fuels spells."
+            title="HP, EP & Speed"
+            subtitle="Resource pools and movement. HP keeps you alive; EP fuels spells; speed is feet per move action."
           >
             <Subsection
               title="Hit Points"
@@ -216,6 +217,19 @@ export function Builder() {
                 onChange={(ep) => patch({ ep })}
                 min={0}
                 max={100}
+              />
+            </Subsection>
+            <Subsection
+              title="Movement Speed"
+              meta={`Default ${DEFAULT_SPEED} ft · school cost curve · ${speedCost(character.speed ?? DEFAULT_SPEED)} BP`}
+            >
+              <NumberStepper
+                label="Speed (ft)"
+                value={character.speed ?? DEFAULT_SPEED}
+                onChange={(speed) => patch({ speed })}
+                min={0}
+                max={40}
+                step={SPEED_STEP}
               />
             </Subsection>
           </StepBlock>
@@ -254,7 +268,7 @@ export function Builder() {
         {currentStep.key === 'attributes' && (
           <StepBlock
             title="Attributes"
-            subtitle={`${ATTRIBUTE_BP_PER_LEVEL} BP per level (range −5 to +5). ${attrTotal} total levels = ${attributesCost(attrTotal)} BP.`}
+            subtitle={`Each attribute follows the skill cost curve starting at level 5 (range −5 to +5). Total: ${breakdown.attributes} BP.`}
           >
             <AttributesEditor
               value={character.attributes}
@@ -282,7 +296,7 @@ export function Builder() {
           >
             <Subsection
               title="Schools"
-              meta={`${MAGIC_SCHOOL_BP_PER_LEVEL} BP/lv · ${schoolTotal} levels = ${magicSchoolCost(schoolTotal)} BP`}
+              meta={`Skill cost curve from level 5 · ${breakdown.magicSchools} BP`}
             >
               <MagicSchoolsEditor
                 value={character.magicSchools}
@@ -291,7 +305,7 @@ export function Builder() {
             </Subsection>
             <Subsection
               title="Mediums"
-              meta={`${MAGIC_MEDIUM_BP_PER_LEVEL} BP/lv · ${mediumTotal} levels = ${magicMediumCost(mediumTotal)} BP`}
+              meta={`Skill cost curve from level 4 · ${breakdown.magicMediums} BP`}
             >
               <MagicMediumsEditor
                 value={character.magicMediums}
