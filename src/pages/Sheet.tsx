@@ -12,8 +12,8 @@ import { skillCost } from '../system/costs'
 import { ATTRIBUTES } from '../system/attributes'
 import { COMBAT_SKILLS, isCombatSkillId } from '../system/combatSkills'
 import { MAGIC_MEDIUMS, MAGIC_SCHOOLS } from '../system/magicSchools'
-import { TETHER_BP_BY_TIER, TETHER_TIERS } from '../system/tethers'
-import { FLAW_BP_BY_SEVERITY, FLAW_SEVERITIES } from '../system/flaws'
+import { TETHER_TIERS } from '../system/tethers'
+import { FLAW_SEVERITIES } from '../system/flaws'
 import { getCharacter, updateCharacter } from '../lib/characters'
 import { supabaseConfigured } from '../lib/supabase'
 import { InventoryEditor } from '../components/InventoryEditor'
@@ -26,6 +26,14 @@ const TABS: { key: Tab; label: string }[] = [
   { key: 'combat', label: 'Combat' },
   { key: 'spellcasting', label: 'Spellcasting' },
 ]
+
+const ATTRIBUTE_ABBR: Record<(typeof ATTRIBUTES)[number], string> = {
+  Power: 'POW',
+  Agility: 'AGI',
+  Lore: 'LOR',
+  Intuition: 'INT',
+  Influence: 'INF',
+}
 
 export function Sheet() {
   const { id } = useParams<{ id: string }>()
@@ -120,14 +128,42 @@ export function Sheet() {
   return (
     <div className="space-y-4">
       <header className="flex items-baseline justify-between gap-4">
-        <div>
+        <div className="min-w-0 flex-1">
           <h2 className="text-2xl font-semibold text-zinc-100">
             {character.name}
           </h2>
-          <p className="text-xs text-zinc-500">
-            {character.tierName} · {character.bpBudget} BP
-            {character.bonusBp ? ` (+${character.bonusBp})` : ''}
-          </p>
+          {(character.tethers.length > 0 || character.flaws.length > 0) && (
+            <div className="flex flex-wrap gap-1 mt-1">
+              {character.tethers.map((t) => {
+                const tierLabel =
+                  TETHER_TIERS.find((o) => o.tier === t.tier)?.label ??
+                  `Tier ${t.tier}`
+                return (
+                  <span
+                    key={t.id}
+                    title={`Tether · ${tierLabel}`}
+                    className="rounded px-2 py-0.5 text-xs bg-sky-900/40 text-sky-200 border border-sky-700/50"
+                  >
+                    {t.description || 'Untitled tether'}
+                  </span>
+                )
+              })}
+              {character.flaws.map((f) => {
+                const sevLabel =
+                  FLAW_SEVERITIES.find((o) => o.key === f.severity)?.label ??
+                  f.severity
+                return (
+                  <span
+                    key={f.id}
+                    title={`Flaw · ${sevLabel}`}
+                    className="rounded px-2 py-0.5 text-xs bg-rose-900/40 text-rose-200 border border-rose-700/50"
+                  >
+                    {f.description || 'Untitled flaw'}
+                  </span>
+                )
+              })}
+            </div>
+          )}
         </div>
         <div className="flex items-center gap-3 text-xs text-zinc-500">
           <span>
@@ -148,30 +184,47 @@ export function Sheet() {
         </div>
       </header>
 
-      <div className="grid sm:grid-cols-2 gap-3">
+      <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
         <ResourceCard
-          label="Hit Points"
+          label="HP"
           current={character.currentHp}
           max={character.hp}
           color="rose"
           onAdjust={adjustHp}
         />
         <ResourceCard
-          label="Energy Points"
+          label="EP"
           current={character.currentEp}
           max={character.ep}
           color="sky"
           onAdjust={adjustEp}
         />
+        <EvasionCard
+          character={character}
+          onArmorChange={(armorModifier) =>
+            setCharacter((c) => (c ? { ...c, armorModifier } : c))
+          }
+        />
+        <div className="rounded-lg border border-zinc-800 bg-zinc-900/50 px-3 py-2 flex items-center justify-between">
+          <span className="text-xs font-medium text-zinc-400 uppercase tracking-wide">
+            SPD
+          </span>
+          <span className="font-mono text-base text-zinc-100">
+            {character.speed ?? 20}
+            <span className="text-zinc-500 text-xs"> ft</span>
+          </span>
+        </div>
       </div>
 
-      <ReadOnlySection title="Attributes">
-        <div className="grid grid-cols-3 sm:grid-cols-5 gap-2">
-          {ATTRIBUTES.map((a) => (
-            <Stat key={a} label={a} value={character.attributes[a]} />
-          ))}
-        </div>
-      </ReadOnlySection>
+      <div className="grid grid-cols-5 gap-1">
+        {ATTRIBUTES.map((a) => (
+          <AttrPill
+            key={a}
+            label={ATTRIBUTE_ABBR[a]}
+            value={character.attributes[a]}
+          />
+        ))}
+      </div>
 
       <div className="flex justify-end">
         <button
@@ -205,13 +258,7 @@ export function Sheet() {
       </nav>
 
       {tab === 'combat' && (
-        <CombatTab
-          character={character}
-          combatSkills={combatSkills}
-          onArmorChange={(armorModifier) =>
-            setCharacter((c) => (c ? { ...c, armorModifier } : c))
-          }
-        />
+        <CombatTab character={character} combatSkills={combatSkills} />
       )}
 
       {tab === 'spellcasting' && (
@@ -317,72 +364,6 @@ export function Sheet() {
             )}
           </ReadOnlySection>
 
-          {character.tethers.length > 0 && (
-            <ReadOnlySection title="Tethers">
-              <ul className="space-y-2">
-                {character.tethers.map((t) => {
-                  const tierLabel =
-                    TETHER_TIERS.find((opt) => opt.tier === t.tier)?.label ??
-                    `Tier ${t.tier}`
-                  return (
-                    <li
-                      key={t.id}
-                      className="flex items-start justify-between gap-3 rounded bg-zinc-900 border border-zinc-800 px-3 py-2"
-                    >
-                      <div className="flex-1 min-w-0">
-                        <div className="text-sm text-zinc-300">
-                          {t.description || (
-                            <span className="italic text-zinc-500">
-                              No description
-                            </span>
-                          )}
-                        </div>
-                        <div className="text-xs text-zinc-500 font-mono">
-                          {tierLabel}
-                        </div>
-                      </div>
-                      <span className="text-xs text-emerald-300 font-mono whitespace-nowrap">
-                        +{TETHER_BP_BY_TIER[t.tier]} BP
-                      </span>
-                    </li>
-                  )
-                })}
-              </ul>
-            </ReadOnlySection>
-          )}
-          {character.flaws.length > 0 && (
-            <ReadOnlySection title="Flaws">
-              <ul className="space-y-2">
-                {character.flaws.map((f) => {
-                  const sevLabel =
-                    FLAW_SEVERITIES.find((opt) => opt.key === f.severity)
-                      ?.label ?? f.severity
-                  return (
-                    <li
-                      key={f.id}
-                      className="flex items-start justify-between gap-3 rounded bg-zinc-900 border border-zinc-800 px-3 py-2"
-                    >
-                      <div className="flex-1 min-w-0">
-                        <div className="text-sm text-zinc-300">
-                          {f.description || (
-                            <span className="italic text-zinc-500">
-                              No description
-                            </span>
-                          )}
-                        </div>
-                        <div className="text-xs text-zinc-500 font-mono">
-                          {sevLabel}
-                        </div>
-                      </div>
-                      <span className="text-xs text-emerald-300 font-mono whitespace-nowrap">
-                        +{FLAW_BP_BY_SEVERITY[f.severity]} BP
-                      </span>
-                    </li>
-                  )
-                })}
-              </ul>
-            </ReadOnlySection>
-          )}
         </div>
       )}
 
@@ -398,13 +379,9 @@ export function Sheet() {
 interface CombatTabProps {
   character: Character
   combatSkills: { id: string; name: string; level: number }[]
-  onArmorChange: (v: number) => void
 }
 
-function CombatTab({ character, combatSkills, onArmorChange }: CombatTabProps) {
-  const ev = evasion(character)
-  const agility = character.attributes['Agility'] ?? 0
-  const dodgeLv = combatSkillLevel(character, 'combat-dodge')
+function CombatTab({ character, combatSkills }: CombatTabProps) {
   const parryLv = combatSkillLevel(character, 'combat-parry')
 
   const skillByName = new Map(combatSkills.map((s) => [s.id, s]))
@@ -461,25 +438,6 @@ function CombatTab({ character, combatSkills, onArmorChange }: CombatTabProps) {
 
   return (
     <div className="space-y-3">
-      <ReadOnlySection title="Evasion">
-        <div className="flex items-center justify-between gap-4 flex-wrap">
-          <div className="text-3xl font-mono text-amber-300">{ev}</div>
-          <div className="text-xs text-zinc-500 font-mono">
-            10 + Agility {fmt(agility)} + Dodge {fmt(dodgeLv)} − Armor{' '}
-            {fmt(character.armorModifier)}
-          </div>
-          <label className="flex items-center gap-2 text-xs text-zinc-400">
-            Armor modifier
-            <input
-              type="number"
-              value={character.armorModifier}
-              onChange={(e) => onArmorChange(Number(e.target.value) || 0)}
-              className="w-20 bg-zinc-950 border border-zinc-700 rounded px-2 py-1 text-sm text-zinc-100 text-right font-mono"
-            />
-          </label>
-        </div>
-      </ReadOnlySection>
-
       <ReadOnlySection title="Actions in combat">
         {actions.length === 0 ? (
           <p className="text-sm text-zinc-500 italic">
@@ -605,38 +563,117 @@ function ResourceCard({
   color,
   onAdjust,
 }: ResourceCardProps) {
+  const [expanded, setExpanded] = useState(false)
   const pct = max > 0 ? Math.max(0, Math.min(100, (current / max) * 100)) : 0
   const fill = color === 'rose' ? 'bg-rose-500' : 'bg-sky-500'
   const accent = color === 'rose' ? 'text-rose-300' : 'text-sky-300'
+
+  if (!expanded) {
+    return (
+      <button
+        type="button"
+        onClick={() => setExpanded(true)}
+        className="w-full rounded-lg border border-zinc-800 bg-zinc-900/50 hover:bg-zinc-900 px-3 py-2 flex items-center justify-between text-left"
+      >
+        <span className="text-xs font-medium text-zinc-400 uppercase tracking-wide">
+          {label}
+        </span>
+        <span className={'font-mono text-base ' + accent}>
+          {current}
+          <span className="text-zinc-500 text-xs"> / {max}</span>
+        </span>
+      </button>
+    )
+  }
+
   return (
-    <div className="rounded-lg border border-zinc-800 bg-zinc-900/50 p-4 space-y-3">
-      <div className="flex items-baseline justify-between">
-        <h3 className="text-sm font-medium text-zinc-400 uppercase tracking-wide">
+    <div className="rounded-lg border border-zinc-800 bg-zinc-900/50 p-3 space-y-2">
+      <button
+        type="button"
+        onClick={() => setExpanded(false)}
+        className="w-full flex items-baseline justify-between"
+      >
+        <h3 className="text-xs font-medium text-zinc-400 uppercase tracking-wide">
           {label}
         </h3>
-        <div className={'font-mono text-xl ' + accent}>
+        <div className={'font-mono text-lg ' + accent}>
           {current}
-          <span className="text-zinc-500 text-sm"> / {max}</span>
+          <span className="text-zinc-500 text-xs"> / {max}</span>
         </div>
-      </div>
-      <div className="h-2 w-full rounded bg-zinc-800 overflow-hidden">
+      </button>
+      <div className="h-1.5 w-full rounded bg-zinc-800 overflow-hidden">
         <div
           className={'h-full transition-all ' + fill}
           style={{ width: `${pct}%` }}
         />
       </div>
-      <div className="flex gap-2">
+      <div className="flex gap-1">
         {[-5, -1, +1, +5].map((d) => (
           <button
             key={d}
             type="button"
             onClick={() => onAdjust(d)}
-            className="flex-1 rounded bg-zinc-800 hover:bg-zinc-700 px-2 py-1.5 text-sm font-mono"
+            className="flex-1 rounded bg-zinc-800 hover:bg-zinc-700 px-2 py-1 text-xs font-mono"
           >
             {d > 0 ? `+${d}` : d}
           </button>
         ))}
       </div>
+    </div>
+  )
+}
+
+interface EvasionCardProps {
+  character: Character
+  onArmorChange: (v: number) => void
+}
+
+function EvasionCard({ character, onArmorChange }: EvasionCardProps) {
+  const [expanded, setExpanded] = useState(false)
+  const ev = evasion(character)
+  const agility = character.attributes['Agility'] ?? 0
+  const dodgeLv = combatSkillLevel(character, 'combat-dodge')
+
+  if (!expanded) {
+    return (
+      <button
+        type="button"
+        onClick={() => setExpanded(true)}
+        className="w-full rounded-lg border border-zinc-800 bg-zinc-900/50 hover:bg-zinc-900 px-3 py-2 flex items-center justify-between text-left"
+      >
+        <span className="text-xs font-medium text-zinc-400 uppercase tracking-wide">
+          EV
+        </span>
+        <span className="font-mono text-base text-amber-300">{ev}</span>
+      </button>
+    )
+  }
+
+  return (
+    <div className="rounded-lg border border-zinc-800 bg-zinc-900/50 p-3 space-y-2">
+      <button
+        type="button"
+        onClick={() => setExpanded(false)}
+        className="w-full flex items-baseline justify-between"
+      >
+        <h3 className="text-xs font-medium text-zinc-400 uppercase tracking-wide">
+          EV
+        </h3>
+        <div className="font-mono text-lg text-amber-300">{ev}</div>
+      </button>
+      <div className="text-[10px] text-zinc-500 font-mono">
+        10 + AGI {fmt(agility)} + Dodge {fmt(dodgeLv)} − Armor{' '}
+        {fmt(character.armorModifier)}
+      </div>
+      <label className="flex items-center justify-between gap-2 text-xs text-zinc-400">
+        <span>Armor</span>
+        <input
+          type="number"
+          value={character.armorModifier}
+          onChange={(e) => onArmorChange(Number(e.target.value) || 0)}
+          className="w-16 bg-zinc-950 border border-zinc-700 rounded px-2 py-1 text-xs text-zinc-100 text-right font-mono"
+        />
+      </label>
     </div>
   )
 }
@@ -663,6 +700,20 @@ function Stat({ label, value }: { label: string; value: number }) {
     <div className="flex items-center justify-between rounded bg-zinc-900 border border-zinc-800 px-3 py-2">
       <span className="text-sm text-zinc-300">{label}</span>
       <span className="font-mono text-zinc-100">{value}</span>
+    </div>
+  )
+}
+
+function AttrPill({ label, value }: { label: string; value: number }) {
+  return (
+    <div className="flex flex-col items-center justify-center rounded bg-zinc-900 border border-zinc-800 px-1 py-1.5">
+      <span className="text-[10px] text-zinc-500 font-medium tracking-wide">
+        {label}
+      </span>
+      <span className="font-mono text-sm text-zinc-100">{value}</span>
+      <span className="text-[10px] text-zinc-500 font-mono">
+        sv {fmt(value * 3)}
+      </span>
     </div>
   )
 }

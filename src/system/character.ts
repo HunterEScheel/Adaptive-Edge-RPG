@@ -9,12 +9,14 @@ import {
   type MagicSchool,
 } from './magicSchools'
 import {
-  attributesCost,
+  attributeCost,
+  DEFAULT_SPEED,
   epCost,
   hpCost,
   magicMediumCost,
   magicSchoolCost,
   skillCost,
+  speedCost,
 } from './costs'
 import {
   tetherObligationWeight,
@@ -35,6 +37,7 @@ export interface Character {
   bonusBp: number
   hp: number
   ep: number
+  speed: number
   currentHp: number
   currentEp: number
   attributes: Record<AttributeName, number>
@@ -52,6 +55,7 @@ export interface Character {
 export interface BPBreakdown {
   hp: number
   ep: number
+  speed: number
   attributes: number
   magicSchools: number
   magicMediums: number
@@ -75,6 +79,7 @@ export function emptyCharacter(tierName: string, bpBudget: number): Character {
     bonusBp: 0,
     hp: 0,
     ep: 0,
+    speed: DEFAULT_SPEED,
     currentHp: 0,
     currentEp: 0,
     attributes: Object.fromEntries(ATTRIBUTES.map((a) => [a, 0])) as Record<
@@ -100,15 +105,22 @@ export function emptyCharacter(tierName: string, bpBudget: number): Character {
 }
 
 export function bpBreakdown(c: Character): BPBreakdown {
-  const attrTotal = Object.values(c.attributes).reduce((a, b) => a + b, 0)
-  const schoolTotal = Object.values(c.magicSchools).reduce((a, b) => a + b, 0)
-  const mediumTotal = Object.values(c.magicMediums).reduce((a, b) => a + b, 0)
   const skills = c.skills.reduce((sum, s) => sum + skillCost(s.level), 0)
   const hp = hpCost(c.hp)
   const ep = epCost(c.ep)
-  const attributes = attributesCost(attrTotal)
-  const magicSchools = magicSchoolCost(schoolTotal)
-  const magicMediums = magicMediumCost(mediumTotal)
+  const speed = speedCost(c.speed ?? DEFAULT_SPEED)
+  const attributes = Object.values(c.attributes).reduce(
+    (sum, v) => sum + attributeCost(v),
+    0,
+  )
+  const magicSchools = Object.values(c.magicSchools).reduce(
+    (sum, v) => sum + magicSchoolCost(v),
+    0,
+  )
+  const magicMediums = Object.values(c.magicMediums).reduce(
+    (sum, v) => sum + magicMediumCost(v),
+    0,
+  )
   const tetherRefund = tetherRefundTotal(c.tethers ?? [])
   const flawRefund = flawRefundTotal(c.flaws ?? [])
   const obligationWeight = tetherObligationWeight(c.tethers ?? [])
@@ -117,11 +129,13 @@ export function bpBreakdown(c: Character): BPBreakdown {
   return {
     hp,
     ep,
+    speed,
     attributes,
     magicSchools,
     magicMediums,
     skills,
-    total: hp + ep + attributes + magicSchools + magicMediums + skills,
+    total:
+      hp + ep + speed + attributes + magicSchools + magicMediums + skills,
     tetherRefund,
     flawRefund,
     obligationWeight,
@@ -153,6 +167,7 @@ export function ensureCombatSkills(c: Character): Character {
   return {
     ...c,
     bonusBp: c.bonusBp ?? 0,
+    speed: c.speed ?? DEFAULT_SPEED,
     tethers: c.tethers ?? [],
     flaws: c.flaws ?? [],
     obligationThreshold: c.obligationThreshold ?? 0,
