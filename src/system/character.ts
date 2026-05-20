@@ -46,6 +46,7 @@ export interface Character {
   obligationThreshold: number
   gold: number
   inventory: InventoryItem[]
+  armorModifier: number
 }
 
 export interface BPBreakdown {
@@ -94,6 +95,7 @@ export function emptyCharacter(tierName: string, bpBudget: number): Character {
     obligationThreshold: 0,
     gold: 0,
     inventory: [],
+    armorModifier: 0,
   }
 }
 
@@ -156,6 +158,18 @@ export function ensureCombatSkills(c: Character): Character {
     obligationThreshold: c.obligationThreshold ?? 0,
     gold: c.gold ?? 0,
     inventory: c.inventory ?? [],
+    armorModifier: c.armorModifier ?? 0,
     skills: [...combatRows, ...custom],
   }
+}
+
+export function combatSkillLevel(c: Character, id: string): number {
+  return c.skills.find((s) => s.id === id)?.level ?? 0
+}
+
+// Evasion = 10 + Agility + Dodge skill level − armor modifier
+export function evasion(c: Character): number {
+  const agility = c.attributes['Agility'] ?? 0
+  const dodge = combatSkillLevel(c, 'combat-dodge')
+  return 10 + agility + dodge - (c.armorModifier ?? 0)
 }

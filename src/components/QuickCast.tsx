@@ -3,9 +3,15 @@ import {
   CASTING_TIMES,
   EP_PER_DAMAGE_DIE,
   SPELL_CRITERIA,
+  criterionEp,
+  criterionOptions,
   emptySpellDraft,
+  selectedOption,
   spellCost,
+  type CastingTimeKey,
   type CriterionKey,
+  type SpellCriterion,
+  type SpellSelection,
 } from '../system/spells'
 import {
   MAGIC_MEDIUMS,
@@ -37,11 +43,22 @@ export function QuickCast({ schools, mediums, currentEp, onCast }: Props) {
 
   const cost = useMemo(() => spellCost(draft), [draft])
 
-  const setTier = (key: CriterionKey, tier: number) =>
-    setDraft((d) => ({ ...d, tiers: { ...d.tiers, [key]: tier } }))
+  const setMode = (key: CriterionKey, modeIndex: number) =>
+    setDraft((d) => ({
+      ...d,
+      selections: { ...d.selections, [key]: { modeIndex, optionIndex: 0 } },
+    }))
+  const setOption = (key: CriterionKey, optionIndex: number) =>
+    setDraft((d) => ({
+      ...d,
+      selections: {
+        ...d.selections,
+        [key]: { ...d.selections[key], optionIndex },
+      },
+    }))
   const setDamage = (n: number) =>
     setDraft((d) => ({ ...d, damageDice: Math.max(0, n) }))
-  const setTime = (k: typeof draft.castingTime) =>
+  const setTime = (k: CastingTimeKey) =>
     setDraft((d) => ({ ...d, castingTime: k }))
 
   const reset = () => setDraft(emptySpellDraft())
@@ -90,13 +107,12 @@ export function QuickCast({ schools, mediums, currentEp, onCast }: Props) {
       </div>
 
       {SPELL_CRITERIA.map((c) => (
-        <TierRow
+        <CriterionRow
           key={c.key}
-          label={c.label}
-          epPerTier={c.epPerTier}
-          tiers={c.tiers}
-          value={draft.tiers[c.key]}
-          onChange={(t) => setTier(c.key, t)}
+          criterion={c}
+          selection={draft.selections[c.key]}
+          onModeChange={(idx) => setMode(c.key, idx)}
+          onOptionChange={(idx) => setOption(c.key, idx)}
         />
       ))}
 
@@ -143,7 +159,7 @@ export function QuickCast({ schools, mediums, currentEp, onCast }: Props) {
           </span>
           <select
             value={draft.castingTime}
-            onChange={(e) => setTime(e.target.value as typeof draft.castingTime)}
+            onChange={(e) => setTime(e.target.value as CastingTimeKey)}
             className="w-full bg-zinc-900 border border-zinc-700 rounded px-3 py-2 text-sm text-zinc-100"
           >
             {CASTING_TIMES.map((t) => (
@@ -221,46 +237,80 @@ function PickerSelect({ label, value, options, onChange }: PickerSelectProps) {
   )
 }
 
-interface TierRowProps {
-  label: string
-  epPerTier: number
-  tiers: readonly string[]
-  value: number
-  onChange: (tier: number) => void
+interface CriterionRowProps {
+  criterion: SpellCriterion
+  selection: SpellSelection
+  onModeChange: (idx: number) => void
+  onOptionChange: (idx: number) => void
 }
 
-function TierRow({ label, epPerTier, tiers, value, onChange }: TierRowProps) {
+function CriterionRow({
+  criterion,
+  selection,
+  onModeChange,
+  onOptionChange,
+}: CriterionRowProps) {
+  const ep = criterionEp(criterion, selection)
+  const hasModes = (criterion.modes?.length ?? 0) > 1
+  const options = criterionOptions(criterion, selection.modeIndex)
+  const currentOption = selectedOption(criterion, selection)
+
   return (
     <div>
       <div className="flex items-baseline justify-between mb-1">
         <span className="text-xs uppercase tracking-wide text-zinc-400">
-          {label}
+          {criterion.label}
         </span>
         <span className="text-xs text-zinc-500 font-mono">
-          {epPerTier} EP / tier · {value * epPerTier} EP
+          {currentOption ? currentOption.label : '—'} · {ep} EP
         </span>
       </div>
-      <div className="flex gap-1 mb-1">
-        {tiers.map((_, tier) => {
-          const active = tier === value
+      {hasModes && criterion.modes && (
+        <div className="flex flex-wrap gap-1 mb-2">
+          {criterion.modes.map((mode, i) => {
+            const active = i === selection.modeIndex
+            return (
+              <button
+                key={mode.key}
+                type="button"
+                onClick={() => onModeChange(i)}
+                className={
+                  'rounded px-2 py-1 text-xs border ' +
+                  (active
+                    ? 'border-violet-500 bg-violet-900/30 text-violet-200'
+                    : 'border-zinc-700 bg-zinc-950 text-zinc-400 hover:border-zinc-500')
+                }
+              >
+                {mode.label}
+              </button>
+            )
+          })}
+        </div>
+      )}
+      <div className="flex flex-wrap gap-1">
+        {options.map((opt, i) => {
+          const active = i === selection.optionIndex
+          const optionEp = opt.tier * criterion.epPerTier
           return (
             <button
-              key={tier}
+              key={i}
               type="button"
-              onClick={() => onChange(tier)}
+              onClick={() => onOptionChange(i)}
               className={
-                'flex-1 rounded px-2 py-1 text-xs border ' +
+                'rounded px-2 py-1 text-xs border ' +
                 (active
-                  ? 'border-violet-500 bg-violet-900/30 text-violet-200'
-                  : 'border-zinc-700 bg-zinc-950 text-zinc-400 hover:border-zinc-500')
+                  ? 'border-emerald-500 bg-emerald-900/30 text-emerald-200'
+                  : 'border-zinc-700 bg-zinc-900 text-zinc-300 hover:border-zinc-500')
               }
             >
-              {tier}
+              <span>{opt.label}</span>
+              <span className="ml-1 text-[10px] text-zinc-500 font-mono">
+                {optionEp} EP
+              </span>
             </button>
           )
         })}
       </div>
-      <p className="text-xs text-zinc-500 italic min-h-[1lh]">{tiers[value]}</p>
     </div>
   )
 }
