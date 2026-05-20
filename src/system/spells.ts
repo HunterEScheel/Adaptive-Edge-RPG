@@ -303,3 +303,22 @@ export function spellCost(draft: SpellDraft): SpellCost {
   const totalEp = Math.ceil(baseEp * time.multiplier)
   return { baseEp, multiplier: time.multiplier, totalEp }
 }
+
+// Saved (prepared) spells cost 25% less to cast.
+export const SAVED_SPELL_DISCOUNT = 0.25
+
+export function savedSpellCost(draft: SpellDraft): SpellCost {
+  const base = spellCost(draft)
+  return {
+    ...base,
+    totalEp: Math.max(0, Math.round(base.totalEp * (1 - SAVED_SPELL_DISCOUNT))),
+  }
+}
+
+export interface SavedSpell {
+  id: string
+  name: string
+  school: string
+  medium: string
+  draft: SpellDraft
+}

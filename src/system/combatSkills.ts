@@ -16,7 +16,19 @@ export const COMBAT_SKILLS: readonly CombatSkillDef[] = [
   {
     id: 'combat-dodge',
     name: 'Dodge',
-    effect: 'evasion +1',
+    effect: 'evasion +1 · save vs. agility-based effects',
+    category: 'passive',
+  },
+  {
+    id: 'combat-grit',
+    name: 'Grit',
+    effect: 'save vs. physical effects',
+    category: 'passive',
+  },
+  {
+    id: 'combat-resolve',
+    name: 'Resolve',
+    effect: 'save vs. mental effects',
     category: 'passive',
   },
   {

@@ -36,14 +36,20 @@ export function SkillsEditor({ value, onChange }: Props) {
     }
   }, [query])
 
-  const { combatSkills, customSkills } = useMemo(() => {
+  const { saveSkills, combatSkills, customSkills } = useMemo(() => {
     const combatById = new Map(value.filter((s) => isCombatSkillId(s.id)).map((s) => [s.id, s]))
-    const ordered = COMBAT_SKILLS.map(
-      (def) =>
-        combatById.get(def.id) ?? { id: def.id, name: def.name, level: 0 },
-    )
+    const ordered = COMBAT_SKILLS.map((def) => ({
+      def,
+      skill: combatById.get(def.id) ?? { id: def.id, name: def.name, level: 0 },
+    }))
+    const saves = ordered.filter((o) => o.def.category === 'passive')
+    const others = ordered.filter((o) => o.def.category !== 'passive')
     const custom = value.filter((s) => !isCombatSkillId(s.id))
-    return { combatSkills: ordered, customSkills: custom }
+    return {
+      saveSkills: saves,
+      combatSkills: others,
+      customSkills: custom,
+    }
   }, [value])
 
   const setLevel = (id: string, level: number) =>
@@ -70,8 +76,46 @@ export function SkillsEditor({ value, onChange }: Props) {
     setResults([])
   }
 
+  const renderSkillRow = ({
+    def,
+    skill,
+  }: {
+    def: (typeof COMBAT_SKILLS)[number]
+    skill: CharacterSkill
+  }) => (
+    <li
+      key={skill.id}
+      className="flex items-center justify-between gap-3 rounded border border-zinc-800 bg-zinc-900 px-3 py-2"
+    >
+      <div className="flex-1 min-w-0">
+        <div className="text-sm text-zinc-100 truncate">{skill.name}</div>
+        <div className="text-xs text-zinc-500 truncate">{def.effect}</div>
+      </div>
+      <span className="text-xs text-zinc-500 font-mono w-16 text-right">
+        {skillCost(skill.level)} BP
+      </span>
+      <NumberStepper
+        value={skill.level}
+        onChange={(v) => setLevel(skill.id, v)}
+        min={0}
+        max={MAX_SKILL_LEVEL}
+      />
+    </li>
+  )
+
   return (
     <div className="space-y-6">
+      <div>
+        <h4 className="text-xs uppercase tracking-wide text-zinc-400 mb-2">
+          Saving throws
+        </h4>
+        <p className="text-xs text-zinc-500 mb-2">
+          Dodge, Grit, and Resolve are your three saves. Each level adds +1
+          to the corresponding save roll.
+        </p>
+        <ul className="space-y-2">{saveSkills.map(renderSkillRow)}</ul>
+      </div>
+
       <div>
         <h4 className="text-xs uppercase tracking-wide text-zinc-400 mb-2">
           Combat skills
@@ -80,35 +124,7 @@ export function SkillsEditor({ value, onChange }: Props) {
           Every character starts with these at level 0. Upgrade as needed; they
           can&apos;t be removed.
         </p>
-        <ul className="space-y-2">
-          {combatSkills.map((s) => {
-            const def = COMBAT_SKILLS.find((d) => d.id === s.id)
-            return (
-              <li
-                key={s.id}
-                className="flex items-center justify-between gap-3 rounded border border-zinc-800 bg-zinc-900 px-3 py-2"
-              >
-                <div className="flex-1 min-w-0">
-                  <div className="text-sm text-zinc-100 truncate">{s.name}</div>
-                  {def && (
-                    <div className="text-xs text-zinc-500 truncate">
-                      {def.effect}
-                    </div>
-                  )}
-                </div>
-                <span className="text-xs text-zinc-500 font-mono w-16 text-right">
-                  {skillCost(s.level)} BP
-                </span>
-                <NumberStepper
-                  value={s.level}
-                  onChange={(v) => setLevel(s.id, v)}
-                  min={0}
-                  max={MAX_SKILL_LEVEL}
-                />
-              </li>
-            )
-          })}
-        </ul>
+        <ul className="space-y-2">{combatSkills.map(renderSkillRow)}</ul>
       </div>
 
       <div>

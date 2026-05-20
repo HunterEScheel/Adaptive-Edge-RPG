@@ -18,6 +18,7 @@ import { getCharacter, updateCharacter } from '../lib/characters'
 import { supabaseConfigured } from '../lib/supabase'
 import { InventoryEditor } from '../components/InventoryEditor'
 import { QuickCast } from '../components/QuickCast'
+import { SavedSpells } from '../components/SavedSpells'
 
 type Tab = 'general' | 'combat' | 'spellcasting'
 
@@ -226,7 +227,26 @@ export function Sheet() {
         ))}
       </div>
 
-      <div className="flex justify-end">
+      <div className="flex items-center justify-between gap-2 flex-wrap">
+        <div className="flex items-center gap-2 flex-wrap">
+          <span className="text-xs uppercase tracking-wide text-zinc-500">
+            Saves
+          </span>
+          <div className="flex items-center gap-1">
+            <SaveBadge
+              label="Dodge"
+              value={combatSkillLevel(character, 'combat-dodge')}
+            />
+            <SaveBadge
+              label="Grit"
+              value={combatSkillLevel(character, 'combat-grit')}
+            />
+            <SaveBadge
+              label="Resolve"
+              value={combatSkillLevel(character, 'combat-resolve')}
+            />
+          </div>
+        </div>
         <button
           type="button"
           onClick={longRest}
@@ -264,23 +284,71 @@ export function Sheet() {
       {tab === 'spellcasting' && (
         <div className="space-y-3">
           {hasMagic && (
-            <ReadOnlySection title="Quick cast">
-              <QuickCast
-                schools={character.magicSchools}
-                mediums={character.magicMediums}
-                currentEp={character.currentEp}
-                onCast={(cost) =>
-                  setCharacter((c) =>
-                    c
-                      ? normalizeCurrentValues({
-                          ...c,
-                          currentEp: c.currentEp - cost,
-                        })
-                      : c,
-                  )
-                }
-              />
-            </ReadOnlySection>
+            <>
+              <ReadOnlySection title="Quick cast">
+                <QuickCast
+                  schools={character.magicSchools}
+                  mediums={character.magicMediums}
+                  currentEp={character.currentEp}
+                  savedSpells={character.savedSpells ?? []}
+                  onCast={(cost) =>
+                    setCharacter((c) =>
+                      c
+                        ? normalizeCurrentValues({
+                            ...c,
+                            currentEp: c.currentEp - cost,
+                          })
+                        : c,
+                    )
+                  }
+                  onSave={(spell) =>
+                    setCharacter((c) =>
+                      c
+                        ? {
+                            ...c,
+                            savedSpells: [
+                              ...(c.savedSpells ?? []),
+                              {
+                                id: crypto.randomUUID(),
+                                ...spell,
+                              },
+                            ],
+                          }
+                        : c,
+                    )
+                  }
+                />
+              </ReadOnlySection>
+              <ReadOnlySection title="Saved spells">
+                <SavedSpells
+                  schools={character.magicSchools}
+                  savedSpells={character.savedSpells ?? []}
+                  currentEp={character.currentEp}
+                  onCast={(cost) =>
+                    setCharacter((c) =>
+                      c
+                        ? normalizeCurrentValues({
+                            ...c,
+                            currentEp: c.currentEp - cost,
+                          })
+                        : c,
+                    )
+                  }
+                  onRemove={(id) =>
+                    setCharacter((c) =>
+                      c
+                        ? {
+                            ...c,
+                            savedSpells: (c.savedSpells ?? []).filter(
+                              (s) => s.id !== id,
+                            ),
+                          }
+                        : c,
+                    )
+                  }
+                />
+              </ReadOnlySection>
+            </>
           )}
           {hasMagic ? (
             <>
@@ -497,9 +565,6 @@ function CombatTab({ character, combatSkills }: CombatTabProps) {
         </ul>
       </ReadOnlySection>
 
-      <ReadOnlySection title="Combat skills">
-        <SkillList skills={combatSkills} />
-      </ReadOnlySection>
     </div>
   )
 }
@@ -704,6 +769,15 @@ function Stat({ label, value }: { label: string; value: number }) {
   )
 }
 
+function SaveBadge({ label, value }: { label: string; value: number }) {
+  return (
+    <span className="inline-flex items-center gap-1 rounded border border-zinc-700 bg-zinc-900/60 px-2 py-1 text-xs">
+      <span className="text-zinc-400">{label}</span>
+      <span className="font-mono text-amber-300">{fmt(value)}</span>
+    </span>
+  )
+}
+
 function AttrPill({ label, value }: { label: string; value: number }) {
   return (
     <div className="flex flex-col items-center justify-center rounded bg-zinc-900 border border-zinc-800 px-1 py-1.5">
@@ -711,9 +785,6 @@ function AttrPill({ label, value }: { label: string; value: number }) {
         {label}
       </span>
       <span className="font-mono text-sm text-zinc-100">{value}</span>
-      <span className="text-[10px] text-zinc-500 font-mono">
-        sv {fmt(value * 3)}
-      </span>
     </div>
   )
 }

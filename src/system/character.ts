@@ -23,6 +23,7 @@ import {
   tetherRefundTotal,
   type Tether,
 } from './tethers'
+import type { SavedSpell } from './spells'
 
 export interface CharacterSkill {
   id: string
@@ -50,6 +51,7 @@ export interface Character {
   gold: number
   inventory: InventoryItem[]
   armorModifier: number
+  savedSpells: SavedSpell[]
 }
 
 export interface BPBreakdown {
@@ -101,6 +103,7 @@ export function emptyCharacter(tierName: string, bpBudget: number): Character {
     gold: 0,
     inventory: [],
     armorModifier: 0,
+    savedSpells: [],
   }
 }
 
@@ -174,6 +177,7 @@ export function ensureCombatSkills(c: Character): Character {
     gold: c.gold ?? 0,
     inventory: c.inventory ?? [],
     armorModifier: c.armorModifier ?? 0,
+    savedSpells: c.savedSpells ?? [],
     skills: [...combatRows, ...custom],
   }
 }

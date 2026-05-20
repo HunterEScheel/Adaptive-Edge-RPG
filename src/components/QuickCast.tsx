@@ -10,7 +10,9 @@ import {
   spellCost,
   type CastingTimeKey,
   type CriterionKey,
+  type SavedSpell,
   type SpellCriterion,
+  type SpellDraft,
   type SpellSelection,
 } from '../system/spells'
 import {
@@ -24,13 +26,28 @@ interface Props {
   schools: Record<MagicSchool, number>
   mediums: Record<MagicMedium, number>
   currentEp: number
+  savedSpells: SavedSpell[]
   onCast: (epCost: number) => void
+  onSave: (spell: {
+    name: string
+    school: MagicSchool
+    medium: MagicMedium
+    draft: SpellDraft
+  }) => void
 }
 
-export function QuickCast({ schools, mediums, currentEp, onCast }: Props) {
+export function QuickCast({
+  schools,
+  mediums,
+  currentEp,
+  savedSpells,
+  onCast,
+  onSave,
+}: Props) {
   const [draft, setDraft] = useState(emptySpellDraft)
   const [school, setSchool] = useState<MagicSchool | ''>('')
   const [medium, setMedium] = useState<MagicMedium | ''>('')
+  const [spellName, setSpellName] = useState('')
 
   const trainedSchools = useMemo(
     () => MAGIC_SCHOOLS.filter((s) => schools[s] > 0),
@@ -72,6 +89,31 @@ export function QuickCast({ schools, mediums, currentEp, onCast }: Props) {
   const handleCast = () => {
     if (!canCast) return
     onCast(cost.totalEp)
+    reset()
+  }
+
+  const savedInSchool =
+    school === ''
+      ? 0
+      : savedSpells.filter((s) => s.school === school).length
+  const schoolLimit = school === '' ? 0 : schools[school]
+  const slotsLeft = Math.max(0, schoolLimit - savedInSchool)
+  const canSave =
+    school !== '' &&
+    medium !== '' &&
+    spellName.trim().length > 0 &&
+    cost.totalEp > 0 &&
+    slotsLeft > 0
+
+  const handleSave = () => {
+    if (!canSave || school === '' || medium === '') return
+    onSave({
+      name: spellName.trim(),
+      school,
+      medium,
+      draft,
+    })
+    setSpellName('')
     reset()
   }
 
@@ -171,36 +213,73 @@ export function QuickCast({ schools, mediums, currentEp, onCast }: Props) {
         </div>
       </div>
 
-      <div className="rounded border border-zinc-800 bg-zinc-950 p-3 flex items-center justify-between gap-3">
-        <div className="text-xs text-zinc-500 font-mono">
-          {cost.baseEp} base × {cost.multiplier} = {cost.totalEp} EP
+      <div className="rounded border border-zinc-800 bg-zinc-950 p-3 space-y-2">
+        <div className="flex items-center justify-between gap-3 flex-wrap">
+          <div className="text-xs text-zinc-500 font-mono">
+            {cost.baseEp} base × {cost.multiplier} = {cost.totalEp} EP
+          </div>
+          <div className="flex items-center gap-2">
+            <button
+              type="button"
+              onClick={reset}
+              className="rounded bg-zinc-800 hover:bg-zinc-700 px-3 py-1.5 text-xs text-zinc-300"
+            >
+              Reset
+            </button>
+            <button
+              type="button"
+              onClick={handleCast}
+              disabled={!canCast}
+              title={
+                cost.totalEp === 0
+                  ? 'Set at least one criterion or damage die'
+                  : cost.totalEp > currentEp
+                    ? `Not enough EP (need ${cost.totalEp}, have ${currentEp})`
+                    : school === ''
+                      ? 'Pick a school'
+                      : medium === ''
+                        ? 'Pick a medium'
+                        : undefined
+              }
+              className="rounded bg-violet-500 hover:bg-violet-400 disabled:opacity-40 disabled:cursor-not-allowed px-4 py-1.5 text-sm font-medium text-zinc-950"
+            >
+              Cast (−{cost.totalEp} EP)
+            </button>
+          </div>
         </div>
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-2 flex-wrap">
+          <input
+            type="text"
+            value={spellName}
+            onChange={(e) => setSpellName(e.target.value)}
+            placeholder="Name to save this spell…"
+            className="flex-1 min-w-[12rem] bg-zinc-900 border border-zinc-700 rounded px-2 py-1.5 text-sm text-zinc-100"
+          />
+          {school !== '' && schoolLimit > 0 && (
+            <span className="text-xs text-zinc-500 font-mono whitespace-nowrap">
+              {school}: {savedInSchool}/{schoolLimit} saved
+            </span>
+          )}
           <button
             type="button"
-            onClick={reset}
-            className="rounded bg-zinc-800 hover:bg-zinc-700 px-3 py-1.5 text-xs text-zinc-300"
-          >
-            Reset
-          </button>
-          <button
-            type="button"
-            onClick={handleCast}
-            disabled={!canCast}
+            onClick={handleSave}
+            disabled={!canSave}
             title={
-              cost.totalEp === 0
-                ? 'Set at least one criterion or damage die'
-                : cost.totalEp > currentEp
-                  ? `Not enough EP (need ${cost.totalEp}, have ${currentEp})`
-                  : school === ''
-                    ? 'Pick a school'
-                    : medium === ''
-                      ? 'Pick a medium'
-                      : undefined
+              school === ''
+                ? 'Pick a school'
+                : medium === ''
+                  ? 'Pick a medium'
+                  : spellName.trim().length === 0
+                    ? 'Give the spell a name'
+                    : cost.totalEp === 0
+                      ? 'Set at least one criterion or damage die'
+                      : slotsLeft === 0
+                        ? `No save slots left for ${school} (school level ${schoolLimit})`
+                        : undefined
             }
-            className="rounded bg-violet-500 hover:bg-violet-400 disabled:opacity-40 disabled:cursor-not-allowed px-4 py-1.5 text-sm font-medium text-zinc-950"
+            className="rounded bg-emerald-500 hover:bg-emerald-400 disabled:opacity-40 disabled:cursor-not-allowed px-4 py-1.5 text-sm font-medium text-zinc-950"
           >
-            Cast (−{cost.totalEp} EP)
+            Save spell
           </button>
         </div>
       </div>

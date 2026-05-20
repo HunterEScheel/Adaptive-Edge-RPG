@@ -56,6 +56,7 @@ export function Builder() {
   const [step, setStep] = useState(0)
   const [loading, setLoading] = useState(isEdit)
   const [saving, setSaving] = useState(false)
+  const [customBpInput, setCustomBpInput] = useState('')
 
   useEffect(() => {
     if (!id) return
@@ -130,54 +131,84 @@ export function Builder() {
             title="BP Management"
             subtitle={
               isEdit
-                ? 'Power tier is locked after creation. Add bonus BP earned in play below.'
+                ? 'Add bonus BP earned in play.'
                 : 'Pick a power tier — this sets your base BP budget.'
             }
           >
             {isEdit ? (
-              <div className="space-y-4">
-                <div className="rounded border border-zinc-800 bg-zinc-950 p-3 flex items-center justify-between">
-                  <div>
-                    <div className="text-xs text-zinc-500">Power tier</div>
-                    <div className="text-sm text-zinc-100">
-                      {character.tierName}
+              (() => {
+                const remaining =
+                  breakdown.effectiveBudget - breakdown.total
+                const addBp = (delta: number) => {
+                  if (!Number.isFinite(delta) || delta === 0) return
+                  patch({
+                    bonusBp: Math.max(0, (character.bonusBp ?? 0) + delta),
+                  })
+                }
+                const parsedInput = () => {
+                  if (customBpInput.trim() === '') return 1
+                  const n = Math.abs(Number(customBpInput))
+                  return Number.isFinite(n) && n > 0 ? n : 0
+                }
+                const applyCustom = () => {
+                  const n = parsedInput()
+                  if (n === 0) return
+                  addBp(n)
+                  setCustomBpInput('')
+                }
+                const removeCustom = () => {
+                  const n = parsedInput()
+                  if (n === 0) return
+                  addBp(-n)
+                  setCustomBpInput('')
+                }
+                return (
+                  <div className="space-y-3">
+                    <div>
+                      <div className="text-xs text-zinc-500">Remaining</div>
+                      <div
+                        className={
+                          'font-mono text-2xl ' +
+                          (remaining < 0
+                            ? 'text-rose-400'
+                            : 'text-emerald-300')
+                        }
+                      >
+                        {remaining}
+                      </div>
+                    </div>
+                    <div className="flex items-center gap-2 flex-wrap">
+                      <button
+                        type="button"
+                        onClick={applyCustom}
+                        className="rounded bg-zinc-800 hover:bg-zinc-700 px-3 py-2 text-sm"
+                      >
+                        + Add
+                      </button>
+                      <input
+                        type="number"
+                        value={customBpInput}
+                        onChange={(e) => setCustomBpInput(e.target.value)}
+                        onKeyDown={(e) => {
+                          if (e.key === 'Enter') applyCustom()
+                        }}
+                        placeholder="1"
+                        className="w-24 bg-zinc-900 border border-zinc-700 rounded px-2 py-2 text-sm text-zinc-100 text-right font-mono"
+                      />
+                      <button
+                        type="button"
+                        onClick={removeCustom}
+                        className="rounded bg-rose-900/40 hover:bg-rose-900/60 border border-rose-800/60 text-rose-200 px-3 py-2 text-sm"
+                      >
+                        − Remove
+                      </button>
+                    </div>
+                    <div className="text-xs text-zinc-500 font-mono">
+                      Bonus BP earned: +{character.bonusBp ?? 0}
                     </div>
                   </div>
-                  <div className="font-mono text-amber-300">
-                    {character.bpBudget} BP
-                  </div>
-                </div>
-                <div>
-                  <label className="text-xs text-zinc-500">Remaining BP</label>
-                  <p className="text-xs text-zinc-500 mb-2">
-                    Adjust unspent BP directly. Increases or decreases bonus
-                    BP earned in play.
-                  </p>
-                  {(() => {
-                    const remaining =
-                      breakdown.effectiveBudget - breakdown.total
-                    return (
-                      <NumberStepper
-                        value={remaining}
-                        onChange={(newRemaining) => {
-                          const delta = newRemaining - remaining
-                          const nextBonus = Math.max(
-                            0,
-                            (character.bonusBp ?? 0) + delta,
-                          )
-                          patch({ bonusBp: nextBonus })
-                        }}
-                        min={0}
-                        max={10000}
-                        step={25}
-                      />
-                    )
-                  })()}
-                  <div className="text-xs text-zinc-500 mt-1 font-mono">
-                    Bonus BP earned: +{character.bonusBp ?? 0}
-                  </div>
-                </div>
-              </div>
+                )
+              })()
             ) : (
               <TierSelector
                 value={character.tierName}
@@ -335,7 +366,7 @@ export function Builder() {
         </div>
       )}
 
-      <div className="flex items-center justify-between">
+      <div className="flex items-center justify-between gap-2">
         <button
           type="button"
           onClick={() => setStep((s) => Math.max(0, s - 1))}
@@ -344,6 +375,29 @@ export function Builder() {
         >
           ← Back
         </button>
+        <div>
+          {isEdit && (
+            <button
+              type="button"
+              onClick={handleSave}
+              disabled={saving || !canSubmit || !supabaseConfigured}
+              title={
+                !supabaseConfigured
+                  ? 'Supabase not configured'
+                  : !character.name.trim()
+                    ? 'Name is required'
+                    : over
+                      ? 'Over BP budget'
+                      : obligationShort
+                        ? 'Obligation threshold not met'
+                        : undefined
+              }
+              className="rounded bg-emerald-500 hover:bg-emerald-400 disabled:opacity-40 disabled:cursor-not-allowed px-4 py-2 text-sm font-medium text-zinc-950"
+            >
+              {saving ? 'Saving…' : 'Save changes'}
+            </button>
+          )}
+        </div>
         {!isLast ? (
           <button
             type="button"
@@ -352,7 +406,7 @@ export function Builder() {
           >
             Next →
           </button>
-        ) : (
+        ) : !isEdit ? (
           <button
             type="button"
             onClick={handleSave}
@@ -370,8 +424,10 @@ export function Builder() {
             }
             className="rounded bg-emerald-500 hover:bg-emerald-400 disabled:opacity-40 disabled:cursor-not-allowed px-4 py-2 text-sm font-medium text-zinc-950"
           >
-            {saving ? 'Saving…' : isEdit ? 'Save changes' : 'Create character'}
+            {saving ? 'Saving…' : 'Create character'}
           </button>
+        ) : (
+          <div />
         )}
       </div>
     </div>

@@ -6,6 +6,7 @@ import {
   type SavedCharacterRow,
 } from '../lib/characters'
 import { supabaseConfigured } from '../lib/supabase'
+import { bpBreakdown } from '../system/character'
 
 export function Home() {
   const [rows, setRows] = useState<SavedCharacterRow[]>([])
@@ -79,7 +80,8 @@ export function Home() {
                 </span>
               </div>
               <p className="text-xs text-zinc-500 mb-3">
-                {row.data.bpBudget} BP · HP {row.data.hp} · EP {row.data.ep}
+                {bpBreakdown(row.data).effectiveBudget} BP · HP {row.data.hp} ·
+                EP {row.data.ep}
               </p>
               <div className="flex gap-2">
                 <Link
