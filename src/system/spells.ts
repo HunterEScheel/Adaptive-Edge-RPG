@@ -233,17 +233,30 @@ export const CASTING_TIMES: readonly CastingTimeOption[] = [
   { key: '1hour', label: '1 Hour', multiplier: 0.25 },
 ] as const
 
-export const EP_PER_DAMAGE_DIE = 1
+export const EP_PER_DAMAGE_DIE = 2
 
 export interface SpellSelection {
   modeIndex: number
   optionIndex: number
 }
 
+export type SpellTargeting = 'hit' | 'dodge' | 'grit' | 'resolve'
+
+export const SPELL_TARGETING_OPTIONS: readonly {
+  key: SpellTargeting
+  label: string
+}[] = [
+  { key: 'hit', label: 'Roll to hit' },
+  { key: 'dodge', label: 'Dodge save' },
+  { key: 'grit', label: 'Grit save' },
+  { key: 'resolve', label: 'Resolve save' },
+] as const
+
 export interface SpellDraft {
   selections: Record<CriterionKey, SpellSelection>
   damageDice: number
   castingTime: CastingTimeKey
+  targeting: SpellTargeting
 }
 
 export function emptySpellDraft(): SpellDraft {
@@ -257,6 +270,7 @@ export function emptySpellDraft(): SpellDraft {
     },
     damageDice: 0,
     castingTime: '2actions',
+    targeting: 'hit',
   }
 }
 

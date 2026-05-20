@@ -3,6 +3,7 @@ import {
   CASTING_TIMES,
   EP_PER_DAMAGE_DIE,
   SPELL_CRITERIA,
+  SPELL_TARGETING_OPTIONS,
   criterionEp,
   criterionOptions,
   emptySpellDraft,
@@ -14,6 +15,7 @@ import {
   type SpellCriterion,
   type SpellDraft,
   type SpellSelection,
+  type SpellTargeting,
 } from '../system/spells'
 import {
   MAGIC_MEDIUMS,
@@ -77,6 +79,8 @@ export function QuickCast({
     setDraft((d) => ({ ...d, damageDice: Math.max(0, n) }))
   const setTime = (k: CastingTimeKey) =>
     setDraft((d) => ({ ...d, castingTime: k }))
+  const setTargeting = (t: SpellTargeting) =>
+    setDraft((d) => ({ ...d, targeting: t }))
 
   const reset = () => setDraft(emptySpellDraft())
 
@@ -106,11 +110,13 @@ export function QuickCast({
     slotsLeft > 0
 
   const handleSave = () => {
-    if (!canSave || school === '' || medium === '') return
+    if (!canSave) return
+    const pickedSchool = school as MagicSchool
+    const pickedMedium = medium as MagicMedium
     onSave({
       name: spellName.trim(),
-      school,
-      medium,
+      school: pickedSchool,
+      medium: pickedMedium,
       draft,
     })
     setSpellName('')
@@ -213,6 +219,32 @@ export function QuickCast({
         </div>
       </div>
 
+      <div>
+        <span className="text-xs uppercase tracking-wide text-zinc-400 block mb-1">
+          Targeting
+        </span>
+        <div className="flex flex-wrap gap-1">
+          {SPELL_TARGETING_OPTIONS.map((opt) => {
+            const active = draft.targeting === opt.key
+            return (
+              <button
+                key={opt.key}
+                type="button"
+                onClick={() => setTargeting(opt.key)}
+                className={
+                  'rounded px-3 py-1.5 text-xs border ' +
+                  (active
+                    ? 'border-amber-500 bg-amber-900/30 text-amber-200'
+                    : 'border-zinc-700 bg-zinc-900 text-zinc-300 hover:border-zinc-500')
+                }
+              >
+                {opt.label}
+              </button>
+            )
+          })}
+        </div>
+      </div>
+
       <div className="rounded border border-zinc-800 bg-zinc-950 p-3 space-y-2">
         <div className="flex items-center justify-between gap-3 flex-wrap">
           <div className="text-xs text-zinc-500 font-mono">
@@ -220,14 +252,21 @@ export function QuickCast({
             {school !== '' && medium !== '' && (
               <>
                 {' · '}
-                <span className="text-amber-300">
-                  DC {10 + schools[school] + mediums[medium]}
-                </span>
-                {' · '}
-                <span className="text-amber-300">
-                  hit {schools[school] + mediums[medium] >= 0 ? '+' : ''}
-                  {schools[school] + mediums[medium]}
-                </span>
+                {draft.targeting === 'hit' ? (
+                  <span className="text-amber-300">
+                    hit {schools[school] + mediums[medium] >= 0 ? '+' : ''}
+                    {schools[school] + mediums[medium]}
+                  </span>
+                ) : (
+                  <span className="text-amber-300">
+                    {draft.targeting === 'dodge'
+                      ? 'Dodge'
+                      : draft.targeting === 'grit'
+                        ? 'Grit'
+                        : 'Resolve'}{' '}
+                    DC {10 + schools[school] + mediums[medium]}
+                  </span>
+                )}
               </>
             )}
           </div>

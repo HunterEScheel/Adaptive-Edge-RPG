@@ -1,6 +1,7 @@
 import {
   CASTING_TIMES,
   criterionEp,
+  EP_PER_DAMAGE_DIE,
   savedSpellCost,
   selectedOption,
   SPELL_CRITERIA,
@@ -78,7 +79,7 @@ export function SavedSpells({
                 if (s.draft.damageDice > 0) {
                   factors.push({
                     label: `${s.draft.damageDice}d6`,
-                    ep: s.draft.damageDice,
+                    ep: s.draft.damageDice * EP_PER_DAMAGE_DIE,
                   })
                 }
                 const time = CASTING_TIMES.find(
@@ -96,6 +97,17 @@ export function SavedSpells({
                   (mediums as Record<string, number>)[s.medium] ?? 0
                 const hit = schoolLv + mediumLv
                 const dc = 10 + hit
+                const targeting = s.draft.targeting ?? 'hit'
+                const targetingLabel =
+                  targeting === 'hit'
+                    ? `hit ${hit >= 0 ? '+' : ''}${hit}`
+                    : `${
+                        targeting === 'dodge'
+                          ? 'Dodge'
+                          : targeting === 'grit'
+                            ? 'Grit'
+                            : 'Resolve'
+                      } DC ${dc}`
                 return (
                   <li
                     key={s.id}
@@ -105,8 +117,7 @@ export function SavedSpells({
                       {s.name}
                     </span>
                     <span className="text-xs font-mono text-amber-300 whitespace-nowrap">
-                      DC {dc} · hit {hit >= 0 ? '+' : ''}
-                      {hit}
+                      {targetingLabel}
                     </span>
                     <div className="flex flex-wrap gap-1 flex-1 min-w-0">
                       {factors.map((f, i) => (
