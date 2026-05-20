@@ -8,11 +8,13 @@ import {
 } from '../system/spells'
 import {
   MAGIC_SCHOOLS,
+  type MagicMedium,
   type MagicSchool,
 } from '../system/magicSchools'
 
 interface Props {
   schools: Record<MagicSchool, number>
+  mediums: Record<MagicMedium, number>
   savedSpells: SavedSpell[]
   currentEp: number
   onCast: (epCost: number) => void
@@ -21,6 +23,7 @@ interface Props {
 
 export function SavedSpells({
   schools,
+  mediums,
   savedSpells,
   currentEp,
   onCast,
@@ -87,6 +90,12 @@ export function SavedSpells({
                     ep: 0,
                   })
                 }
+                const schoolLv =
+                  (schools as Record<string, number>)[s.school] ?? 0
+                const mediumLv =
+                  (mediums as Record<string, number>)[s.medium] ?? 0
+                const hit = schoolLv + mediumLv
+                const dc = 10 + hit
                 return (
                   <li
                     key={s.id}
@@ -94,6 +103,10 @@ export function SavedSpells({
                   >
                     <span className="text-sm text-zinc-100 whitespace-nowrap">
                       {s.name}
+                    </span>
+                    <span className="text-xs font-mono text-amber-300 whitespace-nowrap">
+                      DC {dc} · hit {hit >= 0 ? '+' : ''}
+                      {hit}
                     </span>
                     <div className="flex flex-wrap gap-1 flex-1 min-w-0">
                       {factors.map((f, i) => (

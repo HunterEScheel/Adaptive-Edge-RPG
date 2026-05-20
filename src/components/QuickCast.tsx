@@ -217,6 +217,19 @@ export function QuickCast({
         <div className="flex items-center justify-between gap-3 flex-wrap">
           <div className="text-xs text-zinc-500 font-mono">
             {cost.baseEp} base × {cost.multiplier} = {cost.totalEp} EP
+            {school !== '' && medium !== '' && (
+              <>
+                {' · '}
+                <span className="text-amber-300">
+                  DC {10 + schools[school] + mediums[medium]}
+                </span>
+                {' · '}
+                <span className="text-amber-300">
+                  hit {schools[school] + mediums[medium] >= 0 ? '+' : ''}
+                  {schools[school] + mediums[medium]}
+                </span>
+              </>
+            )}
           </div>
           <div className="flex items-center gap-2">
             <button

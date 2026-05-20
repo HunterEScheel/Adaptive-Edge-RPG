@@ -285,7 +285,14 @@ export function Sheet() {
         <div className="space-y-3">
           {hasMagic && (
             <>
-              <ReadOnlySection title="Quick cast">
+              <div className="rounded border border-sky-800/60 bg-sky-900/20 px-3 py-2 text-xs text-sky-200 flex items-start gap-2">
+                <span aria-hidden className="font-bold">ⓘ</span>
+                <span>
+                  Spells can be amped on the fly: every extra 5 EP spent casting
+                  raises your hit bonus <em>or</em> save DC by 1.
+                </span>
+              </div>
+              <ReadOnlySection title="Quick cast" collapsible defaultOpen={false}>
                 <QuickCast
                   schools={character.magicSchools}
                   mediums={character.magicMediums}
@@ -322,6 +329,7 @@ export function Sheet() {
               <ReadOnlySection title="Saved spells">
                 <SavedSpells
                   schools={character.magicSchools}
+                  mediums={character.magicMediums}
                   savedSpells={character.savedSpells ?? []}
                   currentEp={character.currentEp}
                   onCast={(cost) =>
@@ -353,34 +361,36 @@ export function Sheet() {
           {hasMagic ? (
             <>
               {Object.values(character.magicSchools).some((v) => v > 0) && (
-                <ReadOnlySection title="Schools">
-                  <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
-                    {MAGIC_SCHOOLS.filter(
-                      (s) => character.magicSchools[s] > 0,
-                    ).map((s) => (
-                      <Stat
-                        key={s}
-                        label={s}
-                        value={character.magicSchools[s]}
-                      />
-                    ))}
-                  </div>
-                </ReadOnlySection>
+                <div className="flex flex-wrap items-center gap-1">
+                  <span className="text-xs uppercase tracking-wide text-zinc-500 mr-1">
+                    Schools
+                  </span>
+                  {MAGIC_SCHOOLS.filter(
+                    (s) => character.magicSchools[s] > 0,
+                  ).map((s) => (
+                    <SaveBadge
+                      key={s}
+                      label={s}
+                      value={character.magicSchools[s]}
+                    />
+                  ))}
+                </div>
               )}
               {Object.values(character.magicMediums).some((v) => v > 0) && (
-                <ReadOnlySection title="Mediums">
-                  <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
-                    {MAGIC_MEDIUMS.filter(
-                      (m) => character.magicMediums[m] > 0,
-                    ).map((m) => (
-                      <Stat
-                        key={m}
-                        label={m}
-                        value={character.magicMediums[m]}
-                      />
-                    ))}
-                  </div>
-                </ReadOnlySection>
+                <div className="flex flex-wrap items-center gap-1">
+                  <span className="text-xs uppercase tracking-wide text-zinc-500 mr-1">
+                    Mediums
+                  </span>
+                  {MAGIC_MEDIUMS.filter(
+                    (m) => character.magicMediums[m] > 0,
+                  ).map((m) => (
+                    <SaveBadge
+                      key={m}
+                      label={m}
+                      value={character.magicMediums[m]}
+                    />
+                  ))}
+                </div>
               )}
             </>
           ) : (
@@ -746,26 +756,42 @@ function EvasionCard({ character, onArmorChange }: EvasionCardProps) {
 function ReadOnlySection({
   title,
   children,
+  collapsible,
+  defaultOpen = true,
 }: {
   title: string
   children: React.ReactNode
+  collapsible?: boolean
+  defaultOpen?: boolean
 }) {
+  const [open, setOpen] = useState(defaultOpen)
+  if (!collapsible) {
+    return (
+      <section className="rounded-lg border border-zinc-800 bg-zinc-900/50 p-4">
+        <h3 className="text-sm font-medium text-zinc-400 uppercase tracking-wide mb-3">
+          {title}
+        </h3>
+        {children}
+      </section>
+    )
+  }
   return (
-    <section className="rounded-lg border border-zinc-800 bg-zinc-900/50 p-4">
-      <h3 className="text-sm font-medium text-zinc-400 uppercase tracking-wide mb-3">
-        {title}
-      </h3>
-      {children}
+    <section className="rounded-lg border border-zinc-800 bg-zinc-900/50">
+      <button
+        type="button"
+        onClick={() => setOpen((o) => !o)}
+        className="w-full flex items-center justify-between gap-2 px-4 py-3 text-left"
+        aria-expanded={open}
+      >
+        <h3 className="text-sm font-medium text-zinc-400 uppercase tracking-wide">
+          {title}
+        </h3>
+        <span className="text-zinc-500 text-xs font-mono">
+          {open ? '▾' : '▸'}
+        </span>
+      </button>
+      {open && <div className="px-4 pb-4">{children}</div>}
     </section>
-  )
-}
-
-function Stat({ label, value }: { label: string; value: number }) {
-  return (
-    <div className="flex items-center justify-between rounded bg-zinc-900 border border-zinc-800 px-3 py-2">
-      <span className="text-sm text-zinc-300">{label}</span>
-      <span className="font-mono text-zinc-100">{value}</span>
-    </div>
   )
 }
 
