@@ -1,50 +1,73 @@
-# Welcome to your Expo app 👋
+# Gurps & Dragons
 
-This is an [Expo](https://expo.dev) project created with [`create-expo-app`](https://www.npmjs.com/package/create-expo-app).
+Character creator for a custom GURPS/D&D 5e hybrid system. React + Vite + Supabase.
 
-## Get started
+## Stack
 
-1. Install dependencies
+- Vite + React 19 + TypeScript
+- Tailwind CSS v4
+- Supabase (Postgres + pgvector) for skill embeddings and saved characters
 
-   ```bash
-   npm install
-   ```
-
-2. Start the app
-
-   ```bash
-   npx expo start
-   ```
-
-In the output, you'll find options to open the app in a
-
-- [development build](https://docs.expo.dev/develop/development-builds/introduction/)
-- [Android emulator](https://docs.expo.dev/workflow/android-studio-emulator/)
-- [iOS simulator](https://docs.expo.dev/workflow/ios-simulator/)
-- [Expo Go](https://expo.dev/go), a limited sandbox for trying out app development with Expo
-
-You can start developing by editing the files inside the **app** directory. This project uses [file-based routing](https://docs.expo.dev/router/introduction).
-
-## Get a fresh project
-
-When you're ready, run:
+## Local development
 
 ```bash
-npm run reset-project
+npm install
+cp .env.example .env   # then fill in Supabase URL + anon key
+npm run dev
 ```
 
-This command will move the starter code to the **app-example** directory and create a blank **app** directory where you can start developing.
+The app degrades gracefully when Supabase env vars are absent: skill search and
+save are disabled, custom skill entry still works.
 
-## Learn more
+## Supabase setup
 
-To learn more about developing your project with Expo, look at the following resources:
+1. Create a new Supabase project.
+2. Open the SQL editor and run [`supabase/schema.sql`](supabase/schema.sql).
+   This enables `pgvector`, creates `skill_embeddings` + `characters`, and adds
+   the `match_skills` RPC.
+3. Copy the project URL and anon key into `.env`:
+   ```
+   VITE_SUPABASE_URL=https://YOUR-PROJECT.supabase.co
+   VITE_SUPABASE_PUBLISHABLE_KEY=sb_publishable_...
+   ```
 
-- [Expo documentation](https://docs.expo.dev/): Learn fundamentals, or go into advanced topics with our [guides](https://docs.expo.dev/guides).
-- [Learn Expo tutorial](https://docs.expo.dev/tutorial/introduction/): Follow a step-by-step tutorial where you'll create a project that runs on Android, iOS, and the web.
+### Populating skill embeddings
 
-## Join the community
+The skill list is intentionally not in the repo — bring your own GURPS skill
+list and embed it with OpenAI.
 
-Join our community of developers creating universal apps.
+1. Create `scripts/skills.txt`, one skill per line. Format: `Name | optional description`.
+2. Set the embedding env vars (service role key — never commit this):
+   ```
+   SUPABASE_URL=https://YOUR-PROJECT.supabase.co
+   SUPABASE_SERVICE_ROLE_KEY=...
+   OPENAI_API_KEY=...
+   ```
+3. Run:
+   ```bash
+   node scripts/generate-embeddings.mjs
+   ```
 
-- [Expo on GitHub](https://github.com/expo/expo): View our open source platform and contribute.
-- [Discord community](https://chat.expo.dev): Chat with Expo users and ask questions.
+This batches at 64 inputs per OpenAI call and upserts on `skill_name`.
+
+## Deploying to Vercel
+
+1. Push to GitHub.
+2. Import the repo in Vercel — it auto-detects Vite.
+3. Add `VITE_SUPABASE_URL` and `VITE_SUPABASE_PUBLISHABLE_KEY` in **Project Settings → Environment Variables**.
+4. Deploy.
+
+No `vercel.json` needed — Vite's defaults (`npm run build` → `dist/`) match
+Vercel's framework preset.
+
+## System reference
+
+| Cost                 | Rate                   |
+| -------------------- | ---------------------- |
+| HP                   | 2 BP per 3 HP          |
+| EP                   | 2 BP per 1 EP          |
+| Attribute level      | 50 BP                  |
+| Magic school level   | 25 BP                  |
+| Skill level cost     | exponential, see `src/system/costs.ts` |
+
+Power tier budgets range from 150 BP (Peasants) to 2000 BP (World Savior).
