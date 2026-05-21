@@ -1,7 +1,11 @@
 import { ATTRIBUTES, type AttributeName } from './attributes'
 import { COMBAT_SKILLS, isCombatSkillId } from './combatSkills'
 import { flawRefundTotal, type Flaw } from './flaws'
-import type { InventoryItem } from './inventory'
+import type {
+  ArmorReductionDie,
+  DamageType,
+  InventoryItem,
+} from './inventory'
 import {
   MAGIC_MEDIUMS,
   MAGIC_SCHOOLS,
@@ -228,6 +232,103 @@ export function ensureCombatSkills(c: Character): Character {
 
 export function combatSkillLevel(c: Character, id: string): number {
   return c.skills.find((s) => s.id === id)?.level ?? 0
+}
+
+export interface MatchingArmor {
+  itemId: string
+  itemName: string
+  die: ArmorReductionDie
+  threshold: number
+  durability: number
+}
+
+// Returns equipped armor pieces that reduce the given damage type — useful
+// so the UI can tell the player which physical dice to roll.
+export function matchingArmorFor(
+  c: Character,
+  type: DamageType,
+): MatchingArmor[] {
+  return (c.inventory ?? [])
+    .filter(
+      (i) => i.equipped && i.armor && i.armor.reductionTypes.includes(type),
+    )
+    .map((i) => ({
+      itemId: i.id,
+      itemName: i.name || 'Unnamed armor',
+      die: i.armor!.reductionDie,
+      threshold: i.armor!.damageThreshold,
+      durability: i.armor!.durability,
+    }))
+}
+
+export interface DamageOutcome {
+  rawDamage: number
+  type: DamageType
+  reduction: number
+  netDamage: number
+  hpBefore: number
+  hpAfter: number
+  durabilityChanges: {
+    itemId: string
+    itemName: string
+    delta: number
+    newDurability: number
+    broke: boolean
+  }[]
+}
+
+// Apply typed damage with a player-supplied reduction value (rolled in
+// meatspace). Each piece of equipped armor matching the damage type whose
+// threshold is exceeded loses floor(damage / threshold) durability. Broken
+// armor (durability 0) auto-unequips.
+export function applyTypedDamage(
+  c: Character,
+  amount: number,
+  type: DamageType,
+  reduction: number,
+): { next: Character; outcome: DamageOutcome } {
+  const inv = c.inventory ?? []
+  const safeReduction = Math.max(0, Math.floor(reduction))
+  const netDamage = Math.max(0, amount - safeReduction)
+  const hpBefore = c.currentHp
+  const hpAfter = Math.max(0, hpBefore - netDamage)
+
+  const durabilityChanges: DamageOutcome['durabilityChanges'] = []
+  const nextInventory = inv.map((i) => {
+    if (!i.armor || !i.equipped) return i
+    if (!i.armor.reductionTypes.includes(type)) return i
+    const threshold = i.armor.damageThreshold
+    if (threshold <= 0 || amount <= threshold) return i
+    const loss = Math.floor(amount / threshold)
+    if (loss <= 0) return i
+    const newDurability = Math.max(0, i.armor.durability - loss)
+    const broke = newDurability === 0
+    durabilityChanges.push({
+      itemId: i.id,
+      itemName: i.name || 'Unnamed armor',
+      delta: -loss,
+      newDurability,
+      broke,
+    })
+    return {
+      ...i,
+      armor: { ...i.armor, durability: newDurability },
+      equipped: broke ? false : i.equipped,
+    }
+  })
+
+  return {
+    next: { ...c, currentHp: hpAfter, inventory: nextInventory },
+    outcome: {
+      rawDamage: amount,
+      type,
+      reduction: safeReduction,
+      netDamage,
+      hpBefore,
+      hpAfter,
+      durabilityChanges,
+    },
+  }
 }
 
 // Sum of evasion reduction from equipped armor items.

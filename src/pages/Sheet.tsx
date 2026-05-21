@@ -20,6 +20,7 @@ import { supabaseConfigured } from '../lib/supabase'
 import { InventoryEditor } from '../components/InventoryEditor'
 import { QuickCast } from '../components/QuickCast'
 import { SavedSpells } from '../components/SavedSpells'
+import { TakeDamagePanel } from '../components/TakeDamagePanel'
 
 type Tab = 'general' | 'combat' | 'spellcasting'
 
@@ -279,7 +280,13 @@ export function Sheet() {
       </nav>
 
       {tab === 'combat' && (
-        <CombatTab character={character} combatSkills={combatSkills} />
+        <CombatTab
+          character={character}
+          combatSkills={combatSkills}
+          onTakeDamage={(next) =>
+            setCharacter((c) => (c ? normalizeCurrentValues(next) : c))
+          }
+        />
       )}
 
       {tab === 'spellcasting' && (
@@ -458,9 +465,14 @@ export function Sheet() {
 interface CombatTabProps {
   character: Character
   combatSkills: { id: string; name: string; level: number }[]
+  onTakeDamage: (next: Character) => void
 }
 
-function CombatTab({ character, combatSkills }: CombatTabProps) {
+function CombatTab({
+  character,
+  combatSkills,
+  onTakeDamage,
+}: CombatTabProps) {
   const parryLv = combatSkillLevel(character, 'combat-parry')
 
   const skillByName = new Map(combatSkills.map((s) => [s.id, s]))
@@ -517,6 +529,10 @@ function CombatTab({ character, combatSkills }: CombatTabProps) {
 
   return (
     <div className="space-y-3">
+      <ReadOnlySection title="Take damage">
+        <TakeDamagePanel character={character} onApply={onTakeDamage} />
+      </ReadOnlySection>
+
       <ReadOnlySection title="Actions in combat">
         {actions.length === 0 ? (
           <p className="text-sm text-zinc-500 italic">
