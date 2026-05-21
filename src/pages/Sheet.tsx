@@ -3,6 +3,7 @@ import { Link, useParams } from 'react-router-dom'
 import {
   combatSkillLevel,
   ensureCombatSkills,
+  equippedArmorEvasionReduction,
   evasion,
   normalizeCurrentValues,
   restoreToMax,
@@ -739,6 +740,9 @@ function EvasionCard({ character, onArmorChange }: EvasionCardProps) {
       <div className="text-[10px] text-zinc-500 font-mono">
         10 + AGI {fmt(agility)} + Dodge {fmt(dodgeLv)} − Armor{' '}
         {fmt(character.armorModifier)}
+        {equippedArmorEvasionReduction(character) > 0 && (
+          <> − Worn {equippedArmorEvasionReduction(character)}</>
+        )}
       </div>
       <label className="flex items-center justify-between gap-2 text-xs text-zinc-400">
         <span>Armor</span>

@@ -1,7 +1,13 @@
 import { useState } from 'react'
 import {
+  ARMOR_REDUCTION_DICE,
+  DAMAGE_TYPES,
   WEAPON_CATEGORIES,
+  newArmorStats,
   newInventoryItem,
+  type ArmorReductionDie,
+  type ArmorStats,
+  type DamageType,
   type InventoryItem,
   type WeaponCategory,
   weaponCategoryLabel,
@@ -88,6 +94,11 @@ interface ItemRowProps {
 }
 
 function ItemRow({ item, onOpen }: ItemRowProps) {
+  const typeBadge = item.weaponCategory
+    ? weaponCategoryLabel(item.weaponCategory)
+    : item.armor
+      ? `Armor 1${item.armor.reductionDie}`
+      : null
   return (
     <button
       type="button"
@@ -99,7 +110,7 @@ function ItemRow({ item, onOpen }: ItemRowProps) {
           <span className="text-sm text-zinc-100 truncate">
             {item.name || <span className="italic text-zinc-500">Unnamed</span>}
           </span>
-          {item.weaponCategory && (
+          {typeBadge && (
             <span
               className={
                 'text-[10px] uppercase tracking-wider rounded px-1.5 py-0.5 border ' +
@@ -109,7 +120,7 @@ function ItemRow({ item, onOpen }: ItemRowProps) {
               }
             >
               {item.equipped ? 'Equipped · ' : ''}
-              {weaponCategoryLabel(item.weaponCategory)}
+              {typeBadge}
             </span>
           )}
         </div>
@@ -131,7 +142,16 @@ interface ItemEditorProps {
 }
 
 function ItemEditor({ item, onChange, onRemove, onClose }: ItemEditorProps) {
-  const isWeapon = Boolean(item.weaponCategory)
+  const itemKind: 'none' | 'weapon' | 'armor' = item.weaponCategory
+    ? 'weapon'
+    : item.armor
+      ? 'armor'
+      : 'none'
+
+  const setArmor = (patch: Partial<ArmorStats>) => {
+    onChange({ armor: { ...(item.armor ?? newArmorStats()), ...patch } })
+  }
+
   return (
     <div className="p-3 space-y-2">
       <div className="flex items-center gap-2">
@@ -156,27 +176,43 @@ function ItemEditor({ item, onChange, onRemove, onClose }: ItemEditorProps) {
       </div>
       <div className="flex flex-wrap items-center gap-3">
         <label className="flex items-center gap-2 text-xs text-zinc-400">
-          Weapon
+          Category
           <select
-            value={item.weaponCategory ?? ''}
+            value={
+              item.weaponCategory ?? (item.armor ? 'armor' : 'misc')
+            }
             onChange={(e) => {
               const v = e.target.value
-              onChange({
-                weaponCategory: v ? (v as WeaponCategory) : undefined,
-                equipped: v ? item.equipped : false,
-              })
+              if (v === 'armor') {
+                onChange({
+                  weaponCategory: undefined,
+                  armor: item.armor ?? newArmorStats(),
+                })
+              } else if (v === 'misc') {
+                onChange({
+                  weaponCategory: undefined,
+                  armor: undefined,
+                  equipped: false,
+                })
+              } else {
+                onChange({
+                  weaponCategory: v as WeaponCategory,
+                  armor: undefined,
+                })
+              }
             }}
             className="bg-zinc-950 border border-zinc-700 rounded px-2 py-1 text-xs text-zinc-100"
           >
-            <option value="">— not a weapon —</option>
+            <option value="misc">— misc —</option>
             {WEAPON_CATEGORIES.map((c) => (
               <option key={c.key} value={c.key}>
                 {c.label}
               </option>
             ))}
+            <option value="armor">Armor</option>
           </select>
         </label>
-        {isWeapon && (
+        {itemKind !== 'none' && (
           <label className="flex items-center gap-2 text-xs text-zinc-400">
             <input
               type="checkbox"
@@ -188,6 +224,104 @@ function ItemEditor({ item, onChange, onRemove, onClose }: ItemEditorProps) {
           </label>
         )}
       </div>
+      {itemKind === 'armor' && item.armor && (
+        <div className="rounded border border-zinc-800 bg-zinc-950 p-3 space-y-2">
+          <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
+            <label className="flex flex-col gap-1 text-xs text-zinc-400">
+              Reduction die
+              <select
+                value={item.armor.reductionDie}
+                onChange={(e) =>
+                  setArmor({ reductionDie: e.target.value as ArmorReductionDie })
+                }
+                className="bg-zinc-900 border border-zinc-700 rounded px-2 py-1 text-xs text-zinc-100"
+              >
+                {ARMOR_REDUCTION_DICE.map((d) => (
+                  <option key={d} value={d}>
+                    1{d}
+                  </option>
+                ))}
+              </select>
+            </label>
+            <label className="flex flex-col gap-1 text-xs text-zinc-400">
+              Damage threshold
+              <input
+                type="number"
+                min={0}
+                value={item.armor.damageThreshold}
+                onChange={(e) =>
+                  setArmor({
+                    damageThreshold: Math.max(0, Number(e.target.value) || 0),
+                  })
+                }
+                className="bg-zinc-900 border border-zinc-700 rounded px-2 py-1 text-xs text-zinc-100 text-right font-mono"
+              />
+            </label>
+            <label className="flex flex-col gap-1 text-xs text-zinc-400">
+              Durability
+              <input
+                type="number"
+                min={0}
+                value={item.armor.durability}
+                onChange={(e) =>
+                  setArmor({
+                    durability: Math.max(0, Number(e.target.value) || 0),
+                  })
+                }
+                className="bg-zinc-900 border border-zinc-700 rounded px-2 py-1 text-xs text-zinc-100 text-right font-mono"
+              />
+            </label>
+            <label className="flex flex-col gap-1 text-xs text-zinc-400">
+              Evasion reduction
+              <input
+                type="number"
+                min={0}
+                value={item.armor.evasionReduction}
+                onChange={(e) =>
+                  setArmor({
+                    evasionReduction: Math.max(
+                      0,
+                      Number(e.target.value) || 0,
+                    ),
+                  })
+                }
+                className="bg-zinc-900 border border-zinc-700 rounded px-2 py-1 text-xs text-zinc-100 text-right font-mono"
+              />
+            </label>
+          </div>
+          <div>
+            <div className="text-xs text-zinc-400 mb-1">Reduces damage of</div>
+            <div className="flex flex-wrap gap-1">
+              {DAMAGE_TYPES.map((t) => {
+                const active = item.armor!.reductionTypes.includes(t)
+                return (
+                  <button
+                    key={t}
+                    type="button"
+                    onClick={() =>
+                      setArmor({
+                        reductionTypes: active
+                          ? item.armor!.reductionTypes.filter(
+                              (x: DamageType) => x !== t,
+                            )
+                          : [...item.armor!.reductionTypes, t],
+                      })
+                    }
+                    className={
+                      'rounded px-2 py-0.5 text-xs border ' +
+                      (active
+                        ? 'border-emerald-500 bg-emerald-900/30 text-emerald-200'
+                        : 'border-zinc-700 bg-zinc-900 text-zinc-400 hover:border-zinc-500')
+                    }
+                  >
+                    {t}
+                  </button>
+                )
+              })}
+            </div>
+          </div>
+        </div>
+      )}
       <input
         value={item.notes ?? ''}
         onChange={(e) => onChange({ notes: e.target.value })}

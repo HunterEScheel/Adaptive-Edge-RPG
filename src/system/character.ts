@@ -230,9 +230,22 @@ export function combatSkillLevel(c: Character, id: string): number {
   return c.skills.find((s) => s.id === id)?.level ?? 0
 }
 
-// Evasion = 10 + Agility + Dodge skill level − armor modifier
+// Sum of evasion reduction from equipped armor items.
+export function equippedArmorEvasionReduction(c: Character): number {
+  return (c.inventory ?? [])
+    .filter((i) => i.armor && i.equipped)
+    .reduce((sum, i) => sum + (i.armor?.evasionReduction ?? 0), 0)
+}
+
+// Evasion = 10 + Agility + Dodge skill level − armor modifier − equipped armor
 export function evasion(c: Character): number {
   const agility = c.attributes['Agility'] ?? 0
   const dodge = combatSkillLevel(c, 'combat-dodge')
-  return 10 + agility + dodge - (c.armorModifier ?? 0)
+  return (
+    10 +
+    agility +
+    dodge -
+    (c.armorModifier ?? 0) -
+    equippedArmorEvasionReduction(c)
+  )
 }
