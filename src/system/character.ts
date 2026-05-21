@@ -158,6 +158,43 @@ export function normalizeCurrentValues(c: Character): Character {
   }
 }
 
+// Migration map for the medium rename/consolidation.
+const LEGACY_MEDIUM_MIGRATION: Record<string, MagicMedium> = {
+  Temperature: 'Elemental',
+  Earth: 'Elemental',
+  Luminance: 'Elemental',
+  Weather: 'Elemental',
+  Resonance: 'Magic',
+  Poison: 'Toxicity',
+  Acid: 'Toxicity',
+  Body: 'Material',
+  Object: 'Material',
+}
+
+function migrateMediums(
+  raw: Partial<Record<string, number>> | undefined,
+): Record<MagicMedium, number> {
+  const result = Object.fromEntries(
+    MAGIC_MEDIUMS.map((m) => [m, 0]),
+  ) as Record<MagicMedium, number>
+  if (!raw) return result
+  const VALID = new Set<string>(MAGIC_MEDIUMS)
+  for (const [key, levelRaw] of Object.entries(raw)) {
+    const level = levelRaw ?? 0
+    if (level === 0) continue
+    if (VALID.has(key)) {
+      const k = key as MagicMedium
+      result[k] = Math.max(result[k], level)
+      continue
+    }
+    const mapped = LEGACY_MEDIUM_MIGRATION[key]
+    if (mapped) {
+      result[mapped] = Math.max(result[mapped], level)
+    }
+  }
+  return result
+}
+
 export function ensureCombatSkills(c: Character): Character {
   const existing = new Map(c.skills.map((s) => [s.id, s]))
   const combatRows: CharacterSkill[] = COMBAT_SKILLS.map((def) => {
@@ -177,7 +214,14 @@ export function ensureCombatSkills(c: Character): Character {
     gold: c.gold ?? 0,
     inventory: c.inventory ?? [],
     armorModifier: c.armorModifier ?? 0,
-    savedSpells: c.savedSpells ?? [],
+    savedSpells: (c.savedSpells ?? []).map((s) => ({
+      ...s,
+      medium:
+        MAGIC_MEDIUMS.includes(s.medium as MagicMedium)
+          ? s.medium
+          : (LEGACY_MEDIUM_MIGRATION[s.medium] ?? s.medium),
+    })),
+    magicMediums: migrateMediums(c.magicMediums),
     skills: [...combatRows, ...custom],
   }
 }

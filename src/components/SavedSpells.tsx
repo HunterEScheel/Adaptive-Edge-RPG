@@ -1,7 +1,5 @@
 import {
   CASTING_TIMES,
-  criterionEp,
-  EP_PER_DAMAGE_DIE,
   savedSpellCost,
   selectedOption,
   SPELL_CRITERIA,
@@ -66,30 +64,21 @@ export function SavedSpells({
               {spells.map((s) => {
                 const discounted = savedSpellCost(s.draft).totalEp
                 const canCast = discounted > 0 && discounted <= currentEp
-                const factors: { label: string; ep: number }[] = []
+                const factors: string[] = []
                 for (const c of SPELL_CRITERIA) {
                   const sel = s.draft.selections[c.key]
                   const opt = selectedOption(c, sel)
                   if (!opt) continue
-                  factors.push({
-                    label: opt.label,
-                    ep: criterionEp(c, sel),
-                  })
+                  factors.push(opt.label)
                 }
                 if (s.draft.damageDice > 0) {
-                  factors.push({
-                    label: `${s.draft.damageDice}d6`,
-                    ep: s.draft.damageDice * EP_PER_DAMAGE_DIE,
-                  })
+                  factors.push(`${s.draft.damageDice}d6`)
                 }
                 const time = CASTING_TIMES.find(
                   (t) => t.key === s.draft.castingTime,
                 )
                 if (time) {
-                  factors.push({
-                    label: `${time.label} (×${time.multiplier})`,
-                    ep: 0,
-                  })
+                  factors.push(`${time.label} (×${time.multiplier})`)
                 }
                 const schoolLv =
                   (schools as Record<string, number>)[s.school] ?? 0
@@ -116,21 +105,21 @@ export function SavedSpells({
                     <span className="text-sm text-zinc-100 whitespace-nowrap">
                       {s.name}
                     </span>
+                    <span className="text-[11px] text-zinc-400 whitespace-nowrap">
+                      <span className="text-violet-300">{s.school}</span>
+                      <span className="text-zinc-600 mx-1">·</span>
+                      <span className="text-sky-300">{s.medium}</span>
+                    </span>
                     <span className="text-xs font-mono text-amber-300 whitespace-nowrap">
                       {targetingLabel}
                     </span>
                     <div className="flex flex-wrap gap-1 flex-1 min-w-0">
-                      {factors.map((f, i) => (
+                      {factors.map((label, i) => (
                         <span
                           key={i}
-                          className="inline-flex items-center gap-1 rounded border border-zinc-700 bg-zinc-950 px-2 py-0.5 text-[11px] text-zinc-300"
+                          className="rounded border border-zinc-700 bg-zinc-950 px-2 py-0.5 text-[11px] text-zinc-300"
                         >
-                          <span>{f.label}</span>
-                          {f.ep > 0 && (
-                            <span className="text-zinc-500 font-mono">
-                              {f.ep} EP
-                            </span>
-                          )}
+                          {label}
                         </span>
                       ))}
                     </div>
