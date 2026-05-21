@@ -738,8 +738,10 @@ function EvasionCard({ character, onArmorChange }: EvasionCardProps) {
         <div className="font-mono text-lg text-amber-300">{ev}</div>
       </button>
       <div className="text-[10px] text-zinc-500 font-mono">
-        10 + AGI {fmt(agility)} + Dodge {fmt(dodgeLv)} − Armor{' '}
-        {fmt(character.armorModifier)}
+        10 + AGI {fmt(agility)} + Dodge {fmt(dodgeLv)}
+        {(character.armorModifier ?? 0) > 0 && (
+          <> − Armor {character.armorModifier}</>
+        )}
         {equippedArmorEvasionReduction(character) > 0 && (
           <> − Worn {equippedArmorEvasionReduction(character)}</>
         )}
