@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-// Generate OpenAI embeddings for a list of GURPS non-combat skills
+// Generate OpenAI embeddings for a list of non-combat skills
 // and upsert them into Supabase.
 //
 // Usage:
