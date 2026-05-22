@@ -2,7 +2,7 @@ export const ATTRIBUTES = [
   'Power',
   'Agility',
   'Lore',
-  'Intuition',
+  'Awareness',
   'Influence',
 ] as const
 

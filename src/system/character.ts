@@ -175,6 +175,28 @@ const LEGACY_MEDIUM_MIGRATION: Record<string, MagicMedium> = {
   Object: 'Material',
 }
 
+// Legacy attribute rename: Intuition → Awareness.
+function migrateAttributes(
+  raw: Partial<Record<string, number>> | undefined,
+): Record<AttributeName, number> {
+  const result = Object.fromEntries(
+    ATTRIBUTES.map((a) => [a, 0]),
+  ) as Record<AttributeName, number>
+  if (!raw) return result
+  const VALID = new Set<string>(ATTRIBUTES)
+  for (const [key, levelRaw] of Object.entries(raw)) {
+    const level = levelRaw ?? 0
+    if (VALID.has(key)) {
+      result[key as AttributeName] = level
+      continue
+    }
+    if (key === 'Intuition') {
+      result.Awareness = level
+    }
+  }
+  return result
+}
+
 function migrateMediums(
   raw: Partial<Record<string, number>> | undefined,
 ): Record<MagicMedium, number> {
@@ -226,6 +248,7 @@ export function ensureCombatSkills(c: Character): Character {
           : (LEGACY_MEDIUM_MIGRATION[s.medium] ?? s.medium),
     })),
     magicMediums: migrateMediums(c.magicMediums),
+    attributes: migrateAttributes(c.attributes),
     skills: [...combatRows, ...custom],
   }
 }
