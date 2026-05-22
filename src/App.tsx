@@ -7,18 +7,37 @@ function App() {
       <header className="border-b border-zinc-800 bg-zinc-950/80 backdrop-blur sticky top-0 z-20">
         <div className="max-w-5xl mx-auto px-4 py-3 flex items-center justify-between gap-4">
           <Link to="/" className="flex items-baseline gap-2">
-            <h1 className="text-xl font-semibold">Gurps &amp; Dragons</h1>
+            <h1 className="text-xl font-semibold">Hexcraft RPG</h1>
             <span className="text-xs text-zinc-500">
               {pathname.startsWith('/builder')
                 ? 'Builder'
                 : pathname.startsWith('/sheet')
                   ? 'Sheet'
-                  : 'Roster'}
+                  : pathname.startsWith('/running-the-game')
+                    ? 'GM guide'
+                    : 'Roster'}
             </span>
           </Link>
           <nav className="flex items-center gap-3 text-sm">
-            <Link to="/" className="text-zinc-400 hover:text-zinc-100">
+            <Link
+              to="/"
+              className={
+                pathname === '/'
+                  ? 'text-zinc-100'
+                  : 'text-zinc-400 hover:text-zinc-100'
+              }
+            >
               Characters
+            </Link>
+            <Link
+              to="/running-the-game"
+              className={
+                pathname.startsWith('/running-the-game')
+                  ? 'text-zinc-100'
+                  : 'text-zinc-400 hover:text-zinc-100'
+              }
+            >
+              Running the game
             </Link>
             <Link
               to="/builder"

@@ -138,7 +138,7 @@ export function SkillsEditor({ value, onChange }: Props) {
             onChange={(e) => setQuery(e.target.value)}
             placeholder={
               supabaseConfigured
-                ? 'Search GURPS non-combat skills…'
+                ? 'Search non-combat skills…'
                 : 'Add a skill (Supabase not configured — custom only)'
             }
             className="w-full bg-zinc-900 border border-zinc-700 rounded px-3 py-2 text-zinc-100 placeholder:text-zinc-500"

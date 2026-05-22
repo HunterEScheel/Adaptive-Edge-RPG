@@ -1,6 +1,6 @@
-# Gurps & Dragons
+# Hexcraft RPG
 
-Character creator for a custom GURPS/D&D 5e hybrid system. React + Vite + Supabase.
+Character creator for the Hexcraft RPG system. React + Vite + Supabase.
 
 ## Stack
 
@@ -33,8 +33,8 @@ save are disabled, custom skill entry still works.
 
 ### Populating skill embeddings
 
-The skill list is intentionally not in the repo — bring your own GURPS skill
-list and embed it with OpenAI.
+The skill list is intentionally not in the repo — bring your own skill list
+and embed it with OpenAI.
 
 1. Create `scripts/skills.txt`, one skill per line. Format: `Name | optional description`.
 2. Set the embedding env vars (service role key — never commit this):

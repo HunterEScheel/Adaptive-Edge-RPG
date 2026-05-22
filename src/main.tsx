@@ -6,6 +6,7 @@ import App from './App.tsx'
 import { Home } from './pages/Home.tsx'
 import { Builder } from './pages/Builder.tsx'
 import { Sheet } from './pages/Sheet.tsx'
+import { RunningTheGame } from './pages/RunningTheGame.tsx'
 
 const router = createBrowserRouter([
   {
@@ -16,6 +17,7 @@ const router = createBrowserRouter([
       { path: 'builder', element: <Builder /> },
       { path: 'builder/:id', element: <Builder /> },
       { path: 'sheet/:id', element: <Sheet /> },
+      { path: 'running-the-game', element: <RunningTheGame /> },
     ],
   },
 ])

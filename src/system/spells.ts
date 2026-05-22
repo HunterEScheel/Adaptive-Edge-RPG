@@ -1,4 +1,4 @@
-// Spell scaling criteria from the Gurps & Dragons sheet.
+// Spell scaling criteria from the Hexcraft RPG sheet.
 // Each criterion is split into one or more "modes" (e.g. AOE: splash/line/targets).
 // Each mode contains options whose tier drives the EP cost.
 
