@@ -175,7 +175,14 @@ const LEGACY_MEDIUM_MIGRATION: Record<string, MagicMedium> = {
   Object: 'Material',
 }
 
-// Legacy attribute rename: Intuition → Awareness.
+// Legacy attribute renames: Lore/Wit → Intelligence, Awareness/Intuition → Sense.
+const LEGACY_ATTRIBUTE_RENAMES: Record<string, AttributeName> = {
+  Lore: 'Intelligence',
+  Wit: 'Intelligence',
+  Awareness: 'Sense',
+  Intuition: 'Sense',
+}
+
 function migrateAttributes(
   raw: Partial<Record<string, number>> | undefined,
 ): Record<AttributeName, number> {
@@ -190,8 +197,9 @@ function migrateAttributes(
       result[key as AttributeName] = level
       continue
     }
-    if (key === 'Intuition') {
-      result.Awareness = level
+    const renamed = LEGACY_ATTRIBUTE_RENAMES[key]
+    if (renamed) {
+      result[renamed] = level
     }
   }
   return result

@@ -41,7 +41,7 @@ const SECTIONS: Section[] = [
           budget across:
         </p>
         <ul className="list-disc pl-5 mt-2 space-y-1">
-          <li>5 attributes (Power, Agility, Lore, Awareness, Influence)</li>
+          <li>5 attributes (Power, Agility, Intelligence, Sense, Influence)</li>
           <li>HP (2 BP per 3 HP) and EP (2 BP per 1 EP)</li>
           <li>Movement speed (default 20 ft, ±5 ft per step)</li>
           <li>Skills, weapon proficiencies, and the three saves (Dodge, Grit, Resolve)</li>
@@ -58,7 +58,7 @@ const SECTIONS: Section[] = [
             Mira is a Tier-2 ranger (400 BP). She takes <em>Hunted by the Black
             Sigil</em> (Tier II tether, +15 BP) and <em>Trust no priest</em>
             (Flaw, +15 BP), giving her 430 BP to spend. She buys Agility +3
-            (68 BP), Power +1 (13 BP), Awareness +2 (34 BP), 18 HP (12 BP),
+            (68 BP), Power +1 (13 BP), Sense +2 (34 BP), 18 HP (12 BP),
             10 EP (20 BP), and the rest into skills, weapons, and a saved spell.
           </p>
         </Example>
@@ -113,7 +113,7 @@ const SECTIONS: Section[] = [
           <li>
             <strong className="text-amber-300">Resolve</strong> — resisting
             charm, mental intrusion, illusions, fear. Pairs naturally with
-            Influence or Awareness.
+            Influence or Sense.
           </li>
         </ul>
         <p className="mt-2">
@@ -134,7 +134,7 @@ const SECTIONS: Section[] = [
   },
   {
     id: 'attacks',
-    title: 'Attacks &amp; evasion',
+    title: 'Attacks & evasion',
     body: (
       <>
         <p>
@@ -163,7 +163,7 @@ const SECTIONS: Section[] = [
   },
   {
     id: 'damage',
-    title: 'Taking damage &amp; armor',
+    title: 'Taking damage & armor',
     body: (
       <>
         <p>

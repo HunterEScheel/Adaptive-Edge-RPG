@@ -33,8 +33,8 @@ const TABS: { key: Tab; label: string }[] = [
 const ATTRIBUTE_ABBR: Record<(typeof ATTRIBUTES)[number], string> = {
   Power: 'POW',
   Agility: 'AGI',
-  Lore: 'LOR',
-  Awareness: 'AWA',
+  Intelligence: 'INT',
+  Sense: 'SEN',
   Influence: 'INF',
 }
 
