@@ -21,6 +21,7 @@ import { InventoryEditor } from '../components/InventoryEditor'
 import { QuickCast } from '../components/QuickCast'
 import { SavedSpells } from '../components/SavedSpells'
 import { TakeDamagePanel } from '../components/TakeDamagePanel'
+import { DeathSavePanel } from '../components/DeathSavePanel'
 
 type Tab = 'general' | 'combat' | 'spellcasting'
 
@@ -135,8 +136,18 @@ export function Sheet() {
           <h2 className="text-2xl font-semibold text-zinc-100">
             {character.name}
           </h2>
-          {(character.tethers.length > 0 || character.flaws.length > 0) && (
+          {(character.currentHp === 0 ||
+            character.tethers.length > 0 ||
+            character.flaws.length > 0) && (
             <div className="flex flex-wrap gap-1 mt-1">
+              {character.currentHp === 0 && (
+                <span
+                  title="At 0 HP — rolling death saves"
+                  className="rounded px-2 py-0.5 text-xs bg-rose-900/60 text-rose-100 border border-rose-600 font-semibold uppercase tracking-wider"
+                >
+                  Down
+                </span>
+              )}
               {character.tethers.map((t) => {
                 const tierLabel =
                   TETHER_TIERS.find((o) => o.tier === t.tier)?.label ??
@@ -529,6 +540,12 @@ function CombatTab({
 
   return (
     <div className="space-y-3">
+      {character.currentHp === 0 && (
+        <ReadOnlySection title="Death saves">
+          <DeathSavePanel character={character} onApply={onTakeDamage} />
+        </ReadOnlySection>
+      )}
+
       <ReadOnlySection title="Take damage">
         <TakeDamagePanel character={character} onApply={onTakeDamage} />
       </ReadOnlySection>

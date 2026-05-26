@@ -56,7 +56,15 @@ export interface Character {
   inventory: InventoryItem[]
   armorModifier: number
   savedSpells: SavedSpell[]
+  deathSaves: DeathSaves
 }
+
+export interface DeathSaves {
+  successes: number
+  failures: number
+}
+
+const EMPTY_DEATH_SAVES: DeathSaves = { successes: 0, failures: 0 }
 
 export interface BPBreakdown {
   hp: number
@@ -108,6 +116,7 @@ export function emptyCharacter(tierName: string, bpBudget: number): Character {
     inventory: [],
     armorModifier: 0,
     savedSpells: [],
+    deathSaves: { ...EMPTY_DEATH_SAVES },
   }
 }
 
@@ -155,10 +164,57 @@ export function restoreToMax(c: Character): Character {
 }
 
 export function normalizeCurrentValues(c: Character): Character {
+  const currentHp = Math.max(0, Math.min(c.currentHp, c.hp))
+  const existing = c.deathSaves ?? EMPTY_DEATH_SAVES
   return {
     ...c,
-    currentHp: Math.max(0, Math.min(c.currentHp, c.hp)),
+    currentHp,
     currentEp: Math.max(0, Math.min(c.currentEp, c.ep)),
+    deathSaves: currentHp > 0 ? { ...EMPTY_DEATH_SAVES } : existing,
+  }
+}
+
+const clampSave = (n: number) => Math.max(0, Math.min(3, n))
+
+export function rollDeathSave(c: Character, d20: number): Character {
+  const current = c.deathSaves ?? EMPTY_DEATH_SAVES
+  if (d20 === 20) {
+    return { ...c, currentHp: 1, deathSaves: { ...EMPTY_DEATH_SAVES } }
+  }
+  if (d20 === 1) {
+    return {
+      ...c,
+      deathSaves: {
+        successes: current.successes,
+        failures: clampSave(current.failures + 2),
+      },
+    }
+  }
+  if (d20 >= 10) {
+    return {
+      ...c,
+      deathSaves: {
+        successes: clampSave(current.successes + 1),
+        failures: current.failures,
+      },
+    }
+  }
+  return {
+    ...c,
+    deathSaves: {
+      successes: current.successes,
+      failures: clampSave(current.failures + 1),
+    },
+  }
+}
+
+export function expendEpToRevive(c: Character): Character {
+  if (c.currentEp <= 0) return c
+  return {
+    ...c,
+    currentHp: 1,
+    currentEp: 0,
+    deathSaves: { ...EMPTY_DEATH_SAVES },
   }
 }
 
@@ -255,6 +311,7 @@ export function ensureCombatSkills(c: Character): Character {
           ? s.medium
           : (LEGACY_MEDIUM_MIGRATION[s.medium] ?? s.medium),
     })),
+    deathSaves: c.deathSaves ?? { ...EMPTY_DEATH_SAVES },
     magicMediums: migrateMediums(c.magicMediums),
     attributes: migrateAttributes(c.attributes),
     skills: [...combatRows, ...custom],
