@@ -131,7 +131,7 @@ export function Sheet() {
 
   return (
     <div className="space-y-4">
-      <header className="flex flex-wrap items-baseline gap-x-4 gap-y-2 border-b border-zinc-800 pb-3">
+      <header className="flex flex-wrap items-baseline gap-x-3 gap-y-2 border-b border-zinc-800 pb-3">
         <h2 className="text-xl font-medium uppercase tracking-[0.18em] text-zinc-100">
           {character.name || 'Unnamed'}
         </h2>
@@ -174,6 +174,36 @@ export function Sheet() {
             </span>
           )
         })}
+        <Rule />
+        <ResourceInline
+          label="HP"
+          current={character.currentHp}
+          max={character.hp}
+          color="rose"
+          onAdjust={adjustHp}
+        />
+        <Rule />
+        <ResourceInline
+          label="EP"
+          current={character.currentEp}
+          max={character.ep}
+          color="sky"
+          onAdjust={adjustEp}
+        />
+        <Rule />
+        <StatDisplay
+          label="Evasion"
+          value={evasion(character)}
+          color="text-amber-300"
+          tooltip={evasionBreakdown(character)}
+        />
+        <Rule />
+        <StatDisplay
+          label="Speed"
+          value={character.speed ?? 20}
+          suffix="ft"
+          color="text-zinc-100"
+        />
         <div className="ml-auto flex items-baseline gap-4 text-[10px] uppercase tracking-[0.22em] text-zinc-500">
           {savingState !== 'idle' && (
             <span
@@ -195,12 +225,6 @@ export function Sheet() {
           )}
         </div>
       </header>
-
-      <StatusBar
-        character={character}
-        onAdjustHp={adjustHp}
-        onAdjustEp={adjustEp}
-      />
 
       <div className="grid grid-cols-5 gap-1">
         {ATTRIBUTES.map((a) => (
@@ -629,57 +653,23 @@ function SkillList({ skills }: SkillListProps) {
   )
 }
 
-interface StatusBarProps {
-  character: Character
-  onAdjustHp: (delta: number) => void
-  onAdjustEp: (delta: number) => void
+function Rule() {
+  return (
+    <span
+      aria-hidden
+      className="self-center inline-block h-3 w-px bg-zinc-700/70"
+    />
+  )
 }
 
-function StatusBar({ character, onAdjustHp, onAdjustEp }: StatusBarProps) {
-  const ev = evasion(character)
-  const agility = character.attributes['Agility'] ?? 0
-  const dodgeLv = combatSkillLevel(character, 'combat-dodge')
-  const evasionBreakdown =
-    `10 + AGI ${fmt(agility)} + Dodge ${fmt(dodgeLv)}` +
-    ((character.armorModifier ?? 0) > 0
-      ? ` − Armor ${character.armorModifier}`
-      : '') +
-    (equippedArmorEvasionReduction(character) > 0
-      ? ` − Worn ${equippedArmorEvasionReduction(character)}`
-      : '')
-
-  return (
-    <div className="rounded-lg border border-zinc-800 bg-zinc-900/50 px-3 py-2">
-      <div className="grid grid-cols-2 gap-x-4 gap-y-2 items-center sm:grid-cols-4 sm:gap-x-0 sm:divide-x sm:divide-zinc-700/60 sm:[&>*]:px-4 sm:[&>*:first-child]:pl-0 sm:[&>*:last-child]:pr-0">
-        <ResourceInline
-          label="HP"
-          current={character.currentHp}
-          max={character.hp}
-          color="rose"
-          onAdjust={onAdjustHp}
-        />
-        <ResourceInline
-          label="EP"
-          current={character.currentEp}
-          max={character.ep}
-          color="sky"
-          onAdjust={onAdjustEp}
-        />
-        <StatDisplay
-          label="Evasion"
-          value={ev}
-          color="text-amber-300"
-          tooltip={evasionBreakdown}
-        />
-        <StatDisplay
-          label="Speed"
-          value={character.speed ?? 20}
-          suffix="ft"
-          color="text-zinc-100"
-        />
-      </div>
-    </div>
-  )
+function evasionBreakdown(c: Character): string {
+  const agility = c.attributes['Agility'] ?? 0
+  const dodgeLv = combatSkillLevel(c, 'combat-dodge')
+  const armorPart =
+    (c.armorModifier ?? 0) > 0 ? ` − Armor ${c.armorModifier}` : ''
+  const worn = equippedArmorEvasionReduction(c)
+  const wornPart = worn > 0 ? ` − Worn ${worn}` : ''
+  return `10 + AGI ${fmt(agility)} + Dodge ${fmt(dodgeLv)}${armorPart}${wornPart}`
 }
 
 interface ResourceInlineProps {
@@ -709,16 +699,20 @@ function ResourceInline({
     onAdjust(sign * parsed)
   }
   return (
-    <div className="flex items-center gap-1.5 min-w-0">
-      <span className="text-xs font-medium text-zinc-400 uppercase tracking-wide">
+    <span className="inline-flex items-baseline gap-1.5">
+      <span className="text-[10px] font-medium text-zinc-400 uppercase tracking-[0.2em]">
         {label}
+      </span>
+      <span className={'font-mono text-sm whitespace-nowrap ' + accent}>
+        {current}
+        <span className="text-zinc-500 text-[10px]"> / {max}</span>
       </span>
       <button
         type="button"
         onClick={() => apply(-1)}
         disabled={parsed === 0}
         aria-label={`Subtract ${parsed} ${label}`}
-        className="rounded bg-zinc-800 hover:bg-zinc-700 disabled:opacity-40 px-1.5 py-0.5 text-xs font-mono"
+        className="self-center rounded bg-zinc-800 hover:bg-zinc-700 disabled:opacity-40 px-1 py-0 text-[11px] font-mono leading-none h-[18px]"
       >
         −
       </button>
@@ -731,22 +725,18 @@ function ResourceInline({
           if (e.key === 'Enter') apply(1)
         }}
         placeholder="1"
-        className="w-10 bg-zinc-950 border border-zinc-700 rounded px-1 py-0.5 text-xs text-zinc-100 text-right font-mono"
+        className="self-center w-9 bg-zinc-950 border border-zinc-700 rounded px-1 py-0 text-[11px] text-zinc-100 text-right font-mono leading-none h-[18px]"
       />
       <button
         type="button"
         onClick={() => apply(1)}
         disabled={parsed === 0}
         aria-label={`Add ${parsed} ${label}`}
-        className="rounded bg-zinc-800 hover:bg-zinc-700 disabled:opacity-40 px-1.5 py-0.5 text-xs font-mono"
+        className="self-center rounded bg-zinc-800 hover:bg-zinc-700 disabled:opacity-40 px-1 py-0 text-[11px] font-mono leading-none h-[18px]"
       >
         +
       </button>
-      <span className={'ml-auto font-mono text-base whitespace-nowrap ' + accent}>
-        {current}
-        <span className="text-zinc-500 text-xs"> / {max}</span>
-      </span>
-    </div>
+    </span>
   )
 }
 
@@ -758,20 +748,23 @@ interface StatDisplayProps {
   tooltip?: string
 }
 
-function StatDisplay({ label, value, color, suffix, tooltip }: StatDisplayProps) {
+function StatDisplay({
+  label,
+  value,
+  color,
+  suffix,
+  tooltip,
+}: StatDisplayProps) {
   return (
-    <div
-      className="flex items-center justify-between gap-2 min-w-0"
-      title={tooltip}
-    >
-      <span className="text-xs font-medium text-zinc-400 uppercase tracking-wide">
+    <span className="inline-flex items-baseline gap-1.5" title={tooltip}>
+      <span className="text-[10px] font-medium text-zinc-400 uppercase tracking-[0.2em]">
         {label}
       </span>
-      <span className={'font-mono text-base whitespace-nowrap ' + color}>
+      <span className={'font-mono text-sm whitespace-nowrap ' + color}>
         {value}
-        {suffix && <span className="text-zinc-500 text-xs"> {suffix}</span>}
+        {suffix && <span className="text-zinc-500 text-[10px]"> {suffix}</span>}
       </span>
-    </div>
+    </span>
   )
 }
 
