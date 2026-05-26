@@ -204,12 +204,7 @@ export function Sheet() {
           onAdjustHp={adjustHp}
           onAdjustEp={adjustEp}
         />
-        <DefenseCard
-          character={character}
-          onArmorChange={(armorModifier) =>
-            setCharacter((c) => (c ? { ...c, armorModifier } : c))
-          }
-        />
+        <DefenseCard character={character} />
       </div>
 
       <div className="grid grid-cols-5 gap-1">
@@ -686,15 +681,56 @@ function ResourceRow({
   color,
   onAdjust,
 }: ResourceRowProps) {
+  const [delta, setDelta] = useState('')
   const pct = max > 0 ? Math.max(0, Math.min(100, (current / max) * 100)) : 0
   const fill = color === 'rose' ? 'bg-rose-500' : 'bg-sky-500'
   const accent = color === 'rose' ? 'text-rose-300' : 'text-sky-300'
+  const parsed = (() => {
+    if (delta.trim() === '') return 1
+    const n = Math.abs(Math.floor(Number(delta)))
+    return Number.isFinite(n) && n > 0 ? n : 0
+  })()
+  const apply = (sign: 1 | -1) => {
+    if (parsed === 0) return
+    onAdjust(sign * parsed)
+  }
   return (
     <div className="space-y-2">
-      <div className="flex items-baseline justify-between">
+      <div className="flex items-center justify-between gap-2">
         <h3 className="text-xs font-medium text-zinc-400 uppercase tracking-wide">
           {label}
         </h3>
+        <div className="flex items-center gap-1">
+          <button
+            type="button"
+            onClick={() => apply(-1)}
+            disabled={parsed === 0}
+            aria-label={`Subtract ${parsed} ${label}`}
+            className="rounded bg-zinc-800 hover:bg-zinc-700 disabled:opacity-40 px-2 py-1 text-xs font-mono"
+          >
+            −
+          </button>
+          <input
+            type="number"
+            min={0}
+            value={delta}
+            onChange={(e) => setDelta(e.target.value)}
+            onKeyDown={(e) => {
+              if (e.key === 'Enter') apply(1)
+            }}
+            placeholder="1"
+            className="w-12 bg-zinc-950 border border-zinc-700 rounded px-1.5 py-1 text-xs text-zinc-100 text-right font-mono"
+          />
+          <button
+            type="button"
+            onClick={() => apply(1)}
+            disabled={parsed === 0}
+            aria-label={`Add ${parsed} ${label}`}
+            className="rounded bg-zinc-800 hover:bg-zinc-700 disabled:opacity-40 px-2 py-1 text-xs font-mono"
+          >
+            +
+          </button>
+        </div>
         <div className={'font-mono text-lg ' + accent}>
           {current}
           <span className="text-zinc-500 text-xs"> / {max}</span>
@@ -706,28 +742,15 @@ function ResourceRow({
           style={{ width: `${pct}%` }}
         />
       </div>
-      <div className="flex gap-1">
-        {[-5, -1, +1, +5].map((d) => (
-          <button
-            key={d}
-            type="button"
-            onClick={() => onAdjust(d)}
-            className="flex-1 rounded bg-zinc-800 hover:bg-zinc-700 px-2 py-1 text-xs font-mono"
-          >
-            {d > 0 ? `+${d}` : d}
-          </button>
-        ))}
-      </div>
     </div>
   )
 }
 
 interface DefenseCardProps {
   character: Character
-  onArmorChange: (v: number) => void
 }
 
-function DefenseCard({ character, onArmorChange }: DefenseCardProps) {
+function DefenseCard({ character }: DefenseCardProps) {
   const ev = evasion(character)
   const agility = character.attributes['Agility'] ?? 0
   const dodgeLv = combatSkillLevel(character, 'combat-dodge')
@@ -737,7 +760,7 @@ function DefenseCard({ character, onArmorChange }: DefenseCardProps) {
       <div className="space-y-2">
         <div className="flex items-baseline justify-between">
           <h3 className="text-xs font-medium text-zinc-400 uppercase tracking-wide">
-            EV
+            Evasion
           </h3>
           <div className="font-mono text-lg text-amber-300">{ev}</div>
         </div>
@@ -750,20 +773,11 @@ function DefenseCard({ character, onArmorChange }: DefenseCardProps) {
             <> − Worn {equippedArmorEvasionReduction(character)}</>
           )}
         </div>
-        <label className="flex items-center justify-between gap-2 text-xs text-zinc-400">
-          <span>Armor</span>
-          <input
-            type="number"
-            value={character.armorModifier}
-            onChange={(e) => onArmorChange(Number(e.target.value) || 0)}
-            className="w-16 bg-zinc-950 border border-zinc-700 rounded px-2 py-1 text-xs text-zinc-100 text-right font-mono"
-          />
-        </label>
       </div>
       <div className="h-px bg-zinc-800" />
       <div className="flex items-baseline justify-between">
         <h3 className="text-xs font-medium text-zinc-400 uppercase tracking-wide">
-          SPD
+          Speed
         </h3>
         <div className="font-mono text-lg text-zinc-100">
           {character.speed ?? 20}
