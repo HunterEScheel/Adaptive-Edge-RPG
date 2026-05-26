@@ -1,7 +1,6 @@
 export const MAGIC_SCHOOLS = [
   'Destroy',
   'Create',
-  'Dominate',
   'Alter',
   'Restore',
   'Divine',

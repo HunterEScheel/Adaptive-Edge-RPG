@@ -203,6 +203,12 @@ export function expendEpToRevive(c: Character): Character {
   })
 }
 
+// Migration map for school renames/removals. Dominate folds into Control
+// (cognition-based domination is now expressed as Control + Cognition).
+const LEGACY_SCHOOL_MIGRATION: Record<string, MagicSchool> = {
+  Dominate: 'Control',
+}
+
 // Migration map for the medium rename/consolidation.
 const LEGACY_MEDIUM_MIGRATION: Record<string, MagicMedium> = {
   Temperature: 'Elemental',
@@ -270,6 +276,30 @@ function migrateMediums(
   return result
 }
 
+function migrateSchools(
+  raw: Partial<Record<string, number>> | undefined,
+): Record<MagicSchool, number> {
+  const result = Object.fromEntries(
+    MAGIC_SCHOOLS.map((s) => [s, 0]),
+  ) as Record<MagicSchool, number>
+  if (!raw) return result
+  const VALID = new Set<string>(MAGIC_SCHOOLS)
+  for (const [key, levelRaw] of Object.entries(raw)) {
+    const level = levelRaw ?? 0
+    if (level === 0) continue
+    if (VALID.has(key)) {
+      const k = key as MagicSchool
+      result[k] = Math.max(result[k], level)
+      continue
+    }
+    const mapped = LEGACY_SCHOOL_MIGRATION[key]
+    if (mapped) {
+      result[mapped] = Math.max(result[mapped], level)
+    }
+  }
+  return result
+}
+
 export function ensureCombatSkills(c: Character): Character {
   const existing = new Map(c.skills.map((s) => [s.id, s]))
   const combatRows: CharacterSkill[] = COMBAT_SKILLS.map((def) => {
@@ -291,12 +321,16 @@ export function ensureCombatSkills(c: Character): Character {
     armorModifier: c.armorModifier ?? 0,
     savedSpells: (c.savedSpells ?? []).map((s) => ({
       ...s,
+      school: MAGIC_SCHOOLS.includes(s.school as MagicSchool)
+        ? s.school
+        : (LEGACY_SCHOOL_MIGRATION[s.school] ?? s.school),
       medium:
         MAGIC_MEDIUMS.includes(s.medium as MagicMedium)
           ? s.medium
           : (LEGACY_MEDIUM_MIGRATION[s.medium] ?? s.medium),
     })),
     deathSaves: c.deathSaves ?? { ...EMPTY_DEATH_SAVES },
+    magicSchools: migrateSchools(c.magicSchools),
     magicMediums: migrateMediums(c.magicMediums),
     attributes: migrateAttributes(c.attributes),
     skills: [...combatRows, ...custom],
