@@ -131,7 +131,8 @@ export function Sheet() {
 
   return (
     <div className="space-y-4">
-      <header className="flex flex-wrap items-baseline gap-x-3 gap-y-2 border-b border-zinc-800 pb-3">
+      {/* Band 1 — Identity strip */}
+      <header className="flex flex-wrap items-baseline gap-x-3 gap-y-2 border-b border-zinc-800 pb-2">
         <h2 className="text-xl font-medium uppercase tracking-[0.18em] text-zinc-100">
           {character.name || 'Unnamed'}
         </h2>
@@ -174,36 +175,6 @@ export function Sheet() {
             </span>
           )
         })}
-        <Rule />
-        <ResourceInline
-          label="HP"
-          current={character.currentHp}
-          max={character.hp}
-          color="rose"
-          onAdjust={adjustHp}
-        />
-        <Rule />
-        <ResourceInline
-          label="EP"
-          current={character.currentEp}
-          max={character.ep}
-          color="sky"
-          onAdjust={adjustEp}
-        />
-        <Rule />
-        <StatDisplay
-          label="Evasion"
-          value={evasion(character)}
-          color="text-amber-300"
-          tooltip={evasionBreakdown(character)}
-        />
-        <Rule />
-        <StatDisplay
-          label="Speed"
-          value={character.speed ?? 20}
-          suffix="ft"
-          color="text-zinc-100"
-        />
         <div className="ml-auto flex items-baseline gap-4 text-[10px] uppercase tracking-[0.22em] text-zinc-500">
           {savingState !== 'idle' && (
             <span
@@ -226,42 +197,73 @@ export function Sheet() {
         </div>
       </header>
 
-      <div className="grid grid-cols-5 gap-1">
+      {/* Band 2 — Stats ribbon (tactical HUD) */}
+      <div className="flex flex-wrap items-end gap-x-5 gap-y-3 border-b border-zinc-800 pb-2">
+        <Stat label="HP">
+          <ResourceValueRow
+            current={character.currentHp}
+            max={character.hp}
+            color="rose"
+            onAdjust={adjustHp}
+            ariaLabel="HP"
+          />
+        </Stat>
+        <Stat label="EP">
+          <ResourceValueRow
+            current={character.currentEp}
+            max={character.ep}
+            color="sky"
+            onAdjust={adjustEp}
+            ariaLabel="EP"
+          />
+        </Stat>
+        <Stat
+          label="Evasion"
+          value={evasion(character)}
+          color="text-amber-300"
+          tooltip={evasionBreakdown(character)}
+        />
+        <Stat
+          label="Speed"
+          value={character.speed ?? 20}
+          suffix="ft"
+          color="text-zinc-100"
+        />
+        <RibbonRule />
         {ATTRIBUTES.map((a) => (
-          <AttrPill
+          <Stat
             key={a}
             label={ATTRIBUTE_ABBR[a]}
-            value={character.attributes[a]}
+            value={fmt(character.attributes[a] ?? 0)}
+            color="text-zinc-100"
           />
         ))}
-      </div>
-
-      <div className="flex items-center justify-between gap-2 flex-wrap">
-        <div className="flex items-center gap-2 flex-wrap">
-          <span className="text-xs uppercase tracking-wide text-zinc-500">
-            Saves
-          </span>
-          <div className="flex items-center gap-1">
-            <SaveBadge
-              label="Dodge"
-              value={combatSkillLevel(character, 'combat-dodge')}
-            />
-            <SaveBadge
-              label="Grit"
-              value={combatSkillLevel(character, 'combat-grit')}
-            />
-            <SaveBadge
-              label="Resolve"
-              value={combatSkillLevel(character, 'combat-resolve')}
-            />
-          </div>
-        </div>
+        <RibbonRule />
+        <Stat
+          label="Dodge"
+          value={fmt(combatSkillLevel(character, 'combat-dodge'))}
+          color="text-amber-300"
+        />
+        <Stat
+          label="Grit"
+          value={fmt(combatSkillLevel(character, 'combat-grit'))}
+          color="text-amber-300"
+        />
+        <Stat
+          label="Resolve"
+          value={fmt(combatSkillLevel(character, 'combat-resolve'))}
+          color="text-amber-300"
+        />
         <button
           type="button"
           onClick={longRest}
-          className="rounded bg-emerald-600 hover:bg-emerald-500 px-3 py-1.5 text-sm font-medium text-zinc-950"
+          title="Restore HP & EP, clear death saves"
+          className="ml-auto self-end inline-flex items-center gap-1.5 rounded bg-emerald-700/90 hover:bg-emerald-600 border border-emerald-500/40 px-3 py-1.5 text-[11px] font-medium uppercase tracking-[0.2em] text-emerald-50 transition"
         >
-          Long rest (restore HP & EP)
+          <span aria-hidden className="text-base leading-none">
+            ☾
+          </span>
+          Long Rest
         </button>
       </div>
 
@@ -653,11 +655,11 @@ function SkillList({ skills }: SkillListProps) {
   )
 }
 
-function Rule() {
+function RibbonRule() {
   return (
     <span
       aria-hidden
-      className="self-center inline-block h-3 w-px bg-zinc-700/70"
+      className="self-stretch w-px bg-zinc-700/60 mx-1"
     />
   )
 }
@@ -672,21 +674,51 @@ function evasionBreakdown(c: Character): string {
   return `10 + AGI ${fmt(agility)} + Dodge ${fmt(dodgeLv)}${armorPart}${wornPart}`
 }
 
-interface ResourceInlineProps {
+interface StatProps {
   label: string
+  value?: number | string
+  color?: string
+  suffix?: string
+  tooltip?: string
+  children?: React.ReactNode
+}
+
+function Stat({ label, value, color, suffix, tooltip, children }: StatProps) {
+  return (
+    <div className="flex flex-col gap-0.5 min-w-0" title={tooltip}>
+      <span className="text-[10px] font-medium uppercase tracking-[0.2em] text-zinc-500">
+        {label}
+      </span>
+      {children ?? (
+        <span
+          className={
+            'font-mono text-base whitespace-nowrap leading-none ' +
+            (color ?? 'text-zinc-100')
+          }
+        >
+          {value}
+          {suffix && <span className="text-zinc-500 text-[10px]"> {suffix}</span>}
+        </span>
+      )}
+    </div>
+  )
+}
+
+interface ResourceValueRowProps {
   current: number
   max: number
   color: 'rose' | 'sky'
   onAdjust: (delta: number) => void
+  ariaLabel: string
 }
 
-function ResourceInline({
-  label,
+function ResourceValueRow({
   current,
   max,
   color,
   onAdjust,
-}: ResourceInlineProps) {
+  ariaLabel,
+}: ResourceValueRowProps) {
   const [delta, setDelta] = useState('')
   const accent = color === 'rose' ? 'text-rose-300' : 'text-sky-300'
   const parsed = (() => {
@@ -699,20 +731,21 @@ function ResourceInline({
     onAdjust(sign * parsed)
   }
   return (
-    <span className="inline-flex items-baseline gap-1.5">
-      <span className="text-[10px] font-medium text-zinc-400 uppercase tracking-[0.2em]">
-        {label}
-      </span>
-      <span className={'font-mono text-sm whitespace-nowrap ' + accent}>
+    <div className="flex items-baseline gap-1.5">
+      <span
+        className={
+          'font-mono text-base whitespace-nowrap leading-none ' + accent
+        }
+      >
         {current}
-        <span className="text-zinc-500 text-[10px]"> / {max}</span>
+        <span className="text-zinc-500 text-[10px]"> /{max}</span>
       </span>
       <button
         type="button"
         onClick={() => apply(-1)}
         disabled={parsed === 0}
-        aria-label={`Subtract ${parsed} ${label}`}
-        className="self-center rounded bg-zinc-800 hover:bg-zinc-700 disabled:opacity-40 px-1 py-0 text-[11px] font-mono leading-none h-[18px]"
+        aria-label={`Subtract ${parsed} ${ariaLabel}`}
+        className="self-center rounded bg-zinc-800 hover:bg-zinc-700 disabled:opacity-40 px-1 text-[11px] font-mono leading-none h-[18px]"
       >
         −
       </button>
@@ -725,46 +758,18 @@ function ResourceInline({
           if (e.key === 'Enter') apply(1)
         }}
         placeholder="1"
-        className="self-center w-9 bg-zinc-950 border border-zinc-700 rounded px-1 py-0 text-[11px] text-zinc-100 text-right font-mono leading-none h-[18px]"
+        className="self-center w-8 bg-zinc-950 border border-zinc-700 rounded px-1 text-[11px] text-zinc-100 text-right font-mono leading-none h-[18px]"
       />
       <button
         type="button"
         onClick={() => apply(1)}
         disabled={parsed === 0}
-        aria-label={`Add ${parsed} ${label}`}
-        className="self-center rounded bg-zinc-800 hover:bg-zinc-700 disabled:opacity-40 px-1 py-0 text-[11px] font-mono leading-none h-[18px]"
+        aria-label={`Add ${parsed} ${ariaLabel}`}
+        className="self-center rounded bg-zinc-800 hover:bg-zinc-700 disabled:opacity-40 px-1 text-[11px] font-mono leading-none h-[18px]"
       >
         +
       </button>
-    </span>
-  )
-}
-
-interface StatDisplayProps {
-  label: string
-  value: number
-  color: string
-  suffix?: string
-  tooltip?: string
-}
-
-function StatDisplay({
-  label,
-  value,
-  color,
-  suffix,
-  tooltip,
-}: StatDisplayProps) {
-  return (
-    <span className="inline-flex items-baseline gap-1.5" title={tooltip}>
-      <span className="text-[10px] font-medium text-zinc-400 uppercase tracking-[0.2em]">
-        {label}
-      </span>
-      <span className={'font-mono text-sm whitespace-nowrap ' + color}>
-        {value}
-        {suffix && <span className="text-zinc-500 text-[10px]"> {suffix}</span>}
-      </span>
-    </span>
+    </div>
   )
 }
 
@@ -819,13 +824,3 @@ function SaveBadge({ label, value }: { label: string; value: number }) {
   )
 }
 
-function AttrPill({ label, value }: { label: string; value: number }) {
-  return (
-    <div className="flex flex-col items-center justify-center rounded bg-zinc-900 border border-zinc-800 px-1 py-1.5">
-      <span className="text-[10px] text-zinc-500 font-medium tracking-wide">
-        {label}
-      </span>
-      <span className="font-mono text-sm text-zinc-100">{value}</span>
-    </div>
-  )
-}
