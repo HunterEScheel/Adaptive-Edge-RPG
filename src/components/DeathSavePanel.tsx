@@ -1,7 +1,6 @@
-import { useState } from 'react'
 import {
   expendEpToRevive,
-  rollDeathSave,
+  setDeathSaves,
   type Character,
 } from '../system/character'
 
@@ -10,50 +9,36 @@ interface Props {
   onApply: (next: Character) => void
 }
 
-interface LastRoll {
-  d20: number
-  message: string
-}
-
 export function DeathSavePanel({ character, onApply }: Props) {
-  const [last, setLast] = useState<LastRoll | null>(null)
   const { successes, failures } = character.deathSaves
   const stable = successes >= 3
   const dead = failures >= 3
   const finished = stable || dead
 
-  const roll = () => {
-    const d20 = Math.floor(Math.random() * 20) + 1
-    const next = rollDeathSave(character, d20)
-    onApply(next)
-    let message: string
-    if (d20 === 20) message = 'Critical — revived at 1 HP'
-    else if (d20 === 1) message = '+2 failures'
-    else if (d20 >= 10) message = 'Success'
-    else message = 'Failure'
-    setLast({ d20, message })
+  // Click pip n → set count to n+1. Click the rightmost filled pip → drop to n.
+  const setCount = (kind: 'successes' | 'failures', n: number) => {
+    onApply(setDeathSaves(character, { [kind]: n }))
   }
 
-  const burnEp = () => {
-    onApply(expendEpToRevive(character))
-    setLast(null)
-  }
+  const burnEp = () => onApply(expendEpToRevive(character))
 
   return (
     <div className="space-y-3">
-      <div className="flex items-center justify-between gap-3 flex-wrap">
-        <div className="flex flex-col gap-1">
-          <span className="text-[10px] uppercase tracking-wider text-emerald-300">
-            Successes
-          </span>
-          <Pips count={successes} color="emerald" />
-        </div>
-        <div className="flex flex-col gap-1">
-          <span className="text-[10px] uppercase tracking-wider text-rose-300">
-            Failures
-          </span>
-          <Pips count={failures} color="rose" />
-        </div>
+      <div className="flex items-start justify-between gap-3 flex-wrap">
+        <PipRow
+          label="Successes"
+          color="emerald"
+          count={successes}
+          onChange={(n) => setCount('successes', n)}
+          disabled={dead}
+        />
+        <PipRow
+          label="Failures"
+          color="rose"
+          count={failures}
+          onChange={(n) => setCount('failures', n)}
+          disabled={stable}
+        />
       </div>
 
       {stable && (
@@ -68,65 +53,72 @@ export function DeathSavePanel({ character, onApply }: Props) {
       )}
 
       {!finished && (
-        <div className="flex flex-wrap items-center gap-2">
-          <button
-            type="button"
-            onClick={roll}
-            className="rounded bg-rose-600 hover:bg-rose-500 px-3 py-1.5 text-sm font-medium text-zinc-50"
-          >
-            Roll death save (d20)
-          </button>
-          <button
-            type="button"
-            onClick={burnEp}
-            disabled={character.currentEp <= 0}
-            title={
-              character.currentEp <= 0
-                ? 'No EP to spend'
-                : `Spend ${character.currentEp} EP to stand at 1 HP`
-            }
-            className="rounded bg-amber-600 hover:bg-amber-500 disabled:opacity-40 disabled:cursor-not-allowed px-3 py-1.5 text-sm font-medium text-zinc-950"
-          >
-            Spend all EP ({character.currentEp}) → 1 HP
-          </button>
-        </div>
+        <button
+          type="button"
+          onClick={burnEp}
+          disabled={character.currentEp <= 0}
+          title={
+            character.currentEp <= 0
+              ? 'No EP to spend'
+              : `Spend ${character.currentEp} EP to stand at 1 HP`
+          }
+          className="rounded bg-amber-600 hover:bg-amber-500 disabled:opacity-40 disabled:cursor-not-allowed px-3 py-1.5 text-sm font-medium text-zinc-950"
+        >
+          Spend all EP ({character.currentEp}) → 1 HP
+        </button>
       )}
 
-      {last && (
-        <div className="rounded border border-zinc-800 bg-zinc-950 p-2 text-xs text-zinc-300 flex items-center justify-between gap-2">
-          <span>
-            Rolled <span className="font-mono text-amber-300">{last.d20}</span>{' '}
-            — {last.message}
-          </span>
-          <button
-            type="button"
-            onClick={() => setLast(null)}
-            className="text-[11px] text-zinc-500 hover:text-zinc-300"
-          >
-            dismiss
-          </button>
-        </div>
-      )}
+      <p className="text-[11px] text-zinc-500">
+        Tap a pip to mark a result. Tap the rightmost filled pip to undo.
+      </p>
     </div>
   )
 }
 
-function Pips({ count, color }: { count: number; color: 'emerald' | 'rose' }) {
+interface PipRowProps {
+  label: string
+  color: 'emerald' | 'rose'
+  count: number
+  onChange: (n: number) => void
+  disabled: boolean
+}
+
+function PipRow({ label, color, count, onChange, disabled }: PipRowProps) {
+  const accent =
+    color === 'emerald' ? 'text-emerald-300' : 'text-rose-300'
   const filled =
     color === 'emerald'
-      ? 'bg-emerald-500 border-emerald-400'
-      : 'bg-rose-500 border-rose-400'
+      ? 'bg-emerald-500 border-emerald-400 hover:bg-emerald-400'
+      : 'bg-rose-500 border-rose-400 hover:bg-rose-400'
+  const empty =
+    'border-zinc-700 bg-zinc-900 ' +
+    (color === 'emerald' ? 'hover:border-emerald-500' : 'hover:border-rose-500')
+
   return (
-    <div className="flex gap-1.5">
-      {[0, 1, 2].map((i) => (
-        <span
-          key={i}
-          className={
-            'h-4 w-4 rounded-full border ' +
-            (i < count ? filled : 'border-zinc-700 bg-zinc-900')
-          }
-        />
-      ))}
+    <div className="flex flex-col gap-1">
+      <span className={'text-[10px] uppercase tracking-wider ' + accent}>
+        {label}
+      </span>
+      <div className="flex gap-1.5">
+        {[0, 1, 2].map((i) => {
+          const isFilled = i < count
+          const nextCount = count === i + 1 ? i : i + 1
+          return (
+            <button
+              key={i}
+              type="button"
+              aria-label={`${label} ${i + 1}`}
+              aria-pressed={isFilled}
+              disabled={disabled}
+              onClick={() => onChange(nextCount)}
+              className={
+                'h-6 w-6 rounded-full border transition disabled:opacity-40 disabled:cursor-not-allowed ' +
+                (isFilled ? filled : empty)
+              }
+            />
+          )
+        })}
+      </div>
     </div>
   )
 }

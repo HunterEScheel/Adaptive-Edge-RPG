@@ -1,6 +1,6 @@
 import { StrictMode } from 'react'
 import { createRoot } from 'react-dom/client'
-import { createBrowserRouter, RouterProvider } from 'react-router-dom'
+import { createHashRouter, RouterProvider } from 'react-router-dom'
 import './index.css'
 import App from './App.tsx'
 import { Home } from './pages/Home.tsx'
@@ -8,7 +8,7 @@ import { Builder } from './pages/Builder.tsx'
 import { Sheet } from './pages/Sheet.tsx'
 import { RunningTheGame } from './pages/RunningTheGame.tsx'
 
-const router = createBrowserRouter([
+const router = createHashRouter([
   {
     path: '/',
     element: <App />,

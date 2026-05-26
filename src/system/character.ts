@@ -160,62 +160,47 @@ export function bpBreakdown(c: Character): BPBreakdown {
 }
 
 export function restoreToMax(c: Character): Character {
-  return { ...c, currentHp: c.hp, currentEp: c.ep }
+  return normalizeCurrentValues({ ...c, currentHp: c.hp, currentEp: c.ep })
 }
 
 export function normalizeCurrentValues(c: Character): Character {
   const currentHp = Math.max(0, Math.min(c.currentHp, c.hp))
   const existing = c.deathSaves ?? EMPTY_DEATH_SAVES
+  // Clear death saves whenever the caller intends the character to be conscious
+  // (input currentHp > 0), regardless of clamping against max HP.
+  const alive = c.currentHp > 0
   return {
     ...c,
     currentHp,
     currentEp: Math.max(0, Math.min(c.currentEp, c.ep)),
-    deathSaves: currentHp > 0 ? { ...EMPTY_DEATH_SAVES } : existing,
+    deathSaves: alive ? { ...EMPTY_DEATH_SAVES } : existing,
   }
 }
 
 const clampSave = (n: number) => Math.max(0, Math.min(3, n))
 
-export function rollDeathSave(c: Character, d20: number): Character {
+export function setDeathSaves(
+  c: Character,
+  next: Partial<DeathSaves>,
+): Character {
   const current = c.deathSaves ?? EMPTY_DEATH_SAVES
-  if (d20 === 20) {
-    return { ...c, currentHp: 1, deathSaves: { ...EMPTY_DEATH_SAVES } }
-  }
-  if (d20 === 1) {
-    return {
-      ...c,
-      deathSaves: {
-        successes: current.successes,
-        failures: clampSave(current.failures + 2),
-      },
-    }
-  }
-  if (d20 >= 10) {
-    return {
-      ...c,
-      deathSaves: {
-        successes: clampSave(current.successes + 1),
-        failures: current.failures,
-      },
-    }
-  }
   return {
     ...c,
     deathSaves: {
-      successes: current.successes,
-      failures: clampSave(current.failures + 1),
+      successes: clampSave(next.successes ?? current.successes),
+      failures: clampSave(next.failures ?? current.failures),
     },
   }
 }
 
 export function expendEpToRevive(c: Character): Character {
   if (c.currentEp <= 0) return c
-  return {
+  return normalizeCurrentValues({
     ...c,
     currentHp: 1,
     currentEp: 0,
     deathSaves: { ...EMPTY_DEATH_SAVES },
-  }
+  })
 }
 
 // Migration map for the medium rename/consolidation.
