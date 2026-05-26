@@ -198,36 +198,18 @@ export function Sheet() {
         </div>
       </header>
 
-      <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
-        <ResourceCard
-          label="HP"
-          current={character.currentHp}
-          max={character.hp}
-          color="rose"
-          onAdjust={adjustHp}
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+        <ResourcesCard
+          character={character}
+          onAdjustHp={adjustHp}
+          onAdjustEp={adjustEp}
         />
-        <ResourceCard
-          label="EP"
-          current={character.currentEp}
-          max={character.ep}
-          color="sky"
-          onAdjust={adjustEp}
-        />
-        <EvasionCard
+        <DefenseCard
           character={character}
           onArmorChange={(armorModifier) =>
             setCharacter((c) => (c ? { ...c, armorModifier } : c))
           }
         />
-        <div className="rounded-lg border border-zinc-800 bg-zinc-900/50 px-3 py-2 flex items-center justify-between">
-          <span className="text-xs font-medium text-zinc-400 uppercase tracking-wide">
-            SPD
-          </span>
-          <span className="font-mono text-base text-zinc-100">
-            {character.speed ?? 20}
-            <span className="text-zinc-500 text-xs"> ft</span>
-          </span>
-        </div>
       </div>
 
       <div className="grid grid-cols-5 gap-1">
@@ -657,7 +639,39 @@ function SkillList({ skills }: SkillListProps) {
   )
 }
 
-interface ResourceCardProps {
+interface ResourcesCardProps {
+  character: Character
+  onAdjustHp: (delta: number) => void
+  onAdjustEp: (delta: number) => void
+}
+
+function ResourcesCard({
+  character,
+  onAdjustHp,
+  onAdjustEp,
+}: ResourcesCardProps) {
+  return (
+    <div className="rounded-lg border border-zinc-800 bg-zinc-900/50 p-3 space-y-3">
+      <ResourceRow
+        label="HP"
+        current={character.currentHp}
+        max={character.hp}
+        color="rose"
+        onAdjust={onAdjustHp}
+      />
+      <div className="h-px bg-zinc-800" />
+      <ResourceRow
+        label="EP"
+        current={character.currentEp}
+        max={character.ep}
+        color="sky"
+        onAdjust={onAdjustEp}
+      />
+    </div>
+  )
+}
+
+interface ResourceRowProps {
   label: string
   current: number
   max: number
@@ -665,43 +679,19 @@ interface ResourceCardProps {
   onAdjust: (delta: number) => void
 }
 
-function ResourceCard({
+function ResourceRow({
   label,
   current,
   max,
   color,
   onAdjust,
-}: ResourceCardProps) {
-  const [expanded, setExpanded] = useState(false)
+}: ResourceRowProps) {
   const pct = max > 0 ? Math.max(0, Math.min(100, (current / max) * 100)) : 0
   const fill = color === 'rose' ? 'bg-rose-500' : 'bg-sky-500'
   const accent = color === 'rose' ? 'text-rose-300' : 'text-sky-300'
-
-  if (!expanded) {
-    return (
-      <button
-        type="button"
-        onClick={() => setExpanded(true)}
-        className="w-full rounded-lg border border-zinc-800 bg-zinc-900/50 hover:bg-zinc-900 px-3 py-2 flex items-center justify-between text-left"
-      >
-        <span className="text-xs font-medium text-zinc-400 uppercase tracking-wide">
-          {label}
-        </span>
-        <span className={'font-mono text-base ' + accent}>
-          {current}
-          <span className="text-zinc-500 text-xs"> / {max}</span>
-        </span>
-      </button>
-    )
-  }
-
   return (
-    <div className="rounded-lg border border-zinc-800 bg-zinc-900/50 p-3 space-y-2">
-      <button
-        type="button"
-        onClick={() => setExpanded(false)}
-        className="w-full flex items-baseline justify-between"
-      >
+    <div className="space-y-2">
+      <div className="flex items-baseline justify-between">
         <h3 className="text-xs font-medium text-zinc-400 uppercase tracking-wide">
           {label}
         </h3>
@@ -709,7 +699,7 @@ function ResourceCard({
           {current}
           <span className="text-zinc-500 text-xs"> / {max}</span>
         </div>
-      </button>
+      </div>
       <div className="h-1.5 w-full rounded bg-zinc-800 overflow-hidden">
         <div
           className={'h-full transition-all ' + fill}
@@ -732,62 +722,54 @@ function ResourceCard({
   )
 }
 
-interface EvasionCardProps {
+interface DefenseCardProps {
   character: Character
   onArmorChange: (v: number) => void
 }
 
-function EvasionCard({ character, onArmorChange }: EvasionCardProps) {
-  const [expanded, setExpanded] = useState(false)
+function DefenseCard({ character, onArmorChange }: DefenseCardProps) {
   const ev = evasion(character)
   const agility = character.attributes['Agility'] ?? 0
   const dodgeLv = combatSkillLevel(character, 'combat-dodge')
 
-  if (!expanded) {
-    return (
-      <button
-        type="button"
-        onClick={() => setExpanded(true)}
-        className="w-full rounded-lg border border-zinc-800 bg-zinc-900/50 hover:bg-zinc-900 px-3 py-2 flex items-center justify-between text-left"
-      >
-        <span className="text-xs font-medium text-zinc-400 uppercase tracking-wide">
-          EV
-        </span>
-        <span className="font-mono text-base text-amber-300">{ev}</span>
-      </button>
-    )
-  }
-
   return (
-    <div className="rounded-lg border border-zinc-800 bg-zinc-900/50 p-3 space-y-2">
-      <button
-        type="button"
-        onClick={() => setExpanded(false)}
-        className="w-full flex items-baseline justify-between"
-      >
-        <h3 className="text-xs font-medium text-zinc-400 uppercase tracking-wide">
-          EV
-        </h3>
-        <div className="font-mono text-lg text-amber-300">{ev}</div>
-      </button>
-      <div className="text-[10px] text-zinc-500 font-mono">
-        10 + AGI {fmt(agility)} + Dodge {fmt(dodgeLv)}
-        {(character.armorModifier ?? 0) > 0 && (
-          <> − Armor {character.armorModifier}</>
-        )}
-        {equippedArmorEvasionReduction(character) > 0 && (
-          <> − Worn {equippedArmorEvasionReduction(character)}</>
-        )}
+    <div className="rounded-lg border border-zinc-800 bg-zinc-900/50 p-3 space-y-3">
+      <div className="space-y-2">
+        <div className="flex items-baseline justify-between">
+          <h3 className="text-xs font-medium text-zinc-400 uppercase tracking-wide">
+            EV
+          </h3>
+          <div className="font-mono text-lg text-amber-300">{ev}</div>
+        </div>
+        <div className="text-[10px] text-zinc-500 font-mono">
+          10 + AGI {fmt(agility)} + Dodge {fmt(dodgeLv)}
+          {(character.armorModifier ?? 0) > 0 && (
+            <> − Armor {character.armorModifier}</>
+          )}
+          {equippedArmorEvasionReduction(character) > 0 && (
+            <> − Worn {equippedArmorEvasionReduction(character)}</>
+          )}
+        </div>
+        <label className="flex items-center justify-between gap-2 text-xs text-zinc-400">
+          <span>Armor</span>
+          <input
+            type="number"
+            value={character.armorModifier}
+            onChange={(e) => onArmorChange(Number(e.target.value) || 0)}
+            className="w-16 bg-zinc-950 border border-zinc-700 rounded px-2 py-1 text-xs text-zinc-100 text-right font-mono"
+          />
+        </label>
       </div>
-      <label className="flex items-center justify-between gap-2 text-xs text-zinc-400">
-        <span>Armor</span>
-        <input
-          type="number"
-          value={character.armorModifier}
-          onChange={(e) => onArmorChange(Number(e.target.value) || 0)}
-          className="w-16 bg-zinc-950 border border-zinc-700 rounded px-2 py-1 text-xs text-zinc-100 text-right font-mono"
-        />
-      </label>
+      <div className="h-px bg-zinc-800" />
+      <div className="flex items-baseline justify-between">
+        <h3 className="text-xs font-medium text-zinc-400 uppercase tracking-wide">
+          SPD
+        </h3>
+        <div className="font-mono text-lg text-zinc-100">
+          {character.speed ?? 20}
+          <span className="text-zinc-500 text-xs"> ft</span>
+        </div>
+      </div>
     </div>
   )
 }
