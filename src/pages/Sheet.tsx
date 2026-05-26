@@ -120,6 +120,15 @@ export function Sheet() {
     setCharacter((c) =>
       c ? normalizeCurrentValues({ ...c, currentEp: c.currentEp + delta }) : c,
     )
+  const adjustTempHp = (delta: number) =>
+    setCharacter((c) =>
+      c
+        ? normalizeCurrentValues({
+            ...c,
+            tempHp: (c.tempHp ?? 0) + delta,
+          })
+        : c,
+    )
   const longRest = () => setCharacter((c) => (c ? restoreToMax(c) : c))
   const setGold = (gold: number) =>
     setCharacter((c) => (c ? { ...c, gold: Math.max(0, gold) } : c))
@@ -208,6 +217,9 @@ export function Sheet() {
           <span className="font-mono text-base whitespace-nowrap leading-none text-rose-300">
             {character.currentHp}
             <span className="text-zinc-500 text-[10px]"> /{character.hp}</span>
+            {(character.tempHp ?? 0) > 0 && (
+              <span className="text-sky-300"> +{character.tempHp}</span>
+            )}
           </span>
         </Stat>
         <Stat
@@ -243,19 +255,22 @@ export function Sheet() {
         ))}
         <RibbonRule />
         <Stat
-          label="Dodge"
+          label="DDG"
           value={fmt(combatSkillLevel(character, 'combat-dodge'))}
           color="text-amber-300"
+          tooltip="Dodge"
         />
         <Stat
-          label="Grit"
+          label="GRT"
           value={fmt(combatSkillLevel(character, 'combat-grit'))}
           color="text-amber-300"
+          tooltip="Grit"
         />
         <Stat
-          label="Resolve"
+          label="RSL"
           value={fmt(combatSkillLevel(character, 'combat-resolve'))}
           color="text-amber-300"
+          tooltip="Resolve"
         />
         <button
           type="button"
@@ -503,6 +518,8 @@ export function Sheet() {
           color={adjusting === 'hp' ? 'rose' : 'sky'}
           onAdjust={adjusting === 'hp' ? adjustHp : adjustEp}
           onClose={() => setAdjusting(null)}
+          tempHp={adjusting === 'hp' ? character.tempHp ?? 0 : undefined}
+          onAdjustTempHp={adjusting === 'hp' ? adjustTempHp : undefined}
         />
       )}
     </div>
@@ -775,6 +792,14 @@ interface ResourceAdjustDialogProps {
   color: 'rose' | 'sky'
   onAdjust: (delta: number) => void
   onClose: () => void
+  tempHp?: number
+  onAdjustTempHp?: (delta: number) => void
+}
+
+function parseDelta(raw: string): number {
+  if (raw.trim() === '') return 1
+  const n = Math.abs(Math.floor(Number(raw)))
+  return Number.isFinite(n) && n > 0 ? n : 0
 }
 
 function ResourceAdjustDialog({
@@ -784,16 +809,17 @@ function ResourceAdjustDialog({
   color,
   onAdjust,
   onClose,
+  tempHp,
+  onAdjustTempHp,
 }: ResourceAdjustDialogProps) {
   const [delta, setDelta] = useState('')
+  const [tempDelta, setTempDelta] = useState('')
   const inputRef = useRef<HTMLInputElement>(null)
   const accent = color === 'rose' ? 'text-rose-300' : 'text-sky-300'
   const ring = color === 'rose' ? 'border-rose-500/40' : 'border-sky-500/40'
-  const parsed = (() => {
-    if (delta.trim() === '') return 1
-    const n = Math.abs(Math.floor(Number(delta)))
-    return Number.isFinite(n) && n > 0 ? n : 0
-  })()
+  const parsed = parseDelta(delta)
+  const parsedTemp = parseDelta(tempDelta)
+  const showTemp = onAdjustTempHp !== undefined && tempHp !== undefined
 
   useEffect(() => {
     inputRef.current?.focus()
@@ -809,6 +835,11 @@ function ResourceAdjustDialog({
     onAdjust(sign * parsed)
     setDelta('')
     inputRef.current?.focus()
+  }
+  const applyTemp = (sign: 1 | -1) => {
+    if (parsedTemp === 0 || !onAdjustTempHp) return
+    onAdjustTempHp(sign * parsedTemp)
+    setTempDelta('')
   }
 
   return (
@@ -850,45 +881,94 @@ function ResourceAdjustDialog({
           <span className="font-mono text-base text-zinc-500 leading-none">
             {' '}/ {max}
           </span>
+          {showTemp && tempHp! > 0 && (
+            <span className="font-mono text-2xl text-sky-300 leading-none ml-2">
+              +{tempHp}
+            </span>
+          )}
         </div>
 
-        <div className="flex items-stretch justify-center gap-2">
-          <button
-            type="button"
-            onClick={() => apply(-1)}
-            disabled={parsed === 0}
-            aria-label={`Subtract ${parsed} ${label}`}
-            className="rounded bg-zinc-800 hover:bg-zinc-700 disabled:opacity-40 px-4 text-lg font-mono text-zinc-100"
-          >
-            −
-          </button>
-          <input
-            ref={inputRef}
-            type="number"
-            min={0}
-            value={delta}
-            onChange={(e) => setDelta(e.target.value)}
-            onKeyDown={(e) => {
-              if (e.key === 'Enter') apply(1)
-            }}
-            placeholder="1"
-            className="w-20 bg-zinc-950 border border-zinc-700 rounded px-2 py-2 text-lg text-zinc-100 text-center font-mono"
-          />
-          <button
-            type="button"
-            onClick={() => apply(1)}
-            disabled={parsed === 0}
-            aria-label={`Add ${parsed} ${label}`}
-            className="rounded bg-zinc-800 hover:bg-zinc-700 disabled:opacity-40 px-4 text-lg font-mono text-zinc-100"
-          >
-            +
-          </button>
-        </div>
+        <AdjustRow
+          delta={delta}
+          setDelta={setDelta}
+          parsed={parsed}
+          apply={apply}
+          inputRef={inputRef}
+          ariaLabel={label}
+        />
+
+        {showTemp && (
+          <div className="space-y-2 pt-2 border-t border-zinc-800">
+            <div className="text-[10px] font-medium uppercase tracking-[0.3em] text-sky-300/80">
+              Temp HP
+            </div>
+            <AdjustRow
+              delta={tempDelta}
+              setDelta={setTempDelta}
+              parsed={parsedTemp}
+              apply={applyTemp}
+              ariaLabel="Temp HP"
+            />
+          </div>
+        )}
 
         <div className="text-center text-[9px] uppercase tracking-[0.25em] text-zinc-600">
           Enter to add · Esc to close
         </div>
       </div>
+    </div>
+  )
+}
+
+interface AdjustRowProps {
+  delta: string
+  setDelta: (v: string) => void
+  parsed: number
+  apply: (sign: 1 | -1) => void
+  inputRef?: React.RefObject<HTMLInputElement | null>
+  ariaLabel: string
+}
+
+function AdjustRow({
+  delta,
+  setDelta,
+  parsed,
+  apply,
+  inputRef,
+  ariaLabel,
+}: AdjustRowProps) {
+  return (
+    <div className="flex items-stretch justify-center gap-2">
+      <button
+        type="button"
+        onClick={() => apply(-1)}
+        disabled={parsed === 0}
+        aria-label={`Subtract ${parsed} ${ariaLabel}`}
+        className="rounded bg-zinc-800 hover:bg-zinc-700 disabled:opacity-40 px-4 text-lg font-mono text-zinc-100"
+      >
+        −
+      </button>
+      <input
+        ref={inputRef}
+        type="number"
+        min={0}
+        value={delta}
+        onChange={(e) => setDelta(e.target.value)}
+        onKeyDown={(e) => {
+          if (e.key === 'Enter') apply(1)
+        }}
+        placeholder="1"
+        className="w-20 bg-zinc-950 border border-zinc-700 rounded px-2 py-2 text-lg text-zinc-100 text-center font-mono"
+      />
+      <button
+        type="button"
+        onClick={() => apply(1)}
+        disabled={parsed === 0}
+        aria-label={`Add ${parsed} ${ariaLabel}`}
+        className="rounded bg-zinc-800 hover:bg-zinc-700 disabled:opacity-40 px-4 text-lg font-mono text-zinc-100"
+      >
+        +
+      </button>
     </div>
   )
 }

@@ -57,6 +57,7 @@ export interface Character {
   armorModifier: number
   savedSpells: SavedSpell[]
   deathSaves: DeathSaves
+  tempHp: number
 }
 
 export interface DeathSaves {
@@ -117,6 +118,7 @@ export function emptyCharacter(tierName: string, bpBudget: number): Character {
     armorModifier: 0,
     savedSpells: [],
     deathSaves: { ...EMPTY_DEATH_SAVES },
+    tempHp: 0,
   }
 }
 
@@ -160,7 +162,12 @@ export function bpBreakdown(c: Character): BPBreakdown {
 }
 
 export function restoreToMax(c: Character): Character {
-  return normalizeCurrentValues({ ...c, currentHp: c.hp, currentEp: c.ep })
+  return normalizeCurrentValues({
+    ...c,
+    currentHp: c.hp,
+    currentEp: c.ep,
+    tempHp: 0,
+  })
 }
 
 export function normalizeCurrentValues(c: Character): Character {
@@ -173,6 +180,8 @@ export function normalizeCurrentValues(c: Character): Character {
     ...c,
     currentHp,
     currentEp: Math.max(0, Math.min(c.currentEp, c.ep)),
+    // tempHp has no upper bound — it's the mechanism for going above max HP.
+    tempHp: Math.max(0, Math.floor(c.tempHp ?? 0)),
     deathSaves: alive ? { ...EMPTY_DEATH_SAVES } : existing,
   }
 }
@@ -199,6 +208,7 @@ export function expendEpToRevive(c: Character): Character {
     ...c,
     currentHp: 1,
     currentEp: 0,
+    tempHp: 0,
     deathSaves: { ...EMPTY_DEATH_SAVES },
   })
 }
@@ -330,6 +340,7 @@ export function ensureCombatSkills(c: Character): Character {
           : (LEGACY_MEDIUM_MIGRATION[s.medium] ?? s.medium),
     })),
     deathSaves: c.deathSaves ?? { ...EMPTY_DEATH_SAVES },
+    tempHp: c.tempHp ?? 0,
     magicSchools: migrateSchools(c.magicSchools),
     magicMediums: migrateMediums(c.magicMediums),
     attributes: migrateAttributes(c.attributes),
@@ -373,6 +384,9 @@ export interface DamageOutcome {
   type: DamageType
   reduction: number
   netDamage: number
+  tempHpAbsorbed: number
+  tempHpBefore: number
+  tempHpAfter: number
   hpBefore: number
   hpAfter: number
   durabilityChanges: {
@@ -397,8 +411,13 @@ export function applyTypedDamage(
   const inv = c.inventory ?? []
   const safeReduction = Math.max(0, Math.floor(reduction))
   const netDamage = Math.max(0, amount - safeReduction)
+  // Damage hits temp HP first, then real HP.
+  const tempHpBefore = Math.max(0, c.tempHp ?? 0)
+  const tempHpAbsorbed = Math.min(tempHpBefore, netDamage)
+  const tempHpAfter = tempHpBefore - tempHpAbsorbed
+  const damageToHp = netDamage - tempHpAbsorbed
   const hpBefore = c.currentHp
-  const hpAfter = Math.max(0, hpBefore - netDamage)
+  const hpAfter = Math.max(0, hpBefore - damageToHp)
 
   const durabilityChanges: DamageOutcome['durabilityChanges'] = []
   const nextInventory = inv.map((i) => {
@@ -425,12 +444,20 @@ export function applyTypedDamage(
   })
 
   return {
-    next: { ...c, currentHp: hpAfter, inventory: nextInventory },
+    next: {
+      ...c,
+      currentHp: hpAfter,
+      tempHp: tempHpAfter,
+      inventory: nextInventory,
+    },
     outcome: {
       rawDamage: amount,
       type,
       reduction: safeReduction,
       netDamage,
+      tempHpAbsorbed,
+      tempHpBefore,
+      tempHpAfter,
       hpBefore,
       hpAfter,
       durabilityChanges,

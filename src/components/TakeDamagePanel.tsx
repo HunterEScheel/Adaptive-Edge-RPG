@@ -119,6 +119,14 @@ export function TakeDamagePanel({ character, onApply }: Props) {
             <span className="font-mono text-rose-300">{last.netDamage}</span> to
             HP
           </div>
+          {last.tempHpAbsorbed > 0 && (
+            <div className="text-sky-300 font-mono">
+              Temp HP {last.tempHpBefore} → {last.tempHpAfter}{' '}
+              <span className="text-zinc-500">
+                (absorbed {last.tempHpAbsorbed})
+              </span>
+            </div>
+          )}
           <div className="text-zinc-500 font-mono">
             HP {last.hpBefore} → {last.hpAfter}
           </div>

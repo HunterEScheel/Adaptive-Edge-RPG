@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { DCCalculator } from '../components/DCCalculator'
 
 interface Section {
   id: string
@@ -389,6 +390,8 @@ export function RunningTheGame() {
           {allOpen ? 'Collapse all' : 'Expand all'}
         </button>
       </div>
+      <DCCalculator />
+
       <nav className="rounded border border-zinc-800 bg-zinc-900/50 p-3">
         <ul className="grid grid-cols-2 sm:grid-cols-3 gap-x-3 gap-y-1 text-sm">
           {SECTIONS.map((s) => (
