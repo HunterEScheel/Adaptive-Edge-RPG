@@ -650,7 +650,7 @@ function StatusBar({ character, onAdjustHp, onAdjustEp }: StatusBarProps) {
 
   return (
     <div className="rounded-lg border border-zinc-800 bg-zinc-900/50 px-3 py-2">
-      <div className="grid grid-cols-2 sm:grid-cols-4 gap-x-4 gap-y-2 items-center">
+      <div className="grid grid-cols-2 gap-x-4 gap-y-2 items-center sm:grid-cols-4 sm:gap-x-0 sm:divide-x sm:divide-zinc-700/60 sm:[&>*]:px-4 sm:[&>*:first-child]:pl-0 sm:[&>*:last-child]:pr-0">
         <ResourceInline
           label="HP"
           current={character.currentHp}
