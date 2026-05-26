@@ -1,7 +1,7 @@
 import { useState } from 'react'
 
 type Difficulty = 'easy' | 'medium' | 'hard' | 'near-impossible'
-type Relevance = 'irrelevant' | 'general' | 'related' | 'expertise'
+type Relevance = 'irrelevant' | 'none' | 'general' | 'related' | 'expertise'
 
 interface DifficultyDef {
   key: Difficulty
@@ -27,6 +27,7 @@ const DIFFICULTIES: readonly DifficultyDef[] = [
 
 const RELEVANCES: readonly RelevanceDef[] = [
   { key: 'irrelevant', label: 'Irrelevant', mod: '+10', add: 10 },
+  { key: 'none', label: 'None', mod: '±0' },
   { key: 'general', label: 'General', mod: '−10%', multiplier: 0.9 },
   { key: 'related', label: 'Related', mod: '−25%', multiplier: 0.75 },
   { key: 'expertise', label: 'Expertise', mod: '−40%', multiplier: 0.6 },

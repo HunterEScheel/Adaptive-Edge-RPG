@@ -37,8 +37,11 @@ const SECTIONS: Section[] = [
       <>
         <p>
           Pick a <strong>power tier</strong> together as a table. The tier sets
-          everyone&apos;s base BP budget (e.g. a low-power game might give
-          200&nbsp;BP; a heroic game 1000&nbsp;BP). Players then spend that
+          everyone&apos;s base BP budget, from{' '}
+          <em>Peasants</em>&nbsp;(150&nbsp;BP) up through{' '}
+          <em>World Savior</em>&nbsp;(2000&nbsp;BP). A first campaign typically
+          starts at <em>New&nbsp;Adventurers</em>&nbsp;(400&nbsp;BP) or{' '}
+          <em>Guild&nbsp;Regulars</em>&nbsp;(550&nbsp;BP). Players spend the
           budget across:
         </p>
         <ul className="list-disc pl-5 mt-2 space-y-1">
@@ -56,11 +59,13 @@ const SECTIONS: Section[] = [
         </p>
         <Example label="Example">
           <p>
-            Mira is a Tier-2 ranger (400 BP). She takes <em>Hunted by the Black
-            Sigil</em> (Tier II tether, +15 BP) and <em>Trust no priest</em>
-            (Flaw, +15 BP), giving her 430 BP to spend. She buys Agility +3
-            (68 BP), Power +1 (13 BP), Sense +2 (34 BP), 18 HP (12 BP),
-            10 EP (20 BP), and the rest into skills, weapons, and a saved spell.
+            Mira is a <em>New Adventurers</em> ranger (400 BP). She takes{' '}
+            <em>Hunted by the Black Sigil</em> (Major tether, +15&nbsp;BP) and{' '}
+            <em>Trust no priest</em> (Flaw, +15&nbsp;BP), giving her 430&nbsp;BP
+            to spend. She buys Agility&nbsp;+3 (68&nbsp;BP),
+            Power&nbsp;+1 (13&nbsp;BP), Sense&nbsp;+2 (34&nbsp;BP),
+            18&nbsp;HP (12&nbsp;BP), 10&nbsp;EP (20&nbsp;BP), and the rest
+            into skills, weapons, and a saved spell.
           </p>
         </Example>
       </>
@@ -83,11 +88,49 @@ const SECTIONS: Section[] = [
           against another.
         </p>
         <p className="mt-2">
-          Common DCs: <span className="font-mono">10</span> trivial,{' '}
-          <span className="font-mono">15</span> trained-but-tested,{' '}
-          <span className="font-mono">20</span> hard,{' '}
-          <span className="font-mono">25</span> expert,{' '}
-          <span className="font-mono">30+</span> legendary.
+          Standard DCs:{' '}
+          <strong className="text-amber-300">Easy</strong>{' '}
+          <span className="font-mono">12</span>,{' '}
+          <strong className="text-amber-300">Medium</strong>{' '}
+          <span className="font-mono">20</span>,{' '}
+          <strong className="text-amber-300">Hard</strong>{' '}
+          <span className="font-mono">30</span>,{' '}
+          <strong className="text-amber-300">Near-impossible</strong>{' '}
+          <span className="font-mono">40</span>.
+        </p>
+        <p className="mt-2">
+          Then adjust by how well the character&apos;s most-applicable skill
+          fits the task — pick one:
+        </p>
+        <ul className="list-disc pl-5 mt-1 space-y-1">
+          <li>
+            <strong>Irrelevant</strong> — DC&nbsp;
+            <span className="font-mono">+ 10</span>. No trained skill applies;
+            they&apos;re fumbling at it raw.
+          </li>
+          <li>
+            <strong>None</strong> — DC unchanged. The base difficulty stands.
+          </li>
+          <li>
+            <strong>General</strong> — DC&nbsp;
+            <span className="font-mono">× 0.90</span>. Broadly applicable
+            training.
+          </li>
+          <li>
+            <strong>Related</strong> — DC&nbsp;
+            <span className="font-mono">× 0.75</span>. A clearly relevant
+            skill.
+          </li>
+          <li>
+            <strong>Expertise</strong> — DC&nbsp;
+            <span className="font-mono">× 0.60</span>. This is exactly the
+            character&apos;s thing.
+          </li>
+        </ul>
+        <p className="mt-2 text-zinc-400 text-sm">
+          Round multipliers down to the nearest whole number. The{' '}
+          <strong className="text-amber-300">DC Calculator</strong> at the top
+          of this page does the arithmetic.
         </p>
       </>
     ),
@@ -269,7 +312,11 @@ const SECTIONS: Section[] = [
         <p>
           The GM hands out <strong>bonus BP</strong> at meaningful moments:
           surviving a session, completing a quest beat, learning a new truth.
-          A typical pace is 25–50 BP per session, but campaigns vary.
+          A typical pace is <strong>5–25&nbsp;BP per session</strong> —
+          enough that characters scale visibly over a campaign, but not so
+          much that a single session is a power spike. Even 25&nbsp;BP in one
+          night won&apos;t fundamentally change what a character can do; it
+          buys a small skill bump or a single attribute step.
         </p>
         <p className="mt-2">
           Players open the Builder, navigate to the <em>BP Management</em>{' '}
@@ -345,9 +392,12 @@ const SECTIONS: Section[] = [
             them the save was at +0, they&apos;re glad they amped.
           </li>
           <li>
-            <strong>Pace BP awards to your campaign length.</strong> Long
-            campaign? 25 BP/session. Short arc? Front-load and end higher.
-            Players feeling stuck mechanically is usually a BP problem.
+            <strong>Pace BP awards steadily.</strong> 5–25&nbsp;BP per session
+            is the norm. A quest beat or a hard-won fight might justify the
+            high end; a quiet downtime session sits at the low end. The point
+            is that no single session feels like a level-up — a new skill
+            rank or attribute step is earned across multiple sessions, not
+            banked in one.
           </li>
         </ul>
       </>
