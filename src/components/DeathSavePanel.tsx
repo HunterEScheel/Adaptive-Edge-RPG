@@ -1,5 +1,6 @@
 import {
   expendEpToRevive,
+  restoreToMax,
   setDeathSaves,
   type Character,
 } from '../system/character'
@@ -13,7 +14,12 @@ export function DeathSavePanel({ character, onApply }: Props) {
   const { successes, failures } = character.deathSaves
   const stable = successes >= 3
   const dead = failures >= 3
-  const finished = stable || dead
+
+  if (dead) {
+    return (
+      <DeathScreen onResurrect={() => onApply(restoreToMax(character))} />
+    )
+  }
 
   // Click pip n → set count to n+1. Click the rightmost filled pip → drop to n.
   const setCount = (kind: 'successes' | 'failures', n: number) => {
@@ -30,7 +36,7 @@ export function DeathSavePanel({ character, onApply }: Props) {
           color="emerald"
           count={successes}
           onChange={(n) => setCount('successes', n)}
-          disabled={dead}
+          disabled={false}
         />
         <PipRow
           label="Failures"
@@ -46,13 +52,8 @@ export function DeathSavePanel({ character, onApply }: Props) {
           Stable — unconscious but no longer dying.
         </div>
       )}
-      {dead && (
-        <div className="rounded border border-zinc-700 bg-zinc-900 px-3 py-2 text-sm text-zinc-300">
-          Dead.
-        </div>
-      )}
 
-      {!finished && (
+      {!stable && (
         <button
           type="button"
           onClick={burnEp}
@@ -71,6 +72,26 @@ export function DeathSavePanel({ character, onApply }: Props) {
       <p className="text-[11px] text-zinc-500">
         Tap a pip to mark a result. Tap the rightmost filled pip to undo.
       </p>
+    </div>
+  )
+}
+
+function DeathScreen({ onResurrect }: { onResurrect: () => void }) {
+  return (
+    <div className="flex flex-col items-center justify-center gap-4 py-10 text-center">
+      <div className="text-7xl leading-none" aria-hidden>
+        💀
+      </div>
+      <div className="text-2xl font-bold tracking-[0.3em] text-rose-300">
+        YOU ARE DEAD
+      </div>
+      <button
+        type="button"
+        onClick={onResurrect}
+        className="mt-2 rounded bg-amber-500 hover:bg-amber-400 px-4 py-2 text-sm font-medium text-zinc-950"
+      >
+        Resurrect character
+      </button>
     </div>
   )
 }
