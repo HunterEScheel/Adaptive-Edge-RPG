@@ -48,6 +48,7 @@ export function Sheet() {
   const [savingState, setSavingState] = useState<'idle' | 'saving' | 'saved'>(
     'idle',
   )
+  const [adjusting, setAdjusting] = useState<'hp' | 'ep' | null>(null)
   const saveTimer = useRef<number | null>(null)
   const skipNextSave = useRef(true)
 
@@ -199,26 +200,28 @@ export function Sheet() {
 
       {/* Band 2 — Stats ribbon (tactical HUD) */}
       <div className="flex flex-wrap items-end gap-x-5 gap-y-3 border-b border-zinc-800 pb-2">
-        <Stat label="HP">
-          <ResourceValueRow
-            current={character.currentHp}
-            max={character.hp}
-            color="rose"
-            onAdjust={adjustHp}
-            ariaLabel="HP"
-          />
-        </Stat>
-        <Stat label="EP">
-          <ResourceValueRow
-            current={character.currentEp}
-            max={character.ep}
-            color="sky"
-            onAdjust={adjustEp}
-            ariaLabel="EP"
-          />
+        <Stat
+          label="HP"
+          tooltip="Click to adjust"
+          onClick={() => setAdjusting('hp')}
+        >
+          <span className="font-mono text-base whitespace-nowrap leading-none text-rose-300">
+            {character.currentHp}
+            <span className="text-zinc-500 text-[10px]"> /{character.hp}</span>
+          </span>
         </Stat>
         <Stat
-          label="Evasion"
+          label="EP"
+          tooltip="Click to adjust"
+          onClick={() => setAdjusting('ep')}
+        >
+          <span className="font-mono text-base whitespace-nowrap leading-none text-sky-300">
+            {character.currentEp}
+            <span className="text-zinc-500 text-[10px]"> /{character.ep}</span>
+          </span>
+        </Stat>
+        <Stat
+          label="EVA"
           value={evasion(character)}
           color="text-amber-300"
           tooltip={evasionBreakdown(character)}
@@ -257,13 +260,35 @@ export function Sheet() {
         <button
           type="button"
           onClick={longRest}
-          title="Restore HP & EP, clear death saves"
-          className="ml-auto self-end inline-flex items-center gap-1.5 rounded bg-emerald-700/90 hover:bg-emerald-600 border border-emerald-500/40 px-3 py-1.5 text-[11px] font-medium uppercase tracking-[0.2em] text-emerald-50 transition"
+          title="Long rest — restore HP & EP, clear death saves"
+          aria-label="Long rest"
+          className="ml-auto self-end inline-flex items-center justify-center rounded bg-emerald-700/90 hover:bg-emerald-600 border border-emerald-500/40 h-8 w-8 text-emerald-50 transition"
         >
-          <span aria-hidden className="text-base leading-none">
-            ☾
-          </span>
-          Long Rest
+          <svg
+            width="16"
+            height="16"
+            viewBox="0 0 16 16"
+            fill="currentColor"
+            aria-hidden="true"
+          >
+            <path d="M8 2 C8.6 4, 10.5 5, 10.5 8 C10.5 10, 9.2 11.2, 8 12 C6.8 11.2, 5.5 10, 5.5 8 C5.5 5, 7.4 4, 8 2 Z" />
+            <rect
+              x="2"
+              y="13"
+              width="12"
+              height="1.5"
+              rx="0.6"
+              transform="rotate(-12 8 13.75)"
+            />
+            <rect
+              x="2"
+              y="13"
+              width="12"
+              height="1.5"
+              rx="0.6"
+              transform="rotate(12 8 13.75)"
+            />
+          </svg>
         </button>
       </div>
 
@@ -466,6 +491,19 @@ export function Sheet() {
         <div className="rounded border border-amber-700/50 bg-amber-900/20 p-3 text-xs text-amber-200">
           Supabase isn&apos;t configured — changes won&apos;t be saved.
         </div>
+      )}
+
+      {adjusting && (
+        <ResourceAdjustDialog
+          label={adjusting === 'hp' ? 'HP' : 'EP'}
+          current={
+            adjusting === 'hp' ? character.currentHp : character.currentEp
+          }
+          max={adjusting === 'hp' ? character.hp : character.ep}
+          color={adjusting === 'hp' ? 'rose' : 'sky'}
+          onAdjust={adjusting === 'hp' ? adjustHp : adjustEp}
+          onClose={() => setAdjusting(null)}
+        />
       )}
     </div>
   )
@@ -680,13 +718,22 @@ interface StatProps {
   color?: string
   suffix?: string
   tooltip?: string
+  onClick?: () => void
   children?: React.ReactNode
 }
 
-function Stat({ label, value, color, suffix, tooltip, children }: StatProps) {
-  return (
-    <div className="flex flex-col gap-0.5 min-w-0" title={tooltip}>
-      <span className="text-[10px] font-medium uppercase tracking-[0.2em] text-zinc-500">
+function Stat({
+  label,
+  value,
+  color,
+  suffix,
+  tooltip,
+  onClick,
+  children,
+}: StatProps) {
+  const inner = (
+    <>
+      <span className="text-[10px] font-medium uppercase tracking-[0.2em] text-zinc-500 group-hover:text-amber-300 transition">
         {label}
       </span>
       {children ?? (
@@ -700,75 +747,148 @@ function Stat({ label, value, color, suffix, tooltip, children }: StatProps) {
           {suffix && <span className="text-zinc-500 text-[10px]"> {suffix}</span>}
         </span>
       )}
+    </>
+  )
+  if (onClick) {
+    return (
+      <button
+        type="button"
+        onClick={onClick}
+        title={tooltip}
+        className="group flex flex-col gap-0.5 min-w-0 items-start text-left cursor-pointer rounded -mx-1 px-1 transition hover:bg-zinc-800/40"
+      >
+        {inner}
+      </button>
+    )
+  }
+  return (
+    <div className="flex flex-col gap-0.5 min-w-0" title={tooltip}>
+      {inner}
     </div>
   )
 }
 
-interface ResourceValueRowProps {
+interface ResourceAdjustDialogProps {
+  label: string
   current: number
   max: number
   color: 'rose' | 'sky'
   onAdjust: (delta: number) => void
-  ariaLabel: string
+  onClose: () => void
 }
 
-function ResourceValueRow({
+function ResourceAdjustDialog({
+  label,
   current,
   max,
   color,
   onAdjust,
-  ariaLabel,
-}: ResourceValueRowProps) {
+  onClose,
+}: ResourceAdjustDialogProps) {
   const [delta, setDelta] = useState('')
+  const inputRef = useRef<HTMLInputElement>(null)
   const accent = color === 'rose' ? 'text-rose-300' : 'text-sky-300'
+  const ring = color === 'rose' ? 'border-rose-500/40' : 'border-sky-500/40'
   const parsed = (() => {
     if (delta.trim() === '') return 1
     const n = Math.abs(Math.floor(Number(delta)))
     return Number.isFinite(n) && n > 0 ? n : 0
   })()
+
+  useEffect(() => {
+    inputRef.current?.focus()
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') onClose()
+    }
+    document.addEventListener('keydown', onKey)
+    return () => document.removeEventListener('keydown', onKey)
+  }, [onClose])
+
   const apply = (sign: 1 | -1) => {
     if (parsed === 0) return
     onAdjust(sign * parsed)
+    setDelta('')
+    inputRef.current?.focus()
   }
+
   return (
-    <div className="flex items-baseline gap-1.5">
-      <span
+    <div
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="resource-adjust-title"
+      className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm p-4"
+      onClick={onClose}
+    >
+      <div
+        onClick={(e) => e.stopPropagation()}
         className={
-          'font-mono text-base whitespace-nowrap leading-none ' + accent
+          'rounded-lg border bg-zinc-900 shadow-2xl max-w-xs w-full p-5 space-y-4 ' +
+          ring
         }
       >
-        {current}
-        <span className="text-zinc-500 text-[10px]"> /{max}</span>
-      </span>
-      <button
-        type="button"
-        onClick={() => apply(-1)}
-        disabled={parsed === 0}
-        aria-label={`Subtract ${parsed} ${ariaLabel}`}
-        className="self-center rounded bg-zinc-800 hover:bg-zinc-700 disabled:opacity-40 px-1 text-[11px] font-mono leading-none h-[18px]"
-      >
-        −
-      </button>
-      <input
-        type="number"
-        min={0}
-        value={delta}
-        onChange={(e) => setDelta(e.target.value)}
-        onKeyDown={(e) => {
-          if (e.key === 'Enter') apply(1)
-        }}
-        placeholder="1"
-        className="self-center w-8 bg-zinc-950 border border-zinc-700 rounded px-1 text-[11px] text-zinc-100 text-right font-mono leading-none h-[18px]"
-      />
-      <button
-        type="button"
-        onClick={() => apply(1)}
-        disabled={parsed === 0}
-        aria-label={`Add ${parsed} ${ariaLabel}`}
-        className="self-center rounded bg-zinc-800 hover:bg-zinc-700 disabled:opacity-40 px-1 text-[11px] font-mono leading-none h-[18px]"
-      >
-        +
-      </button>
+        <div className="flex items-center justify-between">
+          <h3
+            id="resource-adjust-title"
+            className="text-[10px] font-medium uppercase tracking-[0.3em] text-zinc-500"
+          >
+            Adjust {label}
+          </h3>
+          <button
+            type="button"
+            onClick={onClose}
+            aria-label="Close"
+            className="text-zinc-600 hover:text-zinc-200 text-sm leading-none"
+          >
+            ✕
+          </button>
+        </div>
+
+        <div className="text-center">
+          <span className={'font-mono text-4xl leading-none ' + accent}>
+            {current}
+          </span>
+          <span className="font-mono text-base text-zinc-500 leading-none">
+            {' '}/ {max}
+          </span>
+        </div>
+
+        <div className="flex items-stretch justify-center gap-2">
+          <button
+            type="button"
+            onClick={() => apply(-1)}
+            disabled={parsed === 0}
+            aria-label={`Subtract ${parsed} ${label}`}
+            className="rounded bg-zinc-800 hover:bg-zinc-700 disabled:opacity-40 px-4 text-lg font-mono text-zinc-100"
+          >
+            −
+          </button>
+          <input
+            ref={inputRef}
+            type="number"
+            min={0}
+            value={delta}
+            onChange={(e) => setDelta(e.target.value)}
+            onKeyDown={(e) => {
+              if (e.key === 'Enter') apply(1)
+            }}
+            placeholder="1"
+            className="w-20 bg-zinc-950 border border-zinc-700 rounded px-2 py-2 text-lg text-zinc-100 text-center font-mono"
+          />
+          <button
+            type="button"
+            onClick={() => apply(1)}
+            disabled={parsed === 0}
+            aria-label={`Add ${parsed} ${label}`}
+            className="rounded bg-zinc-800 hover:bg-zinc-700 disabled:opacity-40 px-4 text-lg font-mono text-zinc-100"
+          >
+            +
+          </button>
+        </div>
+
+        <div className="text-center text-[9px] uppercase tracking-[0.25em] text-zinc-600">
+          Enter to add · Esc to close
+        </div>
+      </div>
     </div>
   )
 }
