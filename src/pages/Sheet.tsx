@@ -198,14 +198,11 @@ export function Sheet() {
         </div>
       </header>
 
-      <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
-        <ResourcesCard
-          character={character}
-          onAdjustHp={adjustHp}
-          onAdjustEp={adjustEp}
-        />
-        <DefenseCard character={character} />
-      </div>
+      <StatusBar
+        character={character}
+        onAdjustHp={adjustHp}
+        onAdjustEp={adjustEp}
+      />
 
       <div className="grid grid-cols-5 gap-1">
         {ATTRIBUTES.map((a) => (
@@ -634,39 +631,60 @@ function SkillList({ skills }: SkillListProps) {
   )
 }
 
-interface ResourcesCardProps {
+interface StatusBarProps {
   character: Character
   onAdjustHp: (delta: number) => void
   onAdjustEp: (delta: number) => void
 }
 
-function ResourcesCard({
-  character,
-  onAdjustHp,
-  onAdjustEp,
-}: ResourcesCardProps) {
+function StatusBar({ character, onAdjustHp, onAdjustEp }: StatusBarProps) {
+  const ev = evasion(character)
+  const agility = character.attributes['Agility'] ?? 0
+  const dodgeLv = combatSkillLevel(character, 'combat-dodge')
+  const evasionBreakdown =
+    `10 + AGI ${fmt(agility)} + Dodge ${fmt(dodgeLv)}` +
+    ((character.armorModifier ?? 0) > 0
+      ? ` − Armor ${character.armorModifier}`
+      : '') +
+    (equippedArmorEvasionReduction(character) > 0
+      ? ` − Worn ${equippedArmorEvasionReduction(character)}`
+      : '')
+
   return (
-    <div className="rounded-lg border border-zinc-800 bg-zinc-900/50 p-3 space-y-3">
-      <ResourceRow
-        label="HP"
-        current={character.currentHp}
-        max={character.hp}
-        color="rose"
-        onAdjust={onAdjustHp}
-      />
-      <div className="h-px bg-zinc-800" />
-      <ResourceRow
-        label="EP"
-        current={character.currentEp}
-        max={character.ep}
-        color="sky"
-        onAdjust={onAdjustEp}
-      />
+    <div className="rounded-lg border border-zinc-800 bg-zinc-900/50 px-3 py-2">
+      <div className="grid grid-cols-2 sm:grid-cols-4 gap-x-4 gap-y-2 items-center">
+        <ResourceInline
+          label="HP"
+          current={character.currentHp}
+          max={character.hp}
+          color="rose"
+          onAdjust={onAdjustHp}
+        />
+        <ResourceInline
+          label="EP"
+          current={character.currentEp}
+          max={character.ep}
+          color="sky"
+          onAdjust={onAdjustEp}
+        />
+        <StatDisplay
+          label="Evasion"
+          value={ev}
+          color="text-amber-300"
+          tooltip={evasionBreakdown}
+        />
+        <StatDisplay
+          label="Speed"
+          value={character.speed ?? 20}
+          suffix="ft"
+          color="text-zinc-100"
+        />
+      </div>
     </div>
   )
 }
 
-interface ResourceRowProps {
+interface ResourceInlineProps {
   label: string
   current: number
   max: number
@@ -674,16 +692,14 @@ interface ResourceRowProps {
   onAdjust: (delta: number) => void
 }
 
-function ResourceRow({
+function ResourceInline({
   label,
   current,
   max,
   color,
   onAdjust,
-}: ResourceRowProps) {
+}: ResourceInlineProps) {
   const [delta, setDelta] = useState('')
-  const pct = max > 0 ? Math.max(0, Math.min(100, (current / max) * 100)) : 0
-  const fill = color === 'rose' ? 'bg-rose-500' : 'bg-sky-500'
   const accent = color === 'rose' ? 'text-rose-300' : 'text-sky-300'
   const parsed = (() => {
     if (delta.trim() === '') return 1
@@ -695,95 +711,68 @@ function ResourceRow({
     onAdjust(sign * parsed)
   }
   return (
-    <div className="space-y-2">
-      <div className="flex items-center justify-between gap-2">
-        <h3 className="text-xs font-medium text-zinc-400 uppercase tracking-wide">
-          {label}
-        </h3>
-        <div className="flex items-center gap-1">
-          <button
-            type="button"
-            onClick={() => apply(-1)}
-            disabled={parsed === 0}
-            aria-label={`Subtract ${parsed} ${label}`}
-            className="rounded bg-zinc-800 hover:bg-zinc-700 disabled:opacity-40 px-2 py-1 text-xs font-mono"
-          >
-            −
-          </button>
-          <input
-            type="number"
-            min={0}
-            value={delta}
-            onChange={(e) => setDelta(e.target.value)}
-            onKeyDown={(e) => {
-              if (e.key === 'Enter') apply(1)
-            }}
-            placeholder="1"
-            className="w-12 bg-zinc-950 border border-zinc-700 rounded px-1.5 py-1 text-xs text-zinc-100 text-right font-mono"
-          />
-          <button
-            type="button"
-            onClick={() => apply(1)}
-            disabled={parsed === 0}
-            aria-label={`Add ${parsed} ${label}`}
-            className="rounded bg-zinc-800 hover:bg-zinc-700 disabled:opacity-40 px-2 py-1 text-xs font-mono"
-          >
-            +
-          </button>
-        </div>
-        <div className={'font-mono text-lg ' + accent}>
-          {current}
-          <span className="text-zinc-500 text-xs"> / {max}</span>
-        </div>
-      </div>
-      <div className="h-1.5 w-full rounded bg-zinc-800 overflow-hidden">
-        <div
-          className={'h-full transition-all ' + fill}
-          style={{ width: `${pct}%` }}
-        />
-      </div>
+    <div className="flex items-center gap-1.5 min-w-0">
+      <span className="text-xs font-medium text-zinc-400 uppercase tracking-wide">
+        {label}
+      </span>
+      <button
+        type="button"
+        onClick={() => apply(-1)}
+        disabled={parsed === 0}
+        aria-label={`Subtract ${parsed} ${label}`}
+        className="rounded bg-zinc-800 hover:bg-zinc-700 disabled:opacity-40 px-1.5 py-0.5 text-xs font-mono"
+      >
+        −
+      </button>
+      <input
+        type="number"
+        min={0}
+        value={delta}
+        onChange={(e) => setDelta(e.target.value)}
+        onKeyDown={(e) => {
+          if (e.key === 'Enter') apply(1)
+        }}
+        placeholder="1"
+        className="w-10 bg-zinc-950 border border-zinc-700 rounded px-1 py-0.5 text-xs text-zinc-100 text-right font-mono"
+      />
+      <button
+        type="button"
+        onClick={() => apply(1)}
+        disabled={parsed === 0}
+        aria-label={`Add ${parsed} ${label}`}
+        className="rounded bg-zinc-800 hover:bg-zinc-700 disabled:opacity-40 px-1.5 py-0.5 text-xs font-mono"
+      >
+        +
+      </button>
+      <span className={'ml-auto font-mono text-base whitespace-nowrap ' + accent}>
+        {current}
+        <span className="text-zinc-500 text-xs"> / {max}</span>
+      </span>
     </div>
   )
 }
 
-interface DefenseCardProps {
-  character: Character
+interface StatDisplayProps {
+  label: string
+  value: number
+  color: string
+  suffix?: string
+  tooltip?: string
 }
 
-function DefenseCard({ character }: DefenseCardProps) {
-  const ev = evasion(character)
-  const agility = character.attributes['Agility'] ?? 0
-  const dodgeLv = combatSkillLevel(character, 'combat-dodge')
-
+function StatDisplay({ label, value, color, suffix, tooltip }: StatDisplayProps) {
   return (
-    <div className="rounded-lg border border-zinc-800 bg-zinc-900/50 p-3 space-y-3">
-      <div className="space-y-2">
-        <div className="flex items-baseline justify-between">
-          <h3 className="text-xs font-medium text-zinc-400 uppercase tracking-wide">
-            Evasion
-          </h3>
-          <div className="font-mono text-lg text-amber-300">{ev}</div>
-        </div>
-        <div className="text-[10px] text-zinc-500 font-mono">
-          10 + AGI {fmt(agility)} + Dodge {fmt(dodgeLv)}
-          {(character.armorModifier ?? 0) > 0 && (
-            <> − Armor {character.armorModifier}</>
-          )}
-          {equippedArmorEvasionReduction(character) > 0 && (
-            <> − Worn {equippedArmorEvasionReduction(character)}</>
-          )}
-        </div>
-      </div>
-      <div className="h-px bg-zinc-800" />
-      <div className="flex items-baseline justify-between">
-        <h3 className="text-xs font-medium text-zinc-400 uppercase tracking-wide">
-          Speed
-        </h3>
-        <div className="font-mono text-lg text-zinc-100">
-          {character.speed ?? 20}
-          <span className="text-zinc-500 text-xs"> ft</span>
-        </div>
-      </div>
+    <div
+      className="flex items-center justify-between gap-2 min-w-0"
+      title={tooltip}
+    >
+      <span className="text-xs font-medium text-zinc-400 uppercase tracking-wide">
+        {label}
+      </span>
+      <span className={'font-mono text-base whitespace-nowrap ' + color}>
+        {value}
+        {suffix && <span className="text-zinc-500 text-xs"> {suffix}</span>}
+      </span>
     </div>
   )
 }
