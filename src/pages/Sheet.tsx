@@ -131,68 +131,66 @@ export function Sheet() {
 
   return (
     <div className="space-y-4">
-      <header className="flex items-baseline justify-between gap-4">
-        <div className="min-w-0 flex-1">
-          <h2 className="text-2xl font-semibold text-zinc-100">
-            {character.name}
-          </h2>
-          {(character.currentHp === 0 ||
-            character.tethers.length > 0 ||
-            character.flaws.length > 0) && (
-            <div className="flex flex-wrap gap-1 mt-1">
-              {character.currentHp === 0 && (
-                <span
-                  title="At 0 HP — rolling death saves"
-                  className="rounded px-2 py-0.5 text-xs bg-rose-900/60 text-rose-100 border border-rose-600 font-semibold uppercase tracking-wider"
-                >
-                  Down
-                </span>
-              )}
-              {character.tethers.map((t) => {
-                const tierLabel =
-                  TETHER_TIERS.find((o) => o.tier === t.tier)?.label ??
-                  `Tier ${t.tier}`
-                return (
-                  <span
-                    key={t.id}
-                    title={`Tether · ${tierLabel}`}
-                    className="rounded px-2 py-0.5 text-xs bg-sky-900/40 text-sky-200 border border-sky-700/50"
-                  >
-                    {t.description || 'Untitled tether'}
-                  </span>
-                )
-              })}
-              {character.flaws.map((f) => {
-                const sevLabel =
-                  FLAW_SEVERITIES.find((o) => o.key === f.severity)?.label ??
-                  f.severity
-                return (
-                  <span
-                    key={f.id}
-                    title={`Flaw · ${sevLabel}`}
-                    className="rounded px-2 py-0.5 text-xs bg-rose-900/40 text-rose-200 border border-rose-700/50"
-                  >
-                    {f.description || 'Untitled flaw'}
-                  </span>
-                )
-              })}
-            </div>
-          )}
-        </div>
-        <div className="flex items-center gap-3 text-xs text-zinc-500">
-          <span>
-            {savingState === 'saving'
-              ? 'Saving…'
-              : savingState === 'saved'
-                ? 'Saved'
-                : ''}
+      <header className="flex flex-wrap items-baseline gap-x-4 gap-y-2 border-b border-zinc-800 pb-3">
+        <h2 className="text-xl font-medium uppercase tracking-[0.18em] text-zinc-100">
+          {character.name || 'Unnamed'}
+        </h2>
+        <span className="text-[10px] uppercase tracking-[0.25em] text-zinc-500">
+          {character.tierName}
+        </span>
+        {character.currentHp === 0 && (
+          <span
+            title="At 0 HP — rolling death saves"
+            className="rounded-sm bg-rose-600 px-1.5 py-0.5 text-[10px] font-bold uppercase tracking-[0.2em] text-zinc-950"
+          >
+            Down
           </span>
+        )}
+        {character.tethers.map((t) => {
+          const tierLabel =
+            TETHER_TIERS.find((o) => o.tier === t.tier)?.label ??
+            `Tier ${t.tier}`
+          return (
+            <span
+              key={t.id}
+              title={`Tether · ${tierLabel}`}
+              className="border-l-2 border-sky-600/70 pl-1.5 text-[11px] text-sky-300"
+            >
+              {t.description || 'Untitled tether'}
+            </span>
+          )
+        })}
+        {character.flaws.map((f) => {
+          const sevLabel =
+            FLAW_SEVERITIES.find((o) => o.key === f.severity)?.label ??
+            f.severity
+          return (
+            <span
+              key={f.id}
+              title={`Flaw · ${sevLabel}`}
+              className="border-l-2 border-rose-600/70 pl-1.5 text-[11px] text-rose-300"
+            >
+              {f.description || 'Untitled flaw'}
+            </span>
+          )
+        })}
+        <div className="ml-auto flex items-baseline gap-4 text-[10px] uppercase tracking-[0.22em] text-zinc-500">
+          {savingState !== 'idle' && (
+            <span
+              className={
+                savingState === 'saving' ? 'text-zinc-400' : 'text-emerald-400'
+              }
+            >
+              <span aria-hidden>●</span>{' '}
+              {savingState === 'saving' ? 'Saving' : 'Saved'}
+            </span>
+          )}
           {id && (
             <Link
               to={`/builder/${id}`}
-              className="rounded bg-zinc-800 hover:bg-zinc-700 px-3 py-1.5 text-zinc-300"
+              className="text-amber-300 hover:text-amber-200"
             >
-              Edit build
+              Edit ▸
             </Link>
           )}
         </div>
