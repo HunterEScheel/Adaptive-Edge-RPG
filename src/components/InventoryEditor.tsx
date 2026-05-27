@@ -245,102 +245,11 @@ function ItemEditor({ item, onChange, onRemove, onClose }: ItemEditorProps) {
         )}
       </div>
       {itemKind === 'armor' && item.armor && (
-        <div className="rounded border border-zinc-800 bg-zinc-950 p-3 space-y-2">
-          <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
-            <label className="flex flex-col gap-1 text-xs text-zinc-400">
-              Reduction die
-              <select
-                value={item.armor.reductionDie}
-                onChange={(e) =>
-                  setArmor({ reductionDie: e.target.value as ArmorReductionDie })
-                }
-                className="bg-zinc-900 border border-zinc-700 rounded px-2 py-1 text-xs text-zinc-100"
-              >
-                {ARMOR_REDUCTION_DICE.map((d) => (
-                  <option key={d} value={d}>
-                    1{d}
-                  </option>
-                ))}
-              </select>
-            </label>
-            <label className="flex flex-col gap-1 text-xs text-zinc-400">
-              Damage threshold
-              <input
-                type="number"
-                min={0}
-                value={item.armor.damageThreshold}
-                onChange={(e) =>
-                  setArmor({
-                    damageThreshold: Math.max(0, Number(e.target.value) || 0),
-                  })
-                }
-                className="bg-zinc-900 border border-zinc-700 rounded px-2 py-1 text-xs text-zinc-100 text-right font-mono"
-              />
-            </label>
-            <label className="flex flex-col gap-1 text-xs text-zinc-400">
-              Durability
-              <input
-                type="number"
-                min={0}
-                value={item.armor.durability}
-                onChange={(e) =>
-                  setArmor({
-                    durability: Math.max(0, Number(e.target.value) || 0),
-                  })
-                }
-                className="bg-zinc-900 border border-zinc-700 rounded px-2 py-1 text-xs text-zinc-100 text-right font-mono"
-              />
-            </label>
-            <label className="flex flex-col gap-1 text-xs text-zinc-400">
-              Evasion reduction
-              <input
-                type="number"
-                min={0}
-                value={item.armor.evasionReduction}
-                onChange={(e) =>
-                  setArmor({
-                    evasionReduction: Math.max(
-                      0,
-                      Number(e.target.value) || 0,
-                    ),
-                  })
-                }
-                className="bg-zinc-900 border border-zinc-700 rounded px-2 py-1 text-xs text-zinc-100 text-right font-mono"
-              />
-            </label>
-          </div>
-          <div>
-            <div className="text-xs text-zinc-400 mb-1">Reduces damage of</div>
-            <div className="flex flex-wrap gap-1">
-              {DAMAGE_TYPES.map((t) => {
-                const active = item.armor!.reductionTypes.includes(t)
-                return (
-                  <button
-                    key={t}
-                    type="button"
-                    onClick={() =>
-                      setArmor({
-                        reductionTypes: active
-                          ? item.armor!.reductionTypes.filter(
-                              (x: DamageType) => x !== t,
-                            )
-                          : [...item.armor!.reductionTypes, t],
-                      })
-                    }
-                    className={
-                      'rounded px-2 py-0.5 text-xs border ' +
-                      (active
-                        ? 'border-emerald-500 bg-emerald-900/30 text-emerald-200'
-                        : 'border-zinc-700 bg-zinc-900 text-zinc-400 hover:border-zinc-500')
-                    }
-                  >
-                    {t}
-                  </button>
-                )
-              })}
-            </div>
-          </div>
-        </div>
+        <ArmorEditor
+          armor={item.armor}
+          setArmor={setArmor}
+          setArmorClass={setArmorClass}
+        />
       )}
       <input
         value={item.notes ?? ''}
