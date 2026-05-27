@@ -99,32 +99,33 @@ const SECTIONS: Section[] = [
           <span className="font-mono">40</span>.
         </p>
         <p className="mt-2">
-          Then adjust by how well the character&apos;s most-applicable skill
-          fits the task — pick one:
+          Then adjust by the <strong>correlation</strong> between the task and
+          whichever skill the player invokes — pick one:
         </p>
         <ul className="list-disc pl-5 mt-1 space-y-1">
           <li>
-            <strong>Irrelevant</strong> — DC&nbsp;
-            <span className="font-mono">+ 10</span>. No trained skill applies;
-            they&apos;re fumbling at it raw.
+            <strong>Negative</strong> — DC&nbsp;
+            <span className="font-mono">+ 10</span>. The invoked skill actively
+            misleads — its training points the wrong direction.
           </li>
           <li>
-            <strong>None</strong> — DC unchanged. The base difficulty stands.
+            <strong>None</strong> — DC unchanged. They attempt the task
+            without leaning on any skill.
           </li>
           <li>
-            <strong>General</strong> — DC&nbsp;
-            <span className="font-mono">× 0.90</span>. Broadly applicable
-            training.
+            <strong>Relevant</strong> — DC&nbsp;
+            <span className="font-mono">× 0.90</span>. A broad skill that
+            touches the domain.
           </li>
           <li>
-            <strong>Related</strong> — DC&nbsp;
-            <span className="font-mono">× 0.75</span>. A clearly relevant
-            skill.
+            <strong>Adjacent</strong> — DC&nbsp;
+            <span className="font-mono">× 0.75</span>. A skill in the same
+            neighborhood as the task.
           </li>
           <li>
-            <strong>Expertise</strong> — DC&nbsp;
-            <span className="font-mono">× 0.60</span>. This is exactly the
-            character&apos;s thing.
+            <strong>Exact</strong> — DC&nbsp;
+            <span className="font-mono">× 0.60</span>. The skill is precisely
+            tuned to what they&apos;re doing.
           </li>
         </ul>
         <p className="mt-2 text-zinc-400 text-sm">
@@ -132,6 +133,35 @@ const SECTIONS: Section[] = [
           <strong className="text-amber-300">DC Calculator</strong> at the top
           of this page does the arithmetic.
         </p>
+        <Example label="Worked example">
+          <p>
+            A player wants to build a sniper rifle — a Hard task,
+            DC&nbsp;<span className="font-mono">30</span>. The final DC depends
+            on which skill they invoke:
+          </p>
+          <ul className="list-disc pl-5 mt-2 space-y-1">
+            <li>
+              <strong>Cooking</strong> — Negative. DC&nbsp;30&nbsp;+&nbsp;10 ={' '}
+              <span className="font-mono">40</span>.
+            </li>
+            <li>
+              <strong>No skill</strong> — None. DC stays at{' '}
+              <span className="font-mono">30</span>.
+            </li>
+            <li>
+              <strong>Firearms knowledge</strong> — Relevant, −10%. DC{' '}
+              <span className="font-mono">27</span>.
+            </li>
+            <li>
+              <strong>Firearms manufacturing</strong> — Adjacent, −25%. DC{' '}
+              <span className="font-mono">22</span>.
+            </li>
+            <li>
+              <strong>Long-range rifle manufacturing</strong> — Exact, −40%. DC{' '}
+              <span className="font-mono">18</span>.
+            </li>
+          </ul>
+        </Example>
       </>
     ),
   },

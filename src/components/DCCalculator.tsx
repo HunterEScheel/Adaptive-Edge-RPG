@@ -1,7 +1,7 @@
 import { useState } from 'react'
 
 type Difficulty = 'easy' | 'medium' | 'hard' | 'near-impossible'
-type Relevance = 'irrelevant' | 'none' | 'general' | 'related' | 'expertise'
+type Correlation = 'negative' | 'none' | 'relevant' | 'adjacent' | 'exact'
 
 interface DifficultyDef {
   key: Difficulty
@@ -9,11 +9,11 @@ interface DifficultyDef {
   base: number
 }
 
-interface RelevanceDef {
-  key: Relevance
+interface CorrelationDef {
+  key: Correlation
   label: string
   mod: string
-  // If multiplier is undefined, this relevance adds `add` to base DC instead.
+  // If multiplier is undefined, this correlation adds `add` to base DC instead.
   multiplier?: number
   add?: number
 }
@@ -25,27 +25,28 @@ const DIFFICULTIES: readonly DifficultyDef[] = [
   { key: 'near-impossible', label: 'Near-impossible', base: 40 },
 ] as const
 
-const RELEVANCES: readonly RelevanceDef[] = [
-  { key: 'irrelevant', label: 'Irrelevant', mod: '+10', add: 10 },
+const CORRELATIONS: readonly CorrelationDef[] = [
+  { key: 'negative', label: 'Negative', mod: '+10', add: 10 },
   { key: 'none', label: 'None', mod: '±0' },
-  { key: 'general', label: 'General', mod: '−10%', multiplier: 0.9 },
-  { key: 'related', label: 'Related', mod: '−25%', multiplier: 0.75 },
-  { key: 'expertise', label: 'Expertise', mod: '−40%', multiplier: 0.6 },
+  { key: 'relevant', label: 'Relevant', mod: '−10%', multiplier: 0.9 },
+  { key: 'adjacent', label: 'Adjacent', mod: '−25%', multiplier: 0.75 },
+  { key: 'exact', label: 'Exact', mod: '−40%', multiplier: 0.6 },
 ] as const
 
-function computeDC(diff: DifficultyDef, rel: RelevanceDef): number {
-  if (rel.add !== undefined) return diff.base + rel.add
-  if (rel.multiplier !== undefined) return Math.floor(diff.base * rel.multiplier)
+function computeDC(diff: DifficultyDef, corr: CorrelationDef): number {
+  if (corr.add !== undefined) return diff.base + corr.add
+  if (corr.multiplier !== undefined)
+    return Math.floor(diff.base * corr.multiplier)
   return diff.base
 }
 
 export function DCCalculator() {
   const [difficulty, setDifficulty] = useState<Difficulty>('medium')
-  const [relevance, setRelevance] = useState<Relevance>('related')
+  const [correlation, setCorrelation] = useState<Correlation>('adjacent')
 
   const diff = DIFFICULTIES.find((d) => d.key === difficulty)!
-  const rel = RELEVANCES.find((r) => r.key === relevance)!
-  const dc = computeDC(diff, rel)
+  const corr = CORRELATIONS.find((c) => c.key === correlation)!
+  const dc = computeDC(diff, corr)
 
   return (
     <section className="overflow-hidden rounded-lg border border-amber-700/40 bg-zinc-900/50">
@@ -73,15 +74,15 @@ export function DCCalculator() {
             ))}
           </Group>
 
-          <Group label="Relevance">
-            {RELEVANCES.map((r) => (
+          <Group label="Correlation">
+            {CORRELATIONS.map((c) => (
               <Pill
-                key={r.key}
-                active={relevance === r.key}
-                onClick={() => setRelevance(r.key)}
+                key={c.key}
+                active={correlation === c.key}
+                onClick={() => setCorrelation(c.key)}
               >
-                <span>{r.label}</span>
-                <span className="font-mono text-zinc-500">{r.mod}</span>
+                <span>{c.label}</span>
+                <span className="font-mono text-zinc-500">{c.mod}</span>
               </Pill>
             ))}
           </Group>
@@ -95,7 +96,7 @@ export function DCCalculator() {
             {dc}
           </span>
           <span className="mt-1 text-center text-[10px] uppercase tracking-[0.18em] text-zinc-500">
-            {diff.label} <span className="text-zinc-700">×</span> {rel.label}
+            {diff.label} <span className="text-zinc-700">×</span> {corr.label}
           </span>
         </div>
       </div>
