@@ -92,7 +92,10 @@ export function TakeDamagePanel({ character, onApply }: Props) {
               className="rounded border border-zinc-700 bg-zinc-900 px-2 py-0.5"
             >
               {m.itemName}{' '}
-              <span className="font-mono text-emerald-300">1{m.die}</span>
+              <span className="font-mono text-emerald-300">
+                1{m.die}
+                {m.extraProtective > 0 && ` + ${m.extraProtective}`}
+              </span>
             </span>
           ))}
         </div>
