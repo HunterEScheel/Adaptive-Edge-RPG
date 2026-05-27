@@ -410,11 +410,8 @@ function ArmorEditor({ armor, setArmor, setArmorClass }: ArmorEditorProps) {
         <Stat label="Threshold">
           <span className="font-mono text-zinc-100">{threshold}</span>
         </Stat>
-        <Stat label="Durability">
-          <span className="font-mono text-zinc-100">
-            {armor.currentDurability}
-            <span className="text-zinc-500"> / {maxDur}</span>
-          </span>
+        <Stat label="Max durability">
+          <span className="font-mono text-zinc-100">{maxDur}</span>
         </Stat>
         <Stat label="EV penalty">
           <span className="font-mono text-rose-300">−{evRed}</span>
