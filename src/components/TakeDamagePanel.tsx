@@ -13,6 +13,7 @@ interface Props {
 }
 
 export function TakeDamagePanel({ character, onApply }: Props) {
+  const [expanded, setExpanded] = useState(false)
   const [amount, setAmount] = useState('')
   const [type, setType] = useState<DamageType>('Physical')
   const [reduction, setReduction] = useState('')
@@ -37,9 +38,36 @@ export function TakeDamagePanel({ character, onApply }: Props) {
     if (e.key === 'Enter') apply()
   }
 
+  if (!expanded) {
+    return (
+      <div className="space-y-3">
+        <CollapsedTeaser onExpand={() => setExpanded(true)} />
+        {last && <ImpactReport outcome={last} onDismiss={() => setLast(null)} />}
+      </div>
+    )
+  }
+
   return (
     <div className="space-y-3">
       <div className="overflow-hidden rounded-lg border border-rose-900/40 bg-zinc-950/40">
+        {/* Header with collapse */}
+        <div className="flex items-center justify-between border-b border-zinc-800/60 bg-zinc-950/50 px-3 py-1.5">
+          <span className="flex items-center gap-2">
+            <span aria-hidden className="h-2 w-2 rounded-full bg-rose-500" />
+            <span className="text-[10px] font-medium uppercase tracking-[0.3em] text-rose-300">
+              Take damage
+            </span>
+          </span>
+          <button
+            type="button"
+            onClick={() => setExpanded(false)}
+            aria-label="Collapse"
+            className="text-sm leading-none text-zinc-500 hover:text-zinc-300"
+          >
+            ✕
+          </button>
+        </div>
+
         {/* Equation row */}
         <div className="grid gap-3 p-3 sm:grid-cols-[1fr_auto_1fr_auto_1fr] sm:items-end">
           {/* DAMAGE */}
@@ -167,6 +195,33 @@ export function TakeDamagePanel({ character, onApply }: Props) {
 
       {last && <ImpactReport outcome={last} onDismiss={() => setLast(null)} />}
     </div>
+  )
+}
+
+function CollapsedTeaser({ onExpand }: { onExpand: () => void }) {
+  return (
+    <button
+      type="button"
+      onClick={onExpand}
+      className="group w-full rounded-lg border border-rose-900/50 bg-zinc-950/40 px-4 py-3 text-left transition hover:border-rose-700/70 hover:bg-rose-950/25 hover:shadow-[0_0_20px_-6px] hover:shadow-rose-600/40"
+    >
+      <div className="flex items-center justify-between gap-3">
+        <span className="flex items-center gap-3">
+          {/* Pulsing rose pip — sonar/notification cue */}
+          <span aria-hidden className="relative flex h-2.5 w-2.5">
+            <span className="absolute inset-0 rounded-full bg-rose-500 opacity-75 animate-ping" />
+            <span className="relative h-2.5 w-2.5 rounded-full bg-rose-500" />
+          </span>
+          <span className="text-sm font-medium uppercase tracking-[0.25em] text-rose-200">
+            Take damage
+          </span>
+        </span>
+        <span className="flex items-baseline gap-2 text-[10px] uppercase tracking-[0.3em] text-rose-400/80 transition group-hover:text-rose-300">
+          <span>Expand</span>
+          <span className="text-sm transition group-hover:translate-y-px">▾</span>
+        </span>
+      </div>
+    </button>
   )
 }
 

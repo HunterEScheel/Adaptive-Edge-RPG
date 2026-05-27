@@ -599,9 +599,7 @@ function CombatTab({
         </ReadOnlySection>
       )}
 
-      <ReadOnlySection title="Take damage">
-        <TakeDamagePanel character={character} onApply={onTakeDamage} />
-      </ReadOnlySection>
+      <TakeDamagePanel character={character} onApply={onTakeDamage} />
 
       <ReadOnlySection title="Actions in combat">
         <ul className="space-y-1">
