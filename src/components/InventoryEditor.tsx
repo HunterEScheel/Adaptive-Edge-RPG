@@ -1,11 +1,17 @@
 import { useState } from 'react'
 import {
-  ARMOR_REDUCTION_DICE,
+  ARMOR_CLASSES,
+  ARMOR_CLASS_STATS,
   DAMAGE_TYPES,
   WEAPON_CATEGORIES,
+  armorEvasionReduction,
+  armorMaxDurability,
+  armorReductionDie,
+  armorThreshold,
   newArmorStats,
   newInventoryItem,
-  type ArmorReductionDie,
+  normalizeArmor,
+  type ArmorClass,
   type ArmorStats,
   type DamageType,
   type InventoryItem,
@@ -97,7 +103,7 @@ function ItemRow({ item, onOpen }: ItemRowProps) {
   const typeBadge = item.weaponCategory
     ? weaponCategoryLabel(item.weaponCategory)
     : item.armor
-      ? `Armor 1${item.armor.reductionDie}`
+      ? `${ARMOR_CLASS_STATS[item.armor.class].label} armor 1${armorReductionDie(item.armor)}`
       : null
   return (
     <button
@@ -149,7 +155,21 @@ function ItemEditor({ item, onChange, onRemove, onClose }: ItemEditorProps) {
       : 'none'
 
   const setArmor = (patch: Partial<ArmorStats>) => {
-    onChange({ armor: { ...(item.armor ?? newArmorStats()), ...patch } })
+    const current = item.armor ?? newArmorStats()
+    onChange({ armor: normalizeArmor({ ...current, ...patch }) })
+  }
+  const setArmorClass = (cls: ArmorClass) => {
+    const current = item.armor ?? newArmorStats()
+    // Switching class refreshes currentDurability to the new max — treat it
+    // as donning a fresh piece of armor.
+    const max = armorMaxDurability({ ...current, class: cls })
+    onChange({
+      armor: normalizeArmor({
+        ...current,
+        class: cls,
+        currentDurability: max,
+      }),
+    })
   }
 
   return (
