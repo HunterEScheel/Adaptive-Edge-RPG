@@ -1,10 +1,18 @@
 import { ATTRIBUTES, type AttributeName } from './attributes'
 import { COMBAT_SKILLS, isCombatSkillId } from './combatSkills'
 import { flawRefundTotal, type Flaw } from './flaws'
-import type {
-  ArmorReductionDie,
-  DamageType,
-  InventoryItem,
+import {
+  ARMOR_CLASS_STATS,
+  armorEvasionReduction,
+  armorMaxDurability,
+  armorReductionDie,
+  armorThreshold,
+  normalizeArmor,
+  type ArmorClass,
+  type ArmorReductionDie,
+  type ArmorStats,
+  type DamageType,
+  type InventoryItem,
 } from './inventory'
 import {
   MAGIC_MEDIUMS,
@@ -327,7 +335,7 @@ export function ensureCombatSkills(c: Character): Character {
     flaws: c.flaws ?? [],
     obligationThreshold: c.obligationThreshold ?? 0,
     gold: c.gold ?? 0,
-    inventory: c.inventory ?? [],
+    inventory: (c.inventory ?? []).map(migrateInventoryItem),
     armorModifier: c.armorModifier ?? 0,
     savedSpells: (c.savedSpells ?? []).map((s) => ({
       ...s,
@@ -352,10 +360,45 @@ export function combatSkillLevel(c: Character, id: string): number {
   return c.skills.find((s) => s.id === id)?.level ?? 0
 }
 
+// Migrate legacy armor (flat reductionDie / damageThreshold / durability /
+// evasionReduction fields) into the new class-based ArmorStats shape. Items
+// that already match the new shape pass through normalized.
+function migrateInventoryItem(item: InventoryItem): InventoryItem {
+  if (!item.armor) return item
+  const a = item.armor as Partial<ArmorStats> & {
+    reductionDie?: ArmorReductionDie | 'd4'
+    damageThreshold?: number
+    durability?: number
+    evasionReduction?: number
+  }
+  // Already new shape.
+  if (a.class && ARMOR_CLASS_STATS[a.class as ArmorClass]) {
+    return { ...item, armor: normalizeArmor(a as ArmorStats) }
+  }
+  // Old shape — pick class by reduction die. d4 and d6 → light, d8 → medium,
+  // d10 → heavy (d10 didn't exist in the old shape but handle it anyway).
+  const die = a.reductionDie
+  const cls: ArmorClass =
+    die === 'd10' ? 'heavy' : die === 'd8' ? 'medium' : 'light'
+  const base = ARMOR_CLASS_STATS[cls]
+  return {
+    ...item,
+    armor: normalizeArmor({
+      class: cls,
+      reductionTypes: a.reductionTypes ?? ['Physical'],
+      extraProtective: 0,
+      weightAdjust: 0,
+      durabilityAdjust: 0,
+      currentDurability: Math.min(a.durability ?? base.durability, base.durability),
+    }),
+  }
+}
+
 export interface MatchingArmor {
   itemId: string
   itemName: string
   die: ArmorReductionDie
+  extraProtective: number
   threshold: number
   durability: number
 }
@@ -373,9 +416,10 @@ export function matchingArmorFor(
     .map((i) => ({
       itemId: i.id,
       itemName: i.name || 'Unnamed armor',
-      die: i.armor!.reductionDie,
-      threshold: i.armor!.damageThreshold,
-      durability: i.armor!.durability,
+      die: armorReductionDie(i.armor!),
+      extraProtective: i.armor!.extraProtective,
+      threshold: armorThreshold(i.armor!),
+      durability: i.armor!.currentDurability,
     }))
 }
 
@@ -423,11 +467,11 @@ export function applyTypedDamage(
   const nextInventory = inv.map((i) => {
     if (!i.armor || !i.equipped) return i
     if (!i.armor.reductionTypes.includes(type)) return i
-    const threshold = i.armor.damageThreshold
+    const threshold = armorThreshold(i.armor)
     if (threshold <= 0 || amount <= threshold) return i
     const loss = Math.floor(amount / threshold)
     if (loss <= 0) return i
-    const newDurability = Math.max(0, i.armor.durability - loss)
+    const newDurability = Math.max(0, i.armor.currentDurability - loss)
     const broke = newDurability === 0
     durabilityChanges.push({
       itemId: i.id,
@@ -438,7 +482,7 @@ export function applyTypedDamage(
     })
     return {
       ...i,
-      armor: { ...i.armor, durability: newDurability },
+      armor: { ...i.armor, currentDurability: newDurability },
       equipped: broke ? false : i.equipped,
     }
   })
@@ -469,7 +513,7 @@ export function applyTypedDamage(
 export function equippedArmorEvasionReduction(c: Character): number {
   return (c.inventory ?? [])
     .filter((i) => i.armor && i.equipped)
-    .reduce((sum, i) => sum + (i.armor?.evasionReduction ?? 0), 0)
+    .reduce((sum, i) => sum + armorEvasionReduction(i.armor!), 0)
 }
 
 // Evasion = 10 + Agility + Dodge skill level − armor modifier − equipped armor

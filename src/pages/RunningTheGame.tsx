@@ -162,6 +162,25 @@ const SECTIONS: Section[] = [
             </li>
           </ul>
         </Example>
+        <p className="mt-4">
+          <strong>Natural 20</strong> adds{' '}
+          <span className="font-mono">+10</span> to the total. <strong>Natural 1</strong>{' '}
+          subtracts <span className="font-mono">10</span>. Neither is an
+          automatic result — they shift the total, and the DC still decides
+          whether the action lands.
+        </p>
+        <p className="mt-2">
+          <strong>Critical success:</strong> the final total beats the DC by{' '}
+          <span className="font-mono">10</span> or more, in combat or out. The
+          action lands exceptionally — narrate accordingly, or treat it as a
+          critical hit on an attack roll.
+        </p>
+        <p className="mt-2">
+          <strong>Critical failure:</strong> the final total is less than{' '}
+          <span className="font-mono">25%</span> of the DC. The action goes
+          badly wrong — a weapon slips, a spell backfires, the lockpick snaps
+          off in the lock.
+        </p>
       </>
     ),
   },
