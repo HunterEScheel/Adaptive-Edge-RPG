@@ -4,7 +4,6 @@ import { flawRefundTotal, type Flaw } from './flaws'
 import {
   ARMOR_CLASS_STATS,
   armorEvasionReduction,
-  armorMaxDurability,
   armorReductionDie,
   armorThreshold,
   normalizeArmor,
