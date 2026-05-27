@@ -6,6 +6,7 @@ import {
   type DamageOutcome,
 } from '../system/character'
 import { DAMAGE_TYPES, type DamageType } from '../system/inventory'
+
 interface Props {
   character: Character
   onApply: (next: Character) => void
@@ -18,142 +19,237 @@ export function TakeDamagePanel({ character, onApply }: Props) {
   const [last, setLast] = useState<DamageOutcome | null>(null)
 
   const matching = matchingArmorFor(character, type)
+  const dmgN = Math.max(0, Math.floor(Number(amount) || 0))
+  const redN = Math.max(0, Math.floor(Number(reduction) || 0))
+  const netPreview = Math.max(0, dmgN - redN)
+  const canApply = dmgN > 0
 
   const apply = () => {
-    const n = Math.max(0, Math.floor(Number(amount) || 0))
-    if (n === 0) return
-    const r = Math.max(0, Math.floor(Number(reduction) || 0))
-    const { next, outcome } = applyTypedDamage(character, n, type, r)
+    if (!canApply) return
+    const { next, outcome } = applyTypedDamage(character, dmgN, type, redN)
     onApply(next)
     setLast(outcome)
     setAmount('')
     setReduction('')
   }
 
+  const onEnter: React.KeyboardEventHandler<HTMLInputElement> = (e) => {
+    if (e.key === 'Enter') apply()
+  }
+
   return (
-    <div className="space-y-2">
-      <div className="flex flex-wrap items-end gap-2">
-        <label className="flex flex-col gap-1 text-xs text-zinc-400">
-          Damage
-          <input
-            type="number"
-            min={0}
-            value={amount}
-            onChange={(e) => setAmount(e.target.value)}
-            placeholder="0"
-            className="w-20 bg-zinc-900 border border-zinc-700 rounded px-2 py-1.5 text-sm text-zinc-100 text-right font-mono"
-          />
-        </label>
-        <label className="flex flex-col gap-1 text-xs text-zinc-400">
-          Type
-          <select
-            value={type}
-            onChange={(e) => setType(e.target.value as DamageType)}
-            className="bg-zinc-900 border border-zinc-700 rounded px-2 py-1.5 text-sm text-zinc-100"
+    <div className="space-y-3">
+      <div className="overflow-hidden rounded-lg border border-rose-900/40 bg-zinc-950/40">
+        {/* Equation row */}
+        <div className="grid gap-3 p-3 sm:grid-cols-[1fr_auto_1fr_auto_1fr] sm:items-end">
+          {/* DAMAGE */}
+          <div className="space-y-1.5">
+            <div className="flex items-center justify-between gap-2">
+              <span className="text-[10px] uppercase tracking-[0.22em] text-rose-300/80">
+                Damage
+              </span>
+              <select
+                value={type}
+                onChange={(e) => setType(e.target.value as DamageType)}
+                className="rounded border border-zinc-700 bg-zinc-900 px-1.5 py-0.5 text-[10px] uppercase tracking-[0.12em] text-zinc-300"
+              >
+                {DAMAGE_TYPES.map((t) => (
+                  <option key={t} value={t}>
+                    {t}
+                  </option>
+                ))}
+              </select>
+            </div>
+            <input
+              type="number"
+              min={0}
+              value={amount}
+              onChange={(e) => setAmount(e.target.value)}
+              onKeyDown={onEnter}
+              placeholder="0"
+              autoFocus
+              className="w-full rounded border border-zinc-700 bg-zinc-900 px-2 py-1.5 text-center font-mono text-3xl leading-tight text-rose-300 tabular-nums focus:border-rose-500 focus:outline-none"
+            />
+          </div>
+
+          {/* − */}
+          <span
+            aria-hidden
+            className="hidden select-none pb-1.5 font-mono text-3xl text-zinc-700 sm:block"
           >
-            {DAMAGE_TYPES.map((t) => (
-              <option key={t} value={t}>
-                {t}
-              </option>
-            ))}
-          </select>
-        </label>
-        <label className="flex flex-col gap-1 text-xs text-zinc-400">
-          Reduction
-          <input
-            type="number"
-            min={0}
-            value={reduction}
-            onChange={(e) => setReduction(e.target.value)}
-            onKeyDown={(e) => {
-              if (e.key === 'Enter') apply()
-            }}
-            placeholder="0"
-            className="w-20 bg-zinc-900 border border-zinc-700 rounded px-2 py-1.5 text-sm text-zinc-100 text-right font-mono"
-          />
-        </label>
+            −
+          </span>
+
+          {/* REDUCTION */}
+          <div className="space-y-1.5">
+            <span className="text-[10px] uppercase tracking-[0.22em] text-emerald-300/80">
+              Armor blocks
+            </span>
+            <input
+              type="number"
+              min={0}
+              value={reduction}
+              onChange={(e) => setReduction(e.target.value)}
+              onKeyDown={onEnter}
+              placeholder="0"
+              className="w-full rounded border border-zinc-700 bg-zinc-900 px-2 py-1.5 text-center font-mono text-3xl leading-tight text-emerald-300 tabular-nums focus:border-emerald-500 focus:outline-none"
+            />
+          </div>
+
+          {/* = */}
+          <span
+            aria-hidden
+            className="hidden select-none pb-1.5 font-mono text-3xl text-zinc-700 sm:block"
+          >
+            =
+          </span>
+
+          {/* NET (live preview) */}
+          <div className="space-y-1.5">
+            <span className="text-[10px] uppercase tracking-[0.22em] text-zinc-500">
+              To HP
+            </span>
+            <div
+              className={
+                'w-full rounded border px-2 py-1.5 text-center font-mono text-3xl leading-tight tabular-nums transition-colors ' +
+                (canApply
+                  ? 'border-rose-900/40 bg-rose-950/30 text-rose-200'
+                  : 'border-zinc-800 bg-zinc-950 text-zinc-600')
+              }
+            >
+              {netPreview}
+            </div>
+          </div>
+        </div>
+
+        {/* Armor roll instruction strip */}
+        <div className="border-t border-zinc-800/60 bg-zinc-950/60 px-3 py-2">
+          {matching.length > 0 ? (
+            <div className="flex flex-wrap items-baseline gap-x-4 gap-y-1">
+              <span className="text-[10px] uppercase tracking-[0.25em] text-zinc-500">
+                Roll
+              </span>
+              {matching.map((m) => (
+                <span
+                  key={m.itemId}
+                  className="flex items-baseline gap-2 whitespace-nowrap"
+                >
+                  <span className="text-[11px] text-zinc-300">
+                    {m.itemName}
+                  </span>
+                  <span className="font-mono text-sm text-emerald-300">
+                    1{m.die}
+                    {m.extraProtective > 0 && ` + ${m.extraProtective}`}
+                  </span>
+                  <span className="text-[10px] uppercase tracking-[0.18em] text-zinc-600">
+                    T{m.threshold} · D{m.durability}
+                  </span>
+                </span>
+              ))}
+            </div>
+          ) : (
+            <div className="text-[10px] uppercase tracking-[0.22em] text-zinc-600">
+              No equipped armor reduces {type} damage
+            </div>
+          )}
+        </div>
+
+        {/* Commit */}
         <button
           type="button"
           onClick={apply}
-          disabled={!amount || Number(amount) <= 0}
-          className="rounded bg-rose-600 hover:bg-rose-500 disabled:opacity-40 disabled:cursor-not-allowed px-3 py-1.5 text-sm font-medium text-zinc-50"
+          disabled={!canApply}
+          className="w-full bg-rose-700 py-2.5 text-sm font-medium uppercase tracking-[0.3em] text-rose-50 transition hover:bg-rose-600 disabled:cursor-not-allowed disabled:bg-zinc-900 disabled:text-zinc-600"
         >
-          Take damage
+          Take hit
         </button>
       </div>
 
-      {matching.length > 0 ? (
-        <div className="text-[11px] text-zinc-400 flex flex-wrap items-center gap-1">
-          <span className="text-zinc-500">Roll:</span>
-          {matching.map((m) => (
-            <span
-              key={m.itemId}
-              title={`Threshold ${m.threshold} · Durability ${m.durability}`}
-              className="rounded border border-zinc-700 bg-zinc-900 px-2 py-0.5"
-            >
-              {m.itemName}{' '}
-              <span className="font-mono text-emerald-300">
-                1{m.die}
-                {m.extraProtective > 0 && ` + ${m.extraProtective}`}
-              </span>
-            </span>
-          ))}
-        </div>
-      ) : (
-        <div className="text-[11px] text-zinc-500 italic">
-          No equipped armor reduces {type} damage.
-        </div>
-      )}
+      {last && <ImpactReport outcome={last} onDismiss={() => setLast(null)} />}
+    </div>
+  )
+}
 
-      {last && (
-        <div className="rounded border border-zinc-800 bg-zinc-950 p-2 space-y-1 text-xs text-zinc-300">
-          <div>
-            <span className="font-mono text-rose-300">{last.rawDamage}</span>{' '}
-            <span className="text-zinc-500">{last.type}</span>
-            {last.reduction > 0 && (
-              <>
-                {' '}− armor{' '}
-                <span className="font-mono text-emerald-300">
-                  {last.reduction}
-                </span>
-              </>
-            )}{' '}
-            ={' '}
-            <span className="font-mono text-rose-300">{last.netDamage}</span> to
-            HP
-          </div>
-          {last.tempHpAbsorbed > 0 && (
-            <div className="text-sky-300 font-mono">
-              Temp HP {last.tempHpBefore} → {last.tempHpAfter}{' '}
-              <span className="text-zinc-500">
-                (absorbed {last.tempHpAbsorbed})
+function ImpactReport({
+  outcome,
+  onDismiss,
+}: {
+  outcome: DamageOutcome
+  onDismiss: () => void
+}) {
+  return (
+    <div className="overflow-hidden rounded-lg border border-rose-700/40 bg-rose-950/15">
+      <div className="flex items-baseline justify-between border-b border-rose-900/40 bg-rose-950/40 px-3 py-1.5">
+        <span className="text-[10px] font-medium uppercase tracking-[0.32em] text-rose-300">
+          ▣ Hit
+        </span>
+        <button
+          type="button"
+          onClick={onDismiss}
+          className="text-[10px] uppercase tracking-[0.2em] text-zinc-500 hover:text-zinc-300"
+        >
+          Dismiss
+        </button>
+      </div>
+      <div className="space-y-1.5 p-3 text-xs">
+        {/* Re-stamped equation */}
+        <div className="font-mono">
+          <span className="text-lg text-rose-300 tabular-nums">
+            {outcome.rawDamage}
+          </span>{' '}
+          <span className="text-[10px] uppercase tracking-[0.18em] text-zinc-500">
+            {outcome.type}
+          </span>
+          {outcome.reduction > 0 && (
+            <>
+              {' '}
+              <span className="text-zinc-700">−</span>{' '}
+              <span className="text-emerald-300 tabular-nums">
+                {outcome.reduction}
               </span>
-            </div>
-          )}
-          <div className="text-zinc-500 font-mono">
-            HP {last.hpBefore} → {last.hpAfter}
-          </div>
-          {last.durabilityChanges.length > 0 && (
-            <ul className="text-[11px] text-amber-200 space-y-0.5">
-              {last.durabilityChanges.map((d) => (
-                <li key={d.itemId} className="font-mono">
-                  {d.itemName}: {d.delta} durability → {d.newDurability}
-                  {d.broke && (
-                    <span className="text-rose-300"> · BROKEN, unequipped</span>
-                  )}
-                </li>
-              ))}
-            </ul>
-          )}
-          <button
-            type="button"
-            onClick={() => setLast(null)}
-            className="text-[11px] text-zinc-500 hover:text-zinc-300"
-          >
-            dismiss
-          </button>
+            </>
+          )}{' '}
+          <span className="text-zinc-700">=</span>{' '}
+          <span className="text-lg text-rose-300 tabular-nums">
+            {outcome.netDamage}
+          </span>{' '}
+          <span className="text-[10px] uppercase tracking-[0.18em] text-zinc-500">
+            to HP
+          </span>
         </div>
-      )}
+
+        {/* Layered damage allocation */}
+        {outcome.tempHpAbsorbed > 0 && (
+          <div className="font-mono text-sky-300">
+            Temp HP {outcome.tempHpBefore} → {outcome.tempHpAfter}{' '}
+            <span className="text-zinc-500">
+              (absorbed {outcome.tempHpAbsorbed})
+            </span>
+          </div>
+        )}
+        <div className="font-mono text-zinc-300">
+          HP {outcome.hpBefore} → {outcome.hpAfter}
+        </div>
+
+        {/* Armor durability changes */}
+        {outcome.durabilityChanges.length > 0 && (
+          <ul className="mt-1 space-y-0.5 border-t border-rose-900/30 pt-1.5 text-amber-200/90">
+            {outcome.durabilityChanges.map((d) => (
+              <li key={d.itemId} className="font-mono text-[11px]">
+                {d.itemName}{' '}
+                <span className="text-zinc-500">{d.delta}</span>
+                {' → '}
+                {d.newDurability}
+                {d.broke && (
+                  <span className="font-bold text-rose-300">
+                    {' · '}BROKEN, unequipped
+                  </span>
+                )}
+              </li>
+            ))}
+          </ul>
+        )}
+      </div>
     </div>
   )
 }
