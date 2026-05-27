@@ -604,39 +604,49 @@ function CombatTab({
       </ReadOnlySection>
 
       <ReadOnlySection title="Actions in combat">
-        {actions.length === 0 ? (
-          <p className="text-sm text-zinc-500 italic">
-            No actions available — equip a weapon on the General tab.
-          </p>
-        ) : (
-          <ul className="space-y-1">
-            {actions.map((a) => (
-              <li
-                key={a.key}
-                className="flex items-center justify-between gap-3 rounded bg-zinc-900 border border-zinc-800 px-3 py-2"
-              >
-                <div className="flex-1 min-w-0">
-                  <div className="flex items-baseline gap-2 flex-wrap">
-                    <span className="text-sm text-zinc-100">{a.label}</span>
-                    <span className="text-[10px] uppercase tracking-wider text-zinc-500">
-                      {a.def.name}
-                    </span>
-                  </div>
-                  {a.notes && (
-                    <div className="text-xs text-zinc-300">{a.notes}</div>
-                  )}
-                  <div className="text-xs text-zinc-500 font-mono">
-                    Skill {fmt(a.level)}
-                    {a.def.attribute &&
-                      ` · ${a.def.attribute} ${fmt(a.attrValue)}`}
-                  </div>
+        <ul className="space-y-1">
+          <li className="flex items-start justify-between gap-3 rounded bg-zinc-900 border border-zinc-800 px-3 py-2">
+            <div className="flex-1 min-w-0">
+              <div className="text-sm text-zinc-100">Move</div>
+              <div className="text-xs text-zinc-400">
+                Move up to your speed.
+              </div>
+            </div>
+            <span className="text-base font-mono text-zinc-100 whitespace-nowrap">
+              {character.speed ?? 20} ft
+            </span>
+          </li>
+          {actions.map((a) => (
+            <li
+              key={a.key}
+              className="flex items-center justify-between gap-3 rounded bg-zinc-900 border border-zinc-800 px-3 py-2"
+            >
+              <div className="flex-1 min-w-0">
+                <div className="flex items-baseline gap-2 flex-wrap">
+                  <span className="text-sm text-zinc-100">{a.label}</span>
+                  <span className="text-[10px] uppercase tracking-wider text-zinc-500">
+                    {a.def.name}
+                  </span>
                 </div>
-                <span className="text-base font-mono text-amber-300 whitespace-nowrap">
-                  {fmt(a.total)}
-                </span>
-              </li>
-            ))}
-          </ul>
+                {a.notes && (
+                  <div className="text-xs text-zinc-300">{a.notes}</div>
+                )}
+                <div className="text-xs text-zinc-500 font-mono">
+                  Skill {fmt(a.level)}
+                  {a.def.attribute &&
+                    ` · ${a.def.attribute} ${fmt(a.attrValue)}`}
+                </div>
+              </div>
+              <span className="text-base font-mono text-amber-300 whitespace-nowrap">
+                {fmt(a.total)}
+              </span>
+            </li>
+          ))}
+        </ul>
+        {actions.length === 0 && (
+          <p className="mt-2 text-sm text-zinc-500 italic">
+            Equip a weapon on the General tab to add attack actions.
+          </p>
         )}
       </ReadOnlySection>
 
@@ -645,6 +655,7 @@ function CombatTab({
           <ReactionRow
             name="Move your character"
             description="Use your reaction to move."
+            value={`${character.speed ?? 20} ft`}
           />
           <ReactionRow
             name="Opportunity attack"
@@ -669,14 +680,23 @@ function CombatTab({
 function ReactionRow({
   name,
   description,
+  value,
 }: {
   name: string
   description: React.ReactNode
+  value?: React.ReactNode
 }) {
   return (
-    <li className="rounded bg-zinc-900 border border-zinc-800 px-3 py-2">
-      <div className="text-sm text-zinc-100">{name}</div>
-      <div className="text-xs text-zinc-400">{description}</div>
+    <li className="flex items-start justify-between gap-3 rounded bg-zinc-900 border border-zinc-800 px-3 py-2">
+      <div className="flex-1 min-w-0">
+        <div className="text-sm text-zinc-100">{name}</div>
+        <div className="text-xs text-zinc-400">{description}</div>
+      </div>
+      {value !== undefined && (
+        <span className="text-base font-mono text-zinc-100 whitespace-nowrap">
+          {value}
+        </span>
+      )}
     </li>
   )
 }
