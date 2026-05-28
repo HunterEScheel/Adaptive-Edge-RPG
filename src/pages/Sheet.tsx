@@ -238,12 +238,6 @@ export function Sheet() {
           color="text-amber-300"
           tooltip={evasionBreakdown(character)}
         />
-        <Stat
-          label="Speed"
-          value={character.speed ?? 20}
-          suffix="ft"
-          color="text-zinc-100"
-        />
         <RibbonRule />
         {ATTRIBUTES.map((a) => (
           <Stat
