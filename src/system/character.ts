@@ -42,6 +42,24 @@ export interface CharacterSkill {
   level: number
 }
 
+export const BODY_PARTS = [
+  'head',
+  'torso',
+  'leftArm',
+  'rightArm',
+  'leftLeg',
+  'rightLeg',
+] as const
+export type BodyPart = (typeof BODY_PARTS)[number]
+export const BODY_PART_LABELS: Record<BodyPart, string> = {
+  head: 'Head',
+  torso: 'Torso',
+  leftArm: 'Left Arm',
+  rightArm: 'Right Arm',
+  leftLeg: 'Left Leg',
+  rightLeg: 'Right Leg',
+}
+
 export interface Character {
   name: string
   tierName: string
@@ -65,6 +83,7 @@ export interface Character {
   savedSpells: SavedSpell[]
   deathSaves: DeathSaves
   tempHp: number
+  bodyDescriptions: Partial<Record<BodyPart, string>>
 }
 
 export interface DeathSaves {
@@ -126,6 +145,7 @@ export function emptyCharacter(tierName: string, bpBudget: number): Character {
     savedSpells: [],
     deathSaves: { ...EMPTY_DEATH_SAVES },
     tempHp: 0,
+    bodyDescriptions: {},
   }
 }
 
@@ -348,6 +368,7 @@ export function ensureCombatSkills(c: Character): Character {
     })),
     deathSaves: c.deathSaves ?? { ...EMPTY_DEATH_SAVES },
     tempHp: c.tempHp ?? 0,
+    bodyDescriptions: c.bodyDescriptions ?? {},
     magicSchools: migrateSchools(c.magicSchools),
     magicMediums: migrateMediums(c.magicMediums),
     attributes: migrateAttributes(c.attributes),

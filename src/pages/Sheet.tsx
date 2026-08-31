@@ -7,6 +7,7 @@ import {
   evasion,
   normalizeCurrentValues,
   restoreToMax,
+  type BodyPart,
   type Character,
 } from '../system/character'
 import { skillCost } from '../system/costs'
@@ -17,6 +18,7 @@ import { TETHER_TIERS } from '../system/tethers'
 import { FLAW_SEVERITIES } from '../system/flaws'
 import { getCharacter, updateCharacter } from '../lib/characters'
 import { supabaseConfigured } from '../lib/supabase'
+import { BodyDiagramEditor } from '../components/BodyDiagramEditor'
 import { InventoryEditor } from '../components/InventoryEditor'
 import { QuickCast } from '../components/QuickCast'
 import { SavedSpells } from '../components/SavedSpells'
@@ -134,6 +136,8 @@ export function Sheet() {
     setCharacter((c) => (c ? { ...c, gold: Math.max(0, gold) } : c))
   const setInventory = (inventory: typeof character.inventory) =>
     setCharacter((c) => (c ? { ...c, inventory } : c))
+  const setBodyDescriptions = (bodyDescriptions: Partial<Record<BodyPart, string>>) =>
+    setCharacter((c) => (c ? { ...c, bodyDescriptions } : c))
 
   const hasMagic =
     Object.values(character.magicSchools).some((v) => v > 0) ||
@@ -491,6 +495,13 @@ export function Sheet() {
             ) : (
               <SkillList skills={otherSkills} />
             )}
+          </ReadOnlySection>
+
+          <ReadOnlySection title="Character Description">
+            <BodyDiagramEditor
+              value={character.bodyDescriptions ?? {}}
+              onChange={setBodyDescriptions}
+            />
           </ReadOnlySection>
 
         </div>
