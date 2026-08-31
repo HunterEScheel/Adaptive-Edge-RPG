@@ -346,7 +346,12 @@ interface PickerSelectProps {
   onChange: (v: string) => void
 }
 
-function PickerSelect({ label, value, options, onChange }: PickerSelectProps) {
+export function PickerSelect({
+  label,
+  value,
+  options,
+  onChange,
+}: PickerSelectProps) {
   return (
     <div>
       <span className="text-xs uppercase tracking-wide text-zinc-400 block mb-1">
@@ -375,7 +380,7 @@ interface CriterionRowProps {
   onOptionChange: (idx: number) => void
 }
 
-function CriterionRow({
+export function CriterionRow({
   criterion,
   selection,
   onModeChange,

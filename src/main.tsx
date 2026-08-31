@@ -7,6 +7,7 @@ import { Home } from './pages/Home.tsx'
 import { Builder } from './pages/Builder.tsx'
 import { Sheet } from './pages/Sheet.tsx'
 import { RunningTheGame } from './pages/RunningTheGame.tsx'
+import { MonsterMaker } from './pages/MonsterMaker.tsx'
 
 const router = createHashRouter([
   {
@@ -18,6 +19,7 @@ const router = createHashRouter([
       { path: 'builder/:id', element: <Builder /> },
       { path: 'sheet/:id', element: <Sheet /> },
       { path: 'running-the-game', element: <RunningTheGame /> },
+      { path: 'monster-maker', element: <MonsterMaker /> },
     ],
   },
 ])

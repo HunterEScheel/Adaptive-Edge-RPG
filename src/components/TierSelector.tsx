@@ -3,18 +3,24 @@ import { POWER_TIERS } from '../system/powerTiers'
 interface TierSelectorProps {
   value: string
   onChange: (name: string, bp: number) => void
+  bpSource?: 'player' | 'enemy'
 }
 
-export function TierSelector({ value, onChange }: TierSelectorProps) {
+export function TierSelector({
+  value,
+  onChange,
+  bpSource = 'player',
+}: TierSelectorProps) {
   return (
     <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
       {POWER_TIERS.map((tier) => {
         const active = tier.name === value
+        const bp = bpSource === 'enemy' ? tier.enemyBP : tier.playerBP
         return (
           <button
             key={tier.name}
             type="button"
-            onClick={() => onChange(tier.name, tier.playerBP)}
+            onClick={() => onChange(tier.name, bp)}
             className={
               'rounded border px-3 py-2 text-left transition ' +
               (active
@@ -23,9 +29,7 @@ export function TierSelector({ value, onChange }: TierSelectorProps) {
             }
           >
             <div className="text-sm font-medium">{tier.name}</div>
-            <div className="text-xs text-zinc-500 font-mono">
-              {tier.playerBP} BP
-            </div>
+            <div className="text-xs text-zinc-500 font-mono">{bp} BP</div>
           </button>
         )
       })}

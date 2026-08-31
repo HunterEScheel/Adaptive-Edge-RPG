@@ -15,7 +15,9 @@ function App() {
                   ? 'Sheet'
                   : pathname.startsWith('/running-the-game')
                     ? 'GM guide'
-                    : 'Roster'}
+                    : pathname.startsWith('/monster-maker')
+                      ? 'Monster maker'
+                      : 'Roster'}
             </span>
           </Link>
           <nav className="flex items-center gap-3 text-sm">
@@ -38,6 +40,16 @@ function App() {
               }
             >
               Running the game
+            </Link>
+            <Link
+              to="/monster-maker"
+              className={
+                pathname.startsWith('/monster-maker')
+                  ? 'text-zinc-100'
+                  : 'text-zinc-400 hover:text-zinc-100'
+              }
+            >
+              Monsters
             </Link>
             <Link
               to="/builder"
