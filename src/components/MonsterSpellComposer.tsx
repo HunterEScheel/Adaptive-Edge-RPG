@@ -10,31 +10,17 @@ import {
   type CriterionKey,
   type SpellTargeting,
 } from '../system/spells'
-import {
-  MAGIC_MEDIUMS,
-  MAGIC_SCHOOLS,
-  type MagicMedium,
-  type MagicSchool,
-} from '../system/magicSchools'
 import { spellTargetingLabel, type MonsterSpell } from '../system/monster'
-import { CriterionRow, PickerSelect } from './QuickCast'
+import { CriterionRow } from './QuickCast'
 
 interface Props {
-  schools: Record<MagicSchool, number>
-  mediums: Record<MagicMedium, number>
+  spellBonus: number
   value: MonsterSpell[]
   onChange: (next: MonsterSpell[]) => void
 }
 
-export function MonsterSpellComposer({
-  schools,
-  mediums,
-  value,
-  onChange,
-}: Props) {
+export function MonsterSpellComposer({ spellBonus, value, onChange }: Props) {
   const [draft, setDraft] = useState(emptySpellDraft)
-  const [school, setSchool] = useState<MagicSchool | ''>('')
-  const [medium, setMedium] = useState<MagicMedium | ''>('')
   const [name, setName] = useState('')
 
   const cost = useMemo(() => spellCost(draft), [draft])
@@ -55,8 +41,7 @@ export function MonsterSpellComposer({
   const setDamage = (n: number) =>
     setDraft((d) => ({ ...d, damageDice: Math.max(0, n) }))
 
-  const canAdd =
-    school !== '' && medium !== '' && name.trim().length > 0 && cost.totalEp > 0
+  const canAdd = name.trim().length > 0 && cost.totalEp > 0
 
   const handleAdd = () => {
     if (!canAdd) return
@@ -65,8 +50,6 @@ export function MonsterSpellComposer({
       {
         id: `monster-spell-${crypto.randomUUID()}`,
         name: name.trim(),
-        school: school as MagicSchool,
-        medium: medium as MagicMedium,
         draft,
       },
     ])
@@ -76,27 +59,6 @@ export function MonsterSpellComposer({
 
   return (
     <div className="space-y-4">
-      <div className="grid grid-cols-2 gap-3">
-        <PickerSelect
-          label="School"
-          value={school}
-          options={MAGIC_SCHOOLS.map((s) => ({
-            value: s,
-            label: `${s} (Lv ${schools[s]})`,
-          }))}
-          onChange={(v) => setSchool(v as MagicSchool)}
-        />
-        <PickerSelect
-          label="Medium"
-          value={medium}
-          options={MAGIC_MEDIUMS.map((m) => ({
-            value: m,
-            label: `${m} (Lv ${mediums[m]})`,
-          }))}
-          onChange={(v) => setMedium(v as MagicMedium)}
-        />
-      </div>
-
       {SPELL_CRITERIA.map((c) => (
         <CriterionRow
           key={c.key}
@@ -214,15 +176,11 @@ export function MonsterSpellComposer({
           onClick={handleAdd}
           disabled={!canAdd}
           title={
-            school === ''
-              ? 'Pick a school'
-              : medium === ''
-                ? 'Pick a medium'
-                : name.trim().length === 0
-                  ? 'Give the spell a name'
-                  : cost.totalEp === 0
-                    ? 'Set at least one criterion or damage die'
-                    : undefined
+            name.trim().length === 0
+              ? 'Give the spell a name'
+              : cost.totalEp === 0
+                ? 'Set at least one criterion or damage die'
+                : undefined
           }
           className="rounded bg-emerald-500 hover:bg-emerald-400 disabled:opacity-40 disabled:cursor-not-allowed px-4 py-1.5 text-sm font-medium text-zinc-950"
         >
@@ -240,13 +198,8 @@ export function MonsterSpellComposer({
               <span className="text-sm text-zinc-100 whitespace-nowrap">
                 {s.name}
               </span>
-              <span className="text-[11px] text-zinc-400 whitespace-nowrap">
-                <span className="text-violet-300">{s.school}</span>
-                <span className="text-zinc-600 mx-1">·</span>
-                <span className="text-sky-300">{s.medium}</span>
-              </span>
               <span className="text-xs font-mono text-amber-300 whitespace-nowrap">
-                {spellTargetingLabel(s, schools, mediums)}
+                {spellTargetingLabel(s, spellBonus)}
               </span>
               <span className="text-xs font-mono text-zinc-500 flex-1">
                 {spellCost(s.draft).totalEp} EP

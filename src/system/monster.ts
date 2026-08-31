@@ -5,18 +5,10 @@ import {
   DEFAULT_SPEED,
   epCost,
   hpCost,
-  magicMediumCost,
-  magicSchoolCost,
   skillCost,
   speedCost,
 } from './costs'
 import type { DamageType } from './inventory'
-import {
-  MAGIC_MEDIUMS,
-  MAGIC_SCHOOLS,
-  type MagicMedium,
-  type MagicSchool,
-} from './magicSchools'
 import {
   CASTING_TIMES,
   SPELL_CRITERIA,
@@ -36,9 +28,20 @@ export interface MonsterAttack {
 export interface MonsterSpell {
   id: string
   name: string
-  school: MagicSchool
-  medium: MagicMedium
   draft: SpellDraft
+}
+
+export interface LairAction {
+  id: string
+  name: string
+  description: string
+}
+
+export interface LegendaryAction {
+  id: string
+  name: string
+  cost: number
+  description: string
 }
 
 export interface Monster {
@@ -49,11 +52,13 @@ export interface Monster {
   ep: number
   speed: number
   attributes: Record<AttributeName, number>
-  magicSchools: Record<MagicSchool, number>
-  magicMediums: Record<MagicMedium, number>
   combatSkills: Record<string, number>
+  spellBonus: number
   attacks: MonsterAttack[]
   spells: MonsterSpell[]
+  lairActions: LairAction[]
+  legendaryActionSlots: number
+  legendaryActions: LegendaryAction[]
 }
 
 export function emptyMonster(tierName: string, bpBudget: number): Monster {
@@ -68,17 +73,13 @@ export function emptyMonster(tierName: string, bpBudget: number): Monster {
       AttributeName,
       number
     >,
-    magicSchools: Object.fromEntries(MAGIC_SCHOOLS.map((s) => [s, 0])) as Record<
-      MagicSchool,
-      number
-    >,
-    magicMediums: Object.fromEntries(MAGIC_MEDIUMS.map((m) => [m, 0])) as Record<
-      MagicMedium,
-      number
-    >,
     combatSkills: Object.fromEntries(COMBAT_SKILLS.map((c) => [c.id, 0])),
+    spellBonus: 0,
     attacks: [],
     spells: [],
+    lairActions: [],
+    legendaryActionSlots: 0,
+    legendaryActions: [],
   }
 }
 
@@ -87,7 +88,6 @@ export interface MonsterBPBreakdown {
   ep: number
   speed: number
   attributes: number
-  magic: number
   skills: number
   total: number
   remaining: number
@@ -101,20 +101,16 @@ export function monsterBpBreakdown(m: Monster): MonsterBPBreakdown {
     (sum, a) => sum + attributeCost(m.attributes[a]),
     0,
   )
-  const magic =
-    MAGIC_SCHOOLS.reduce((sum, s) => sum + magicSchoolCost(m.magicSchools[s]), 0) +
-    MAGIC_MEDIUMS.reduce((sum, x) => sum + magicMediumCost(m.magicMediums[x]), 0)
   const skills = Object.values(m.combatSkills).reduce(
     (sum, lv) => sum + skillCost(lv),
     0,
   )
-  const total = hp + ep + speed + attributes + magic + skills
+  const total = hp + ep + speed + attributes + skills
   return {
     hp,
     ep,
     speed,
     attributes,
-    magic,
     skills,
     total,
     remaining: m.bpBudget - total,
@@ -125,17 +121,12 @@ export function monsterEvasion(m: Monster): number {
   return 10 + m.attributes.Agility + (m.combatSkills['combat-dodge'] ?? 0)
 }
 
-export function spellTargetingLabel(
-  s: MonsterSpell,
-  schools: Record<MagicSchool, number>,
-  mediums: Record<MagicMedium, number>,
-): string {
-  const hit = (schools[s.school] ?? 0) + (mediums[s.medium] ?? 0)
+export function spellTargetingLabel(s: MonsterSpell, bonus: number): string {
   const targeting = s.draft.targeting ?? 'hit'
-  if (targeting === 'hit') return `hit ${hit >= 0 ? '+' : ''}${hit}`
+  if (targeting === 'hit') return `hit ${bonus >= 0 ? '+' : ''}${bonus}`
   const save =
     targeting === 'dodge' ? 'Dodge' : targeting === 'grit' ? 'Grit' : 'Resolve'
-  return `${save} DC ${10 + hit}`
+  return `${save} DC ${10 + bonus}`
 }
 
 export function spellFactors(s: MonsterSpell): string[] {

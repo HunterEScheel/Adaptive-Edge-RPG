@@ -3,21 +3,20 @@ import { ATTRIBUTES } from '../system/attributes'
 import { COMBAT_SKILLS } from '../system/combatSkills'
 import { MAX_SKILL_LEVEL, SPEED_STEP } from '../system/costs'
 import { DAMAGE_TYPES, type DamageType } from '../system/inventory'
-import { MAGIC_MEDIUMS, MAGIC_SCHOOLS } from '../system/magicSchools'
 import {
   emptyMonster,
   monsterBpBreakdown,
   monsterEvasion,
   spellFactors,
   spellTargetingLabel,
+  type LairAction,
+  type LegendaryAction,
   type Monster,
   type MonsterAttack,
 } from '../system/monster'
 import { POWER_TIERS } from '../system/powerTiers'
 import { spellCost } from '../system/spells'
 import { AttributesEditor } from '../components/AttributesEditor'
-import { MagicMediumsEditor } from '../components/MagicMediumsEditor'
-import { MagicSchoolsEditor } from '../components/MagicSchoolsEditor'
 import { MonsterSpellComposer } from '../components/MonsterSpellComposer'
 import { NumberStepper } from '../components/NumberStepper'
 import { Section } from '../components/Section'
@@ -155,23 +154,6 @@ export function MonsterMaker() {
       </Section>
 
       <Section
-        title="Magic"
-        subtitle="School + medium levels set spell hit bonus and save DCs."
-        cost={breakdown.magic}
-      >
-        <div className="space-y-4">
-          <MagicSchoolsEditor
-            value={monster.magicSchools}
-            onChange={(magicSchools) => patch({ magicSchools })}
-          />
-          <MagicMediumsEditor
-            value={monster.magicMediums}
-            onChange={(magicMediums) => patch({ magicMediums })}
-          />
-        </div>
-      </Section>
-
-      <Section
         title="Attacks"
         subtitle="Free-form — hit bonus and damage are whatever fits the monster."
       >
@@ -185,12 +167,52 @@ export function MonsterMaker() {
         title="Spells"
         subtitle="Monsters know spells innately — no training gates or save slots. Casting still costs EP."
       >
-        <MonsterSpellComposer
-          schools={monster.magicSchools}
-          mediums={monster.magicMediums}
-          value={monster.spells}
-          onChange={(spells) => patch({ spells })}
+        <div className="space-y-4">
+          <div className="flex items-center gap-3">
+            <NumberStepper
+              label="Spell bonus"
+              value={monster.spellBonus}
+              onChange={(spellBonus) => patch({ spellBonus })}
+              min={-Infinity}
+            />
+            <span className="text-xs text-zinc-500">
+              Sets spell hit bonus; save DC is 10 + bonus.
+            </span>
+          </div>
+          <MonsterSpellComposer
+            spellBonus={monster.spellBonus}
+            value={monster.spells}
+            onChange={(spells) => patch({ spells })}
+          />
+        </div>
+      </Section>
+
+      <Section
+        title="Lair actions"
+        subtitle="Environment effects the lair itself takes on its own initiative."
+      >
+        <LairActionsEditor
+          value={monster.lairActions}
+          onChange={(lairActions) => patch({ lairActions })}
         />
+      </Section>
+
+      <Section
+        title="Legendary actions"
+        subtitle="Slots refresh each round and are spent between other creatures' turns."
+      >
+        <div className="space-y-3">
+          <NumberStepper
+            label="Slots / round"
+            value={monster.legendaryActionSlots}
+            onChange={(legendaryActionSlots) => patch({ legendaryActionSlots })}
+            min={0}
+          />
+          <LegendaryActionsEditor
+            value={monster.legendaryActions}
+            onChange={(legendaryActions) => patch({ legendaryActions })}
+          />
+        </div>
       </Section>
 
       <div className="flex items-center gap-3">
@@ -307,16 +329,139 @@ function AttacksEditor({
   )
 }
 
+function LairActionsEditor({
+  value,
+  onChange,
+}: {
+  value: LairAction[]
+  onChange: (next: LairAction[]) => void
+}) {
+  const add = () =>
+    onChange([
+      ...value,
+      { id: `lair-action-${crypto.randomUUID()}`, name: '', description: '' },
+    ])
+  const update = (id: string, p: Partial<LairAction>) =>
+    onChange(value.map((a) => (a.id === id ? { ...a, ...p } : a)))
+
+  return (
+    <div className="space-y-2">
+      {value.map((a) => (
+        <div
+          key={a.id}
+          className="rounded bg-zinc-900 border border-zinc-800 px-3 py-2 flex flex-wrap items-start gap-2"
+        >
+          <input
+            type="text"
+            value={a.name}
+            onChange={(e) => update(a.id, { name: e.target.value })}
+            placeholder="Lair action name"
+            className="w-48 bg-zinc-950 border border-zinc-700 rounded px-2 py-1.5 text-sm text-zinc-100"
+          />
+          <textarea
+            value={a.description}
+            onChange={(e) => update(a.id, { description: e.target.value })}
+            rows={2}
+            placeholder="What happens…"
+            className="flex-1 min-w-[14rem] bg-zinc-950 border border-zinc-700 rounded px-2 py-1.5 text-sm text-zinc-100 resize-y"
+          />
+          <button
+            type="button"
+            onClick={() => onChange(value.filter((x) => x.id !== a.id))}
+            className="text-zinc-500 hover:text-rose-400 text-sm"
+            aria-label={`Remove ${a.name || 'lair action'}`}
+          >
+            ✕
+          </button>
+        </div>
+      ))}
+      <button
+        type="button"
+        onClick={add}
+        className="rounded bg-zinc-800 hover:bg-zinc-700 px-3 py-1.5 text-sm text-zinc-200"
+      >
+        + Add lair action
+      </button>
+    </div>
+  )
+}
+
+function LegendaryActionsEditor({
+  value,
+  onChange,
+}: {
+  value: LegendaryAction[]
+  onChange: (next: LegendaryAction[]) => void
+}) {
+  const add = () =>
+    onChange([
+      ...value,
+      {
+        id: `legendary-action-${crypto.randomUUID()}`,
+        name: '',
+        cost: 1,
+        description: '',
+      },
+    ])
+  const update = (id: string, p: Partial<LegendaryAction>) =>
+    onChange(value.map((a) => (a.id === id ? { ...a, ...p } : a)))
+
+  return (
+    <div className="space-y-2">
+      {value.map((a) => (
+        <div
+          key={a.id}
+          className="rounded bg-zinc-900 border border-zinc-800 px-3 py-2 flex flex-wrap items-start gap-2"
+        >
+          <input
+            type="text"
+            value={a.name}
+            onChange={(e) => update(a.id, { name: e.target.value })}
+            placeholder="Legendary action name"
+            className="w-48 bg-zinc-950 border border-zinc-700 rounded px-2 py-1.5 text-sm text-zinc-100"
+          />
+          <label className="flex items-center gap-1 text-xs text-zinc-400 pt-1.5">
+            costs
+            <input
+              type="number"
+              min={1}
+              value={a.cost}
+              onChange={(e) =>
+                update(a.id, { cost: Math.max(1, Number(e.target.value) || 1) })
+              }
+              className="w-14 bg-zinc-950 border border-zinc-700 rounded px-2 py-1 text-sm text-zinc-100 font-mono"
+            />
+          </label>
+          <textarea
+            value={a.description}
+            onChange={(e) => update(a.id, { description: e.target.value })}
+            rows={2}
+            placeholder="What happens…"
+            className="flex-1 min-w-[14rem] bg-zinc-950 border border-zinc-700 rounded px-2 py-1.5 text-sm text-zinc-100 resize-y"
+          />
+          <button
+            type="button"
+            onClick={() => onChange(value.filter((x) => x.id !== a.id))}
+            className="text-zinc-500 hover:text-rose-400 text-sm"
+            aria-label={`Remove ${a.name || 'legendary action'}`}
+          >
+            ✕
+          </button>
+        </div>
+      ))}
+      <button
+        type="button"
+        onClick={add}
+        className="rounded bg-zinc-800 hover:bg-zinc-700 px-3 py-1.5 text-sm text-zinc-200"
+      >
+        + Add legendary action
+      </button>
+    </div>
+  )
+}
+
 function StatBlock({ monster }: { monster: Monster }) {
   const skillLv = (id: string) => monster.combatSkills[id] ?? 0
-  const trainedMagic = [
-    ...MAGIC_SCHOOLS.filter((s) => monster.magicSchools[s] > 0).map(
-      (s) => `${s} ${monster.magicSchools[s]}`,
-    ),
-    ...MAGIC_MEDIUMS.filter((m) => monster.magicMediums[m] > 0).map(
-      (m) => `${m} ${monster.magicMediums[m]}`,
-    ),
-  ]
   const reactions = COMBAT_SKILLS.filter(
     (d) => d.category === 'reaction' && skillLv(d.id) > 0,
   )
@@ -420,26 +565,14 @@ function StatBlock({ monster }: { monster: Monster }) {
       )}
 
       {monster.spells.length > 0 && (
-        <BlockSection
-          title="Spells"
-          meta={trainedMagic.length > 0 ? trainedMagic.join(' · ') : undefined}
-        >
+        <BlockSection title="Spells" meta={`spell bonus ${fmt(monster.spellBonus)}`}>
           <ul className="space-y-2">
             {monster.spells.map((s) => (
               <li key={s.id} className="text-sm">
                 <div className="flex flex-wrap items-baseline gap-x-2">
                   <span className="text-zinc-100 font-medium">{s.name}</span>
-                  <span className="text-[11px] text-zinc-400">
-                    <span className="text-violet-300">{s.school}</span>
-                    <span className="text-zinc-600 mx-1">·</span>
-                    <span className="text-sky-300">{s.medium}</span>
-                  </span>
                   <span className="font-mono text-amber-300">
-                    {spellTargetingLabel(
-                      s,
-                      monster.magicSchools,
-                      monster.magicMediums,
-                    )}
+                    {spellTargetingLabel(s, monster.spellBonus)}
                   </span>
                   <span className="font-mono text-zinc-400">
                     {spellCost(s.draft).totalEp} EP
@@ -455,6 +588,48 @@ function StatBlock({ monster }: { monster: Monster }) {
                     </span>
                   ))}
                 </div>
+              </li>
+            ))}
+          </ul>
+        </BlockSection>
+      )}
+
+      {monster.lairActions.length > 0 && (
+        <BlockSection title="Lair actions">
+          <ul className="space-y-1">
+            {monster.lairActions.map((a) => (
+              <li key={a.id} className="text-sm">
+                <span className="text-zinc-100 font-medium">
+                  {a.name || 'Lair action'}
+                </span>
+                {a.description && (
+                  <span className="text-zinc-400"> — {a.description}</span>
+                )}
+              </li>
+            ))}
+          </ul>
+        </BlockSection>
+      )}
+
+      {(monster.legendaryActions.length > 0 ||
+        monster.legendaryActionSlots > 0) && (
+        <BlockSection
+          title="Legendary actions"
+          meta={`${monster.legendaryActionSlots} slots / round`}
+        >
+          <ul className="space-y-1">
+            {monster.legendaryActions.map((a) => (
+              <li key={a.id} className="text-sm">
+                <span className="text-zinc-100 font-medium">
+                  {a.name || 'Legendary action'}
+                </span>
+                <span className="font-mono text-amber-300">
+                  {' '}
+                  ({a.cost} {a.cost === 1 ? 'slot' : 'slots'})
+                </span>
+                {a.description && (
+                  <span className="text-zinc-400"> — {a.description}</span>
+                )}
               </li>
             ))}
           </ul>
