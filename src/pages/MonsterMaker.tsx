@@ -157,10 +157,24 @@ export function MonsterMaker() {
         title="Attacks"
         subtitle="Free-form — hit bonus and damage are whatever fits the monster."
       >
-        <AttacksEditor
-          value={monster.attacks}
-          onChange={(attacks) => patch({ attacks })}
-        />
+        <div className="space-y-3">
+          <div>
+            <span className="text-xs uppercase tracking-wide text-zinc-400 block mb-1">
+              Multiattack
+            </span>
+            <input
+              type="text"
+              value={monster.multiattack}
+              onChange={(e) => patch({ multiattack: e.target.value })}
+              placeholder="e.g. Makes three attacks: two claws and one bite."
+              className="w-full bg-zinc-950 border border-zinc-700 rounded px-3 py-2 text-sm text-zinc-100 placeholder:text-zinc-500"
+            />
+          </div>
+          <AttacksEditor
+            value={monster.attacks}
+            onChange={(attacks) => patch({ attacks })}
+          />
+        </div>
       </Section>
 
       <Section
@@ -508,8 +522,14 @@ function StatBlock({ monster }: { monster: Monster }) {
         <BlockStat label="RSL" value={fmt(skillLv('combat-resolve'))} color="text-amber-200" />
       </div>
 
-      {monster.attacks.length > 0 && (
+      {(monster.attacks.length > 0 || monster.multiattack.trim()) && (
         <BlockSection title="Attacks">
+          {monster.multiattack.trim() && (
+            <p className="text-sm mb-1">
+              <span className="text-zinc-100 font-medium">Multiattack</span>
+              <span className="text-zinc-400"> — {monster.multiattack}</span>
+            </p>
+          )}
           <ul className="space-y-1">
             {monster.attacks.map((a) => (
               <li key={a.id} className="flex flex-wrap items-baseline gap-x-2 text-sm">

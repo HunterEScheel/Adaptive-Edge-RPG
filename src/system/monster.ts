@@ -54,6 +54,7 @@ export interface Monster {
   attributes: Record<AttributeName, number>
   combatSkills: Record<string, number>
   spellBonus: number
+  multiattack: string
   attacks: MonsterAttack[]
   spells: MonsterSpell[]
   lairActions: LairAction[]
@@ -75,6 +76,7 @@ export function emptyMonster(tierName: string, bpBudget: number): Monster {
     >,
     combatSkills: Object.fromEntries(COMBAT_SKILLS.map((c) => [c.id, 0])),
     spellBonus: 0,
+    multiattack: '',
     attacks: [],
     spells: [],
     lairActions: [],
