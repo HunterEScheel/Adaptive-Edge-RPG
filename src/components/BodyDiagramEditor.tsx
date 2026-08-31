@@ -17,26 +17,20 @@ const FILLED_CLASSES =
 
 const SHAPES: Record<
   BodyPart,
-  { tag: 'circle' | 'rect'; attrs: Record<string, number> }
+  { tag: 'circle' | 'rect'; attrs: Record<string, number> }[]
 > = {
-  head: { tag: 'circle', attrs: { cx: 50, cy: 20, r: 14 } },
-  torso: { tag: 'rect', attrs: { x: 34, y: 38, width: 32, height: 55, rx: 6 } },
-  leftArm: {
-    tag: 'rect',
-    attrs: { x: 16, y: 40, width: 14, height: 55, rx: 7 },
-  },
-  rightArm: {
-    tag: 'rect',
-    attrs: { x: 70, y: 40, width: 14, height: 55, rx: 7 },
-  },
-  leftLeg: {
-    tag: 'rect',
-    attrs: { x: 35, y: 97, width: 13, height: 70, rx: 6 },
-  },
-  rightLeg: {
-    tag: 'rect',
-    attrs: { x: 52, y: 97, width: 13, height: 70, rx: 6 },
-  },
+  head: [{ tag: 'circle', attrs: { cx: 50, cy: 20, r: 14 } }],
+  torso: [
+    { tag: 'rect', attrs: { x: 34, y: 38, width: 32, height: 55, rx: 6 } },
+  ],
+  arms: [
+    { tag: 'rect', attrs: { x: 16, y: 40, width: 14, height: 55, rx: 7 } },
+    { tag: 'rect', attrs: { x: 70, y: 40, width: 14, height: 55, rx: 7 } },
+  ],
+  legs: [
+    { tag: 'rect', attrs: { x: 35, y: 97, width: 13, height: 70, rx: 6 } },
+    { tag: 'rect', attrs: { x: 52, y: 97, width: 13, height: 70, rx: 6 } },
+  ],
 }
 
 export function BodyDiagramEditor({ value, onChange }: Props) {
@@ -58,34 +52,36 @@ export function BodyDiagramEditor({ value, onChange }: Props) {
         className="w-36 shrink-0 select-none"
         aria-label="Body diagram"
       >
-        {BODY_PARTS.map((part) => {
-          const { tag, attrs } = SHAPES[part]
-          const label = BODY_PART_LABELS[part]
-          const shared = {
-            role: 'button',
-            tabIndex: 0,
-            'aria-label': `Edit ${label} description`,
-            strokeWidth: 1.5,
-            className: value[part] ? FILLED_CLASSES : EMPTY_CLASSES,
-            onClick: () => setEditing(part),
-            onKeyDown: (e: React.KeyboardEvent) => {
-              if (e.key === 'Enter' || e.key === ' ') {
-                e.preventDefault()
-                setEditing(part)
-              }
-            },
-          }
-          const title = <title>{label}</title>
-          return tag === 'circle' ? (
-            <circle key={part} {...shared} {...attrs}>
-              {title}
-            </circle>
-          ) : (
-            <rect key={part} {...shared} {...attrs}>
-              {title}
-            </rect>
-          )
-        })}
+        {BODY_PARTS.flatMap((part) =>
+          SHAPES[part].map(({ tag, attrs }, i) => {
+            const label = BODY_PART_LABELS[part]
+            const shared = {
+              role: 'button',
+              tabIndex: 0,
+              'aria-label': `Edit ${label} description`,
+              strokeWidth: 1.5,
+              className: value[part] ? FILLED_CLASSES : EMPTY_CLASSES,
+              onClick: () => setEditing(part),
+              onKeyDown: (e: React.KeyboardEvent) => {
+                if (e.key === 'Enter' || e.key === ' ') {
+                  e.preventDefault()
+                  setEditing(part)
+                }
+              },
+            }
+            const key = `${part}-${i}`
+            const title = <title>{label}</title>
+            return tag === 'circle' ? (
+              <circle key={key} {...shared} {...attrs}>
+                {title}
+              </circle>
+            ) : (
+              <rect key={key} {...shared} {...attrs}>
+                {title}
+              </rect>
+            )
+          }),
+        )}
       </svg>
 
       <div className="flex-1 space-y-1">

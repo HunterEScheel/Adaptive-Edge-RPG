@@ -42,22 +42,35 @@ export interface CharacterSkill {
   level: number
 }
 
-export const BODY_PARTS = [
-  'head',
-  'torso',
-  'leftArm',
-  'rightArm',
-  'leftLeg',
-  'rightLeg',
-] as const
+export const BODY_PARTS = ['head', 'torso', 'arms', 'legs'] as const
 export type BodyPart = (typeof BODY_PARTS)[number]
 export const BODY_PART_LABELS: Record<BodyPart, string> = {
   head: 'Head',
   torso: 'Torso',
-  leftArm: 'Left Arm',
-  rightArm: 'Right Arm',
-  leftLeg: 'Left Leg',
-  rightLeg: 'Right Leg',
+  arms: 'Arms',
+  legs: 'Legs',
+}
+
+// Merge legacy per-limb keys (leftArm/rightArm/leftLeg/rightLeg) into the
+// combined arms/legs regions.
+function migrateBodyDescriptions(
+  raw: Record<string, string> | undefined,
+): Partial<Record<BodyPart, string>> {
+  if (!raw) return {}
+  const result: Partial<Record<BodyPart, string>> = {}
+  for (const part of BODY_PARTS) {
+    if (raw[part]) result[part] = raw[part]
+  }
+  const merged: [BodyPart, string[]][] = [
+    ['arms', [raw.leftArm, raw.rightArm].filter((s): s is string => !!s)],
+    ['legs', [raw.leftLeg, raw.rightLeg].filter((s): s is string => !!s)],
+  ]
+  for (const [part, legacy] of merged) {
+    if (legacy.length) {
+      result[part] = [result[part], ...legacy].filter(Boolean).join('\n')
+    }
+  }
+  return result
 }
 
 export interface Character {
@@ -368,7 +381,7 @@ export function ensureCombatSkills(c: Character): Character {
     })),
     deathSaves: c.deathSaves ?? { ...EMPTY_DEATH_SAVES },
     tempHp: c.tempHp ?? 0,
-    bodyDescriptions: c.bodyDescriptions ?? {},
+    bodyDescriptions: migrateBodyDescriptions(c.bodyDescriptions),
     magicSchools: migrateSchools(c.magicSchools),
     magicMediums: migrateMediums(c.magicMediums),
     attributes: migrateAttributes(c.attributes),

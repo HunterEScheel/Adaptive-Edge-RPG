@@ -25,12 +25,13 @@ import { SavedSpells } from '../components/SavedSpells'
 import { TakeDamagePanel } from '../components/TakeDamagePanel'
 import { DeathSavePanel } from '../components/DeathSavePanel'
 
-type Tab = 'general' | 'combat' | 'spellcasting'
+type Tab = 'general' | 'combat' | 'spellcasting' | 'description'
 
 const TABS: { key: Tab; label: string }[] = [
   { key: 'general', label: 'General' },
   { key: 'combat', label: 'Combat' },
   { key: 'spellcasting', label: 'Spellcasting' },
+  { key: 'description', label: 'Description' },
 ]
 
 const ATTRIBUTE_ABBR: Record<(typeof ATTRIBUTES)[number], string> = {
@@ -497,13 +498,17 @@ export function Sheet() {
             )}
           </ReadOnlySection>
 
+        </div>
+      )}
+
+      {tab === 'description' && (
+        <div className="space-y-3">
           <ReadOnlySection title="Character Description">
             <BodyDiagramEditor
               value={character.bodyDescriptions ?? {}}
               onChange={setBodyDescriptions}
             />
           </ReadOnlySection>
-
         </div>
       )}
 
