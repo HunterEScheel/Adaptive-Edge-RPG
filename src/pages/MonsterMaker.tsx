@@ -123,6 +123,7 @@ export function MonsterMaker() {
         <AttributesEditor
           value={monster.attributes}
           onChange={(attributes) => patch({ attributes })}
+          max={Infinity}
         />
       </Section>
 
